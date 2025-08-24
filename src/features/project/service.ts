@@ -1,71 +1,54 @@
-import { 
-  Project, 
-  ProjectConnection,
-  LinearDocument
-} from '@linear/sdk';
+import { Project, ProjectConnection, LinearDocument } from '@linear/sdk';
 
 type ProjectCreateInput = LinearDocument.ProjectCreateInput;
 type ProjectUpdateInput = LinearDocument.ProjectUpdateInput;
+
 import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
-import { NotFoundError, ValidationError, Pagination } from '@atoms/types/common';
-import { z } from 'zod';
-
-export const ProjectCreateSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().optional(),
-  teamIds: z.array(z.string()).min(1),
-  leadId: z.string().optional(),
-  memberIds: z.array(z.string()).optional(),
-  targetDate: z.string().optional(),
-  startDate: z.string().optional(),
-  priority: z.number().min(0).max(4).optional(),
-});
-
-export type ProjectCreate = z.infer<typeof ProjectCreateSchema>;
-
-export const ProjectUpdateSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  leadId: z.string().nullable().optional(),
-  memberIds: z.array(z.string()).optional(),
-  targetDate: z.string().nullable().optional(),
-  startDate: z.string().nullable().optional(),
-  priority: z.number().min(0).max(4).optional(),
-  state: z.enum(['planned', 'started', 'paused', 'completed', 'canceled']).optional(),
-});
-
-export type ProjectUpdate = z.infer<typeof ProjectUpdateSchema>;
+import { NotFoundError, ValidationError } from '@atoms/types/common';
+import {
+  ProjectCreate,
+  ProjectUpdate,
+  ProjectCreateSchema,
+  ProjectUpdateSchema,
+  Pagination,
+} from './schemas';
 
 export class ProjectService {
   private client = linearClient.getClient();
 
   async create(data: ProjectCreate): Promise<Project> {
     try {
-      logger.debug('Creating project', data);
-      
+      // Validate input data
+      const validatedData = ProjectCreateSchema.parse(data);
+
+      logger.debug('Creating project', validatedData);
+
       const input: ProjectCreateInput = {
-        name: data.name,
-        description: data.description,
-        teamIds: data.teamIds,
-        leadId: data.leadId,
-        memberIds: data.memberIds,
-        targetDate: data.targetDate,
-        startDate: data.startDate,
-        priority: data.priority,
+        name: validatedData.name,
+        description: validatedData.description,
+        teamIds: validatedData.teamIds,
+        leadId: validatedData.leadId,
+        memberIds: validatedData.memberIds,
+        targetDate: validatedData.targetDate,
+        startDate: validatedData.startDate,
+        priority: validatedData.priority,
       };
 
       const payload = await this.client.createProject(input);
-      
+
       if (!payload.success || !payload.project) {
         throw new ValidationError('Failed to create project');
       }
 
       const project = await payload.project;
       logger.success(`Project created: ${project.name}`);
-      
+
       return project;
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error?.name === 'ZodError') {
+        throw new ValidationError(`Validation failed: ${error.message}`);
+      }
       logger.error('Failed to create project', error);
       throw error;
     }
@@ -84,35 +67,44 @@ export class ProjectService {
 
   async update(id: string, data: ProjectUpdate): Promise<Project> {
     try {
-      logger.debug(`Updating project: ${id}`, data);
-      
+      // Validate input data
+      const validatedData = ProjectUpdateSchema.parse(data);
+
+      logger.debug(`Updating project: ${id}`, validatedData);
+
       const project = await this.get(id);
       if (!project) {
         throw new NotFoundError('Project', id);
       }
 
       const input: ProjectUpdateInput = {
-        name: data.name,
-        description: data.description,
-        leadId: data.leadId,
-        memberIds: data.memberIds,
-        targetDate: data.targetDate,
-        startDate: data.startDate,
-        priority: data.priority,
-        state: data.state,
+        name: validatedData.name,
+        description: validatedData.description,
+        leadId: validatedData.leadId,
+        memberIds: validatedData.memberIds,
+        targetDate: validatedData.targetDate,
+        startDate: validatedData.startDate,
+        priority: validatedData.priority,
+        state: validatedData.state,
       };
 
       const payload = await this.client.updateProject(id, input);
-      
+
       if (!payload.success || !payload.project) {
         throw new ValidationError('Failed to update project');
       }
 
       const updatedProject = await payload.project;
       logger.success(`Project updated: ${updatedProject.name}`);
-      
+
       return updatedProject;
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof NotFoundError || error instanceof ValidationError) {
+        throw error;
+      }
+      if (error?.name === 'ZodError') {
+        throw new ValidationError(`Validation failed: ${error.message}`);
+      }
       logger.error(`Failed to update project ${id}`, error);
       throw error;
     }
@@ -121,14 +113,14 @@ export class ProjectService {
   async delete(id: string): Promise<boolean> {
     try {
       logger.debug(`Deleting project: ${id}`);
-      
+
       const project = await this.get(id);
       if (!project) {
         throw new NotFoundError('Project', id);
       }
 
       const payload = await this.client.deleteProject(id);
-      
+
       if (!payload.success) {
         throw new ValidationError('Failed to delete project');
       }
@@ -144,7 +136,7 @@ export class ProjectService {
   async list(pagination?: Pagination): Promise<ProjectConnection> {
     try {
       logger.debug('Listing projects', pagination);
-      
+
       const projects = await this.client.projects({
         first: pagination?.first,
         after: pagination?.after,

@@ -1,27 +1,17 @@
-import { 
-  Issue, 
-  IssueConnection,
-  LinearDocument
-} from '@linear/sdk';
+import { Issue, IssueConnection, LinearDocument } from '@linear/sdk';
 
 type IssueCreateInput = LinearDocument.IssueCreateInput;
 type IssueUpdateInput = LinearDocument.IssueUpdateInput;
 type LinearIssueFilter = LinearDocument.IssueFilter;
 import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
-import { 
-  NotFoundError, 
-  ValidationError, 
-  OperationResult,
+import {
+  NotFoundError,
+  ValidationError,
   BatchOperationResult,
-  Pagination 
+  Pagination,
 } from '@atoms/types/common';
-import { 
-  IssueCreate, 
-  IssueUpdate, 
-  IssueFilter,
-  IssueBulkUpdate 
-} from './schemas';
+import { IssueCreate, IssueUpdate, IssueFilter, IssueBulkUpdate } from './schemas';
 
 export class IssueService {
   private client = linearClient.getClient();
@@ -29,7 +19,7 @@ export class IssueService {
   async create(data: IssueCreate): Promise<Issue> {
     try {
       logger.debug('Creating issue', data);
-      
+
       const input: IssueCreateInput = {
         title: data.title,
         description: data.description,
@@ -45,14 +35,14 @@ export class IssueService {
       };
 
       const payload = await this.client.createIssue(input);
-      
+
       if (!payload.success || !payload.issue) {
         throw new ValidationError('Failed to create issue');
       }
 
       const issue = await payload.issue;
       logger.success(`Issue created: ${issue.identifier}`);
-      
+
       return issue;
     } catch (error) {
       logger.error('Failed to create issue', error);
@@ -74,12 +64,12 @@ export class IssueService {
   async getByIdentifier(identifier: string): Promise<Issue | null> {
     try {
       logger.debug(`Fetching issue by identifier: ${identifier}`);
-      
+
       const issues = await this.client.issues({
         filter: {
-          searchableContent: { contains: identifier }
+          searchableContent: { contains: identifier },
         },
-        first: 1
+        first: 1,
       });
 
       const nodes = await issues.nodes;
@@ -87,7 +77,7 @@ export class IssueService {
         return null;
       }
 
-      const issue = nodes.find(i => i.identifier === identifier);
+      const issue = nodes.find((i) => i.identifier === identifier);
       return issue || null;
     } catch (error) {
       logger.debug(`Issue not found: ${identifier}`);
@@ -98,7 +88,7 @@ export class IssueService {
   async update(id: string, data: IssueUpdate): Promise<Issue> {
     try {
       logger.debug(`Updating issue: ${id}`, data);
-      
+
       const issue = await this.get(id);
       if (!issue) {
         throw new NotFoundError('Issue', id);
@@ -119,14 +109,14 @@ export class IssueService {
       };
 
       const payload = await this.client.updateIssue(id, input);
-      
+
       if (!payload.success || !payload.issue) {
         throw new ValidationError('Failed to update issue');
       }
 
       const updatedIssue = await payload.issue;
       logger.success(`Issue updated: ${updatedIssue.identifier}`);
-      
+
       return updatedIssue;
     } catch (error) {
       logger.error(`Failed to update issue ${id}`, error);
@@ -137,14 +127,14 @@ export class IssueService {
   async delete(id: string): Promise<boolean> {
     try {
       logger.debug(`Deleting issue: ${id}`);
-      
+
       const issue = await this.get(id);
       if (!issue) {
         throw new NotFoundError('Issue', id);
       }
 
       const payload = await this.client.deleteIssue(id);
-      
+
       if (!payload.success) {
         throw new ValidationError('Failed to delete issue');
       }
@@ -160,14 +150,14 @@ export class IssueService {
   async archive(id: string): Promise<boolean> {
     try {
       logger.debug(`Archiving issue: ${id}`);
-      
+
       const issue = await this.get(id);
       if (!issue) {
         throw new NotFoundError('Issue', id);
       }
 
       const payload = await this.client.archiveIssue(id);
-      
+
       if (!payload.success) {
         throw new ValidationError('Failed to archive issue');
       }
@@ -183,9 +173,9 @@ export class IssueService {
   async list(filter?: IssueFilter, pagination?: Pagination): Promise<IssueConnection> {
     try {
       logger.debug('Listing issues', { filter, pagination });
-      
+
       const linearFilter: LinearIssueFilter = {};
-      
+
       if (filter) {
         if (filter.teamId) {
           linearFilter.team = { id: { eq: filter.teamId } };
@@ -244,26 +234,26 @@ export class IssueService {
         const updated = await this.update(issueId, data.update);
         results.succeeded.push(updated);
         results.successCount++;
-      } catch (error: any) {
+      } catch (error: unknown) {
         results.failed.push({
           item: issueId,
-          error: error.message || 'Unknown error',
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
         results.failureCount++;
       }
     }
 
     results.success = results.failureCount === 0;
-    
+
     logger.info(`Bulk update completed: ${results.successCount}/${results.totalCount} succeeded`);
-    
+
     return results;
   }
 
   async addComment(issueId: string, body: string): Promise<boolean> {
     try {
       logger.debug(`Adding comment to issue ${issueId}`);
-      
+
       const payload = await this.client.createComment({
         issueId,
         body,
@@ -288,7 +278,7 @@ export class IssueService {
         throw new NotFoundError('Issue', issueId);
       }
 
-      const currentLabelIds = (await issue.labels()).nodes.map(l => l.id);
+      const currentLabelIds = (await issue.labels()).nodes.map((l) => l.id);
       const newLabelIds = [...new Set([...currentLabelIds, ...labelIds])];
 
       return await this.update(issueId, { labelIds: newLabelIds });
@@ -305,8 +295,8 @@ export class IssueService {
         throw new NotFoundError('Issue', issueId);
       }
 
-      const currentLabelIds = (await issue.labels()).nodes.map(l => l.id);
-      const newLabelIds = currentLabelIds.filter(id => !labelIds.includes(id));
+      const currentLabelIds = (await issue.labels()).nodes.map((l) => l.id);
+      const newLabelIds = currentLabelIds.filter((id) => !labelIds.includes(id));
 
       return await this.update(issueId, { labelIds: newLabelIds });
     } catch (error) {

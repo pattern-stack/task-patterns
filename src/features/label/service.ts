@@ -1,32 +1,30 @@
-import { 
-  IssueLabel, 
+import {
+  IssueLabel,
   IssueLabelConnection,
   Issue,
   IssueConnection,
-  LinearDocument
+  LinearDocument,
 } from '@linear/sdk';
 
 type LabelCreateInput = LinearDocument.IssueLabelCreateInput;
 type LabelUpdateInput = LinearDocument.IssueLabelUpdateInput;
 type LinearLabelFilter = LinearDocument.IssueLabelFilter;
-type LinearIssueFilter = LinearDocument.IssueFilter;
 
 import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
-import { 
-  NotFoundError, 
-  ValidationError, 
+import {
+  NotFoundError,
+  ValidationError,
   BatchOperationResult,
-  Pagination 
+  Pagination,
 } from '@atoms/types/common';
-import { 
-  LabelCreate, 
-  LabelUpdate, 
+import {
+  LabelCreate,
+  LabelUpdate,
   LabelFilter,
   LabelCreateSchema,
   LabelUpdateSchema,
-  BulkLabelOperation,
-  BulkLabelOperationSchema
+  BulkLabelOperationSchema,
 } from './schemas';
 
 export class LabelService {
@@ -36,9 +34,9 @@ export class LabelService {
     try {
       // Validate input
       const validatedData = LabelCreateSchema.parse(data);
-      
+
       logger.debug('Creating label', validatedData);
-      
+
       const input: LabelCreateInput = {
         name: validatedData.name,
         color: validatedData.color,
@@ -48,22 +46,23 @@ export class LabelService {
       };
 
       const payload = await this.client.createIssueLabel(input);
-      
+
       if (!payload.success || !payload.issueLabel) {
         throw new ValidationError('Failed to create label');
       }
 
       const label = await payload.issueLabel;
       logger.success(`Label created: ${label.name}`);
-      
+
       return label;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ValidationError) {
         throw error;
       }
       // Handle Zod validation errors
-      if (error?.name === 'ZodError') {
-        throw new ValidationError(`Validation failed: ${error.message}`);
+      if (error && typeof error === 'object' && 'name' in error && error.name === 'ZodError') {
+        const zodError = error as { message: string };
+        throw new ValidationError(`Validation failed: ${zodError.message}`);
       }
       logger.error('Failed to create label', error);
       throw error;
@@ -84,8 +83,8 @@ export class LabelService {
   async getByName(name: string, teamId?: string): Promise<IssueLabel | null> {
     try {
       logger.debug(`Fetching label by name: ${name}`, { teamId });
-      
-      const filter: any = {
+
+      const filter: Record<string, unknown> = {
         name: { eq: name },
       };
 
@@ -99,7 +98,7 @@ export class LabelService {
 
       const labels = await this.client.issueLabels({
         filter,
-        first: 1
+        first: 1,
       });
 
       const nodes = await labels.nodes;
@@ -114,9 +113,9 @@ export class LabelService {
     try {
       // Validate input
       const validatedData = LabelUpdateSchema.parse(data);
-      
+
       logger.debug(`Updating label: ${id}`, validatedData);
-      
+
       const label = await this.get(id);
       if (!label) {
         throw new NotFoundError('Label', id);
@@ -129,22 +128,23 @@ export class LabelService {
       };
 
       const payload = await this.client.updateIssueLabel(id, input);
-      
+
       if (!payload.success || !payload.issueLabel) {
         throw new ValidationError('Failed to update label');
       }
 
       const updatedLabel = await payload.issueLabel;
       logger.success(`Label updated: ${updatedLabel.name}`);
-      
+
       return updatedLabel;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof NotFoundError || error instanceof ValidationError) {
         throw error;
       }
       // Handle Zod validation errors
-      if (error?.name === 'ZodError') {
-        throw new ValidationError(`Validation failed: ${error.message}`);
+      if (error && typeof error === 'object' && 'name' in error && error.name === 'ZodError') {
+        const zodError = error as { message: string };
+        throw new ValidationError(`Validation failed: ${zodError.message}`);
       }
       logger.error(`Failed to update label ${id}`, error);
       throw error;
@@ -154,14 +154,14 @@ export class LabelService {
   async delete(id: string): Promise<boolean> {
     try {
       logger.debug(`Deleting label: ${id}`);
-      
+
       const label = await this.get(id);
       if (!label) {
         throw new NotFoundError('Label', id);
       }
 
       const payload = await this.client.deleteIssueLabel(id);
-      
+
       if (!payload.success) {
         throw new ValidationError('Failed to delete label');
       }
@@ -180,9 +180,9 @@ export class LabelService {
   async list(filter?: LabelFilter, pagination?: Pagination): Promise<IssueLabelConnection> {
     try {
       logger.debug('Listing labels', { filter, pagination });
-      
+
       const linearFilter: LinearLabelFilter = {};
-      
+
       if (filter) {
         if (filter.teamId === null) {
           // Workspace labels only
@@ -191,7 +191,7 @@ export class LabelService {
           // Team-specific labels
           linearFilter.team = { id: { eq: filter.teamId } };
         }
-        
+
         if (filter.searchQuery) {
           linearFilter.name = { contains: filter.searchQuery };
         }
@@ -216,7 +216,7 @@ export class LabelService {
   async listByTeam(teamId: string): Promise<IssueLabelConnection> {
     try {
       logger.debug(`Listing labels for team: ${teamId}`);
-      
+
       const labels = await this.client.issueLabels({
         filter: {
           team: { id: { eq: teamId } },
@@ -234,13 +234,13 @@ export class LabelService {
   async addToIssue(issueId: string, labelId: string): Promise<Issue> {
     try {
       logger.debug(`Adding label ${labelId} to issue ${issueId}`);
-      
+
       const issue = await this.client.issue(issueId);
       if (!issue) {
         throw new NotFoundError('Issue', issueId);
       }
 
-      const currentLabelIds = (await issue.labels()).nodes.map(l => l.id);
+      const currentLabelIds = (await issue.labels()).nodes.map((l) => l.id);
       const newLabelIds = [...new Set([...currentLabelIds, labelId])];
 
       const payload = await this.client.updateIssue(issueId, {
@@ -253,9 +253,9 @@ export class LabelService {
 
       const updatedIssue = await payload.issue;
       logger.success(`Label added to issue ${issueId}`);
-      
+
       return updatedIssue;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof NotFoundError) {
         throw error;
       }
@@ -271,14 +271,14 @@ export class LabelService {
   async removeFromIssue(issueId: string, labelId: string): Promise<Issue> {
     try {
       logger.debug(`Removing label ${labelId} from issue ${issueId}`);
-      
+
       const issue = await this.client.issue(issueId);
       if (!issue) {
         throw new NotFoundError('Issue', issueId);
       }
 
-      const currentLabelIds = (await issue.labels()).nodes.map(l => l.id);
-      const newLabelIds = currentLabelIds.filter(id => id !== labelId);
+      const currentLabelIds = (await issue.labels()).nodes.map((l) => l.id);
+      const newLabelIds = currentLabelIds.filter((id) => id !== labelId);
 
       const payload = await this.client.updateIssue(issueId, {
         labelIds: newLabelIds,
@@ -290,9 +290,9 @@ export class LabelService {
 
       const updatedIssue = await payload.issue;
       logger.success(`Label removed from issue ${issueId}`);
-      
+
       return updatedIssue;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof NotFoundError) {
         throw error;
       }
@@ -308,14 +308,14 @@ export class LabelService {
   async getIssues(labelId: string, pagination?: Pagination): Promise<IssueConnection> {
     try {
       logger.debug(`Getting issues for label: ${labelId}`);
-      
+
       const issues = await this.client.issues({
         filter: {
           labels: {
             some: {
-              id: { eq: labelId }
-            }
-          }
+              id: { eq: labelId },
+            },
+          },
         },
         first: pagination?.first,
         after: pagination?.after,
@@ -347,24 +347,27 @@ export class LabelService {
           const updated = await this.addToIssue(issueId, validatedData.labelId);
           results.succeeded.push(updated);
           results.successCount++;
-        } catch (error: any) {
+        } catch (error: unknown) {
           results.failed.push({
             item: issueId,
-            error: error.message || 'Unknown error',
+            error: error instanceof Error ? error.message : 'Unknown error',
           });
           results.failureCount++;
         }
       }
 
       results.success = results.failureCount === 0;
-      
-      logger.info(`Bulk add label completed: ${results.successCount}/${results.totalCount} succeeded`);
-      
+
+      logger.info(
+        `Bulk add label completed: ${results.successCount}/${results.totalCount} succeeded`,
+      );
+
       return results;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle Zod validation errors
-      if (error?.name === 'ZodError') {
-        throw new ValidationError(`Validation failed: ${error.message}`);
+      if (error && typeof error === 'object' && 'name' in error && error.name === 'ZodError') {
+        const zodError = error as { message: string };
+        throw new ValidationError(`Validation failed: ${zodError.message}`);
       }
       throw error;
     }
@@ -373,7 +376,7 @@ export class LabelService {
   async mergeLabels(sourceId: string, targetId: string): Promise<IssueLabel> {
     try {
       logger.debug(`Merging label ${sourceId} into ${targetId}`);
-      
+
       // Verify both labels exist
       const sourceLabel = await this.get(sourceId);
       if (!sourceLabel) {

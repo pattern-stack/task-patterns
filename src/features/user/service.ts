@@ -4,20 +4,15 @@ import {
   IssueConnection,
   TeamConnection,
   CommentConnection,
-  LinearDocument
+  LinearDocument,
 } from '@linear/sdk';
 
-type LinearUserFilter = LinearDocument.UserFilter;
 type LinearIssueFilter = LinearDocument.IssueFilter;
 type UserUpdateInput = LinearDocument.UserUpdateInput;
 
 import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
-import {
-  NotFoundError,
-  ValidationError,
-  Pagination
-} from '@atoms/types/common';
+import { NotFoundError, ValidationError, Pagination } from '@atoms/types/common';
 import { UserUpdate, UserFilter, UserSettingsUpdate } from './schemas';
 import { IssueFilter } from '@features/issue/schemas';
 
@@ -60,12 +55,12 @@ export class UserService {
   async getByEmail(email: string): Promise<User | null> {
     try {
       logger.debug(`Fetching user by email: ${email}`);
-      
+
       const users = await this.client.users({
         filter: {
-          email: { eq: email }
+          email: { eq: email },
         },
-        first: 1
+        first: 1,
       });
 
       const nodes = await users.nodes;
@@ -79,9 +74,9 @@ export class UserService {
   async list(filter?: UserFilter, pagination?: Pagination): Promise<UserConnection> {
     try {
       logger.debug('Listing users', { filter, pagination });
-      
-      const linearFilter: any = {};
-      
+
+      const linearFilter: Record<string, unknown> = {};
+
       if (filter) {
         if (filter.active !== undefined) {
           linearFilter.active = { eq: filter.active };
@@ -122,14 +117,14 @@ export class UserService {
   async update(id: string, data: UserUpdate): Promise<User> {
     try {
       logger.debug(`Updating user: ${id}`, data);
-      
+
       const user = await this.get(id);
       if (!user) {
         throw new NotFoundError('User', id);
       }
 
       const input: UserUpdateInput = {};
-      
+
       if (data.displayName !== undefined) {
         input.displayName = data.displayName;
       }
@@ -150,14 +145,14 @@ export class UserService {
       }
 
       const payload = await this.client.updateUser(id, input);
-      
+
       if (!payload.success || !payload.user) {
         throw new ValidationError('Failed to update user');
       }
 
       const updatedUser = await payload.user;
       logger.success(`User updated: ${id}`);
-      
+
       return updatedUser;
     } catch (error) {
       logger.error(`Failed to update user ${id}`, error);
@@ -179,9 +174,9 @@ export class UserService {
   async getAssignedIssues(userId: string, filter?: Partial<IssueFilter>): Promise<IssueConnection> {
     try {
       logger.debug(`Fetching assigned issues for user: ${userId}`);
-      
+
       const linearFilter: LinearIssueFilter = {
-        assignee: { id: { eq: userId } }
+        assignee: { id: { eq: userId } },
       };
 
       if (filter) {
@@ -224,9 +219,9 @@ export class UserService {
   async getCreatedIssues(userId: string, filter?: Partial<IssueFilter>): Promise<IssueConnection> {
     try {
       logger.debug(`Fetching created issues for user: ${userId}`);
-      
+
       const linearFilter: LinearIssueFilter = {
-        creator: { id: { eq: userId } }
+        creator: { id: { eq: userId } },
       };
 
       if (filter) {
@@ -272,7 +267,7 @@ export class UserService {
 
       const comments = await this.client.comments({
         filter: {
-          user: { id: { eq: userId } }
+          user: { id: { eq: userId } },
         },
         first: pagination?.first,
         after: pagination?.after,
@@ -291,8 +286,8 @@ export class UserService {
 
       const teams = await this.client.teams({
         filter: {
-          members: { some: { id: { eq: userId } } }
-        } as any
+          members: { some: { id: { eq: userId } } },
+        } as Record<string, unknown>,
       });
 
       return teams;
@@ -302,7 +297,7 @@ export class UserService {
     }
   }
 
-  async addToTeam(userId: string, teamId: string): Promise<any> {
+  async addToTeam(userId: string, teamId: string): Promise<unknown> {
     try {
       logger.debug(`Adding user ${userId} to team ${teamId}`);
 
@@ -317,7 +312,7 @@ export class UserService {
 
       const membership = await payload.teamMembership;
       logger.success(`User ${userId} added to team ${teamId}`);
-      
+
       return membership;
     } catch (error) {
       logger.error(`Failed to add user ${userId} to team ${teamId}`, error);
@@ -333,10 +328,10 @@ export class UserService {
       const memberships = await this.client.teamMemberships({
         filter: {
           user: { id: { eq: userId } },
-          team: { id: { eq: teamId } }
+          team: { id: { eq: teamId } },
         },
-        first: 1
-      } as any);
+        first: 1,
+      } as Record<string, unknown>);
 
       const membershipNodes = await memberships.nodes;
       if (membershipNodes.length === 0) {
@@ -359,16 +354,16 @@ export class UserService {
     }
   }
 
-  async getSettings(userId: string): Promise<any> {
+  async getSettings(userId: string): Promise<unknown> {
     try {
       logger.debug(`Fetching settings for user: ${userId}`);
-      
+
       const user = await this.get(userId);
       if (!user) {
         throw new NotFoundError('User', userId);
       }
 
-      const settings = await (user as any).settings();
+      const settings = await (user as { settings(): Promise<unknown> }).settings();
       return settings;
     } catch (error) {
       logger.error(`Failed to get settings for user ${userId}`, error);
@@ -376,17 +371,17 @@ export class UserService {
     }
   }
 
-  async updateSettings(userId: string, settings: UserSettingsUpdate): Promise<any> {
+  async updateSettings(userId: string, settings: UserSettingsUpdate): Promise<unknown> {
     try {
       logger.debug(`Updating settings for user: ${userId}`, settings);
-      
+
       const user = await this.get(userId);
       if (!user) {
         throw new NotFoundError('User', userId);
       }
 
       const payload = await this.client.updateUserSettings(userId, settings);
-      
+
       if (!payload.success) {
         throw new ValidationError('Failed to update user settings');
       }

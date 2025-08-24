@@ -1,15 +1,14 @@
 import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
-import { 
-  CommentCreate, 
-  CommentUpdate, 
+import {
+  CommentCreate,
+  CommentUpdate,
   CommentCreateSchema,
   CommentUpdateSchema,
   ReactionCreateSchema,
-  VALID_EMOJI_REACTIONS,
   MentionParseResult,
-  Pagination
+  Pagination,
 } from './schemas';
 import type { Comment } from '@linear/sdk';
 
@@ -19,15 +18,16 @@ export class CommentService {
    */
   async create(data: CommentCreate): Promise<Comment> {
     // Validate input data
+    let validatedData: CommentCreate;
     try {
-      var validatedData = CommentCreateSchema.parse(data);
+      validatedData = CommentCreateSchema.parse(data);
     } catch (error) {
       logger.error('Invalid comment data', { error, data });
       throw new ValidationError('Invalid comment data');
     }
-    
+
     const client = linearClient.getClient();
-    
+
     try {
       const response = await client.createComment({
         issueId: validatedData.issueId,
@@ -43,9 +43,9 @@ export class CommentService {
       }
 
       const comment = await response.comment;
-      logger.info('Comment created successfully', { 
+      logger.info('Comment created successfully', {
         commentId: comment.id,
-        issueId: validatedData.issueId 
+        issueId: validatedData.issueId,
       });
 
       return comment;
@@ -63,7 +63,7 @@ export class CommentService {
    */
   async get(id: string): Promise<Comment | null> {
     const client = linearClient.getClient();
-    
+
     try {
       const comment = await client.comment({ id });
       return comment;
@@ -78,13 +78,14 @@ export class CommentService {
    */
   async update(id: string, data: CommentUpdate): Promise<Comment> {
     // Validate input data
+    let validatedData: CommentUpdate;
     try {
-      var validatedData = CommentUpdateSchema.parse(data);
+      validatedData = CommentUpdateSchema.parse(data);
     } catch (error) {
       logger.error('Invalid update data', { error, data });
       throw new ValidationError('Invalid update data');
     }
-    
+
     const client = linearClient.getClient();
 
     // Check if comment exists
@@ -146,13 +147,13 @@ export class CommentService {
   /**
    * List comments for an issue
    */
-  async listByIssue(issueId: string, pagination?: Partial<Pagination>): Promise<any> {
+  async listByIssue(issueId: string, pagination?: Partial<Pagination>): Promise<Comment[]> {
     const client = linearClient.getClient();
-    
+
     try {
       const response = await client.comments({
         filter: {
-          issue: { id: { eq: issueId } }
+          issue: { id: { eq: issueId } },
         },
         first: pagination?.first || 50,
         ...(pagination?.after && { after: pagination.after }),
@@ -168,13 +169,13 @@ export class CommentService {
   /**
    * List comments by a user
    */
-  async listByUser(userId: string, pagination?: Partial<Pagination>): Promise<any> {
+  async listByUser(userId: string, pagination?: Partial<Pagination>): Promise<Comment[]> {
     const client = linearClient.getClient();
-    
+
     try {
       const response = await client.comments({
         filter: {
-          user: { id: { eq: userId } }
+          user: { id: { eq: userId } },
         },
         first: pagination?.first || 50,
         ...(pagination?.after && { after: pagination.after }),
@@ -190,18 +191,22 @@ export class CommentService {
   /**
    * Create a reaction on a comment
    */
-  async createReaction(commentId: string, emoji: string): Promise<any> {
+  async createReaction(
+    commentId: string,
+    emoji: string,
+  ): Promise<{ success: boolean; reaction?: unknown }> {
     // Validate emoji
     const validationData = { commentId, emoji };
+    let validatedData: { commentId: string; emoji: string };
     try {
-      var validatedData = ReactionCreateSchema.parse(validationData);
+      validatedData = ReactionCreateSchema.parse(validationData);
     } catch (error) {
       logger.error('Invalid reaction data', { error, validationData });
       throw new ValidationError('Invalid emoji reaction');
     }
-    
+
     const client = linearClient.getClient();
-    
+
     try {
       const response = await client.createReaction({
         commentId: validatedData.commentId,
@@ -229,7 +234,7 @@ export class CommentService {
    */
   async deleteReaction(reactionId: string): Promise<boolean> {
     const client = linearClient.getClient();
-    
+
     try {
       const response = await client.deleteReaction(reactionId);
 
@@ -249,13 +254,13 @@ export class CommentService {
   /**
    * Get replies to a comment
    */
-  async getReplies(commentId: string, pagination?: Partial<Pagination>): Promise<any> {
+  async getReplies(commentId: string, pagination?: Partial<Pagination>): Promise<Comment[]> {
     const client = linearClient.getClient();
-    
+
     try {
       const response = await client.comments({
         filter: {
-          parent: { id: { eq: commentId } }
+          parent: { id: { eq: commentId } },
         },
         first: pagination?.first || 50,
         ...(pagination?.after && { after: pagination.after }),
