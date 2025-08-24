@@ -1,7 +1,8 @@
-import { Team, TeamConnection } from '@linear/sdk';
+import { Team, TeamConnection, WorkflowStateConnection, CycleConnection, ProjectConnection, IssueLabelConnection, UserConnection, WebhookConnection, TemplateConnection, Template } from '@linear/sdk';
 import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
-import { NotFoundError, Pagination } from '@atoms/types/common';
+import { NotFoundError, Pagination, ValidationError, PermissionError } from '@atoms/types/common';
+import { TeamCreate, TeamUpdate, TeamSettingsUpdate, TemplateCreate, validateTeamCreate, validateTeamUpdate, validateTeamSettingsUpdate, validateTemplateCreate } from './schemas';
 
 export class TeamService {
   private client = linearClient.getClient();
@@ -141,6 +142,213 @@ export class TeamService {
       return labels;
     } catch (error) {
       logger.error(`Failed to get labels for team ${teamId}`, error);
+      throw error;
+    }
+  }
+
+  // NEW CRUD operations
+  async create(data: TeamCreate): Promise<Team> {
+    try {
+      logger.debug('Creating team', data);
+      
+      // Validate input data
+      const validatedData = validateTeamCreate(data);
+      
+      // Check if team key already exists
+      const existingTeam = await this.getByKey(validatedData.key);
+      if (existingTeam) {
+        throw new ValidationError(`Team key '${validatedData.key}' already exists`);
+      }
+      
+      const payload = await this.client.createTeam(validatedData);
+      
+      if (!payload.success || !payload.team) {
+        throw new Error('Failed to create team');
+      }
+      
+      const team = await payload.team;
+      logger.info(`Team created: ${team.id}`);
+      return team;
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+      if ((error as any).name === 'ZodError') {
+        throw new ValidationError('Invalid team data', error);
+      }
+      logger.error('Failed to create team', error);
+      throw error;
+    }
+  }
+
+  async update(id: string, data: TeamUpdate): Promise<Team> {
+    try {
+      logger.debug(`Updating team: ${id}`, data);
+      
+      // Validate input data
+      const validatedData = validateTeamUpdate(data);
+      
+      const payload = await this.client.updateTeam(id, validatedData);
+      
+      if (!payload.success || !payload.team) {
+        throw new Error('Failed to update team');
+      }
+      
+      const team = await payload.team;
+      logger.info(`Team updated: ${id}`);
+      return team;
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+      if ((error as any).name === 'ZodError') {
+        throw new ValidationError('Invalid team update data', error);
+      }
+      logger.error(`Failed to update team ${id}`, error);
+      throw error;
+    }
+  }
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      logger.debug(`Deleting team: ${id}`);
+      
+      const payload = await this.client.deleteTeam(id);
+      
+      if (payload.success) {
+        logger.info(`Team deleted: ${id}`);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      logger.error(`Failed to delete team ${id}`, error);
+      throw error;
+    }
+  }
+
+  async merge(sourceId: string, targetId: string): Promise<Team> {
+    try {
+      logger.debug(`Merging team ${sourceId} into ${targetId}`);
+      
+      // Note: Linear SDK might not have teamMerge method, this would need to be implemented
+      // as a custom operation or API call
+      throw new Error('Team merge not implemented - Linear SDK does not support direct team merging');
+    } catch (error) {
+      logger.error(`Failed to merge teams ${sourceId} -> ${targetId}`, error);
+      throw error;
+    }
+  }
+
+  // NEW team resource methods
+  async getWebhooks(teamId: string): Promise<WebhookConnection> {
+    try {
+      const team = await this.get(teamId);
+      if (!team) {
+        throw new NotFoundError('Team', teamId);
+      }
+
+      const webhooks = await team.webhooks();
+      return webhooks;
+    } catch (error) {
+      logger.error(`Failed to get webhooks for team ${teamId}`, error);
+      throw error;
+    }
+  }
+
+  async getSettings(teamId: string): Promise<any> {
+    try {
+      const team = await this.get(teamId);
+      if (!team) {
+        throw new NotFoundError('Team', teamId);
+      }
+
+      // Note: Team settings might not be directly available through the team object
+      // This would typically be retrieved through the team's properties or a separate query
+      const settings = {
+        id: `settings-${teamId}`,
+        cyclesEnabled: (team as any).cyclesEnabled,
+        cycleStartDay: (team as any).cycleStartDay,
+        cycleDuration: (team as any).cycleDuration,
+        triageEnabled: (team as any).triageEnabled
+      };
+      return settings;
+    } catch (error) {
+      logger.error(`Failed to get settings for team ${teamId}`, error);
+      throw error;
+    }
+  }
+
+  async updateSettings(teamId: string, settings: TeamSettingsUpdate): Promise<any> {
+    try {
+      logger.debug(`Updating settings for team: ${teamId}`, settings);
+      
+      // Validate input data
+      const validatedSettings = validateTeamSettingsUpdate(settings);
+      
+      // Note: updateTeamSettings might not exist, would use updateTeam instead
+      const payload = await this.client.updateTeam(teamId, validatedSettings);
+      
+      if (!payload.success) {
+        throw new Error('Failed to update team settings');
+      }
+      
+      logger.info(`Team settings updated: ${teamId}`);
+      return payload;
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+      if ((error as any).name === 'ZodError') {
+        throw new ValidationError('Invalid team settings data', error);
+      }
+      logger.error(`Failed to update settings for team ${teamId}`, error);
+      throw error;
+    }
+  }
+
+  async getIssueTemplates(teamId: string): Promise<TemplateConnection> {
+    try {
+      const team = await this.get(teamId);
+      if (!team) {
+        throw new NotFoundError('Team', teamId);
+      }
+
+      const templates = await team.templates();
+      return templates;
+    } catch (error) {
+      logger.error(`Failed to get templates for team ${teamId}`, error);
+      throw error;
+    }
+  }
+
+  async createIssueTemplate(teamId: string, templateData: TemplateCreate): Promise<Template> {
+    try {
+      logger.debug(`Creating template for team: ${teamId}`, templateData);
+      
+      // Validate input data
+      const validatedTemplate = validateTemplateCreate(templateData);
+      
+      const payload = await this.client.createTemplate({
+        ...validatedTemplate,
+        teamId
+      });
+      
+      if (!payload.success || !payload.template) {
+        throw new Error('Failed to create template');
+      }
+      
+      const template = await payload.template;
+      logger.info(`Template created for team ${teamId}: ${template.id}`);
+      return template;
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+      if ((error as any).name === 'ZodError') {
+        throw new ValidationError('Invalid template data', error);
+      }
+      logger.error(`Failed to create template for team ${teamId}`, error);
       throw error;
     }
   }
