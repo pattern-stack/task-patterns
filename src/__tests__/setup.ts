@@ -25,7 +25,7 @@ expect.extend({
     const pass = uuidRegex.test(received);
     return {
       pass,
-      message: () => 
+      message: () =>
         pass
           ? `expected ${received} not to be a valid UUID`
           : `expected ${received} to be a valid UUID`,

@@ -28,7 +28,7 @@ export interface OperationResult<T> {
 export interface BatchOperationResult<T> {
   success: boolean;
   succeeded: T[];
-  failed: Array<{ item: any; error: string }>;
+  failed: Array<{ item: unknown; error: string }>;
   totalCount: number;
   successCount: number;
   failureCount: number;
@@ -38,7 +38,7 @@ export class LinearError extends Error {
   constructor(
     message: string,
     public code?: string,
-    public details?: any
+    public details?: unknown,
   ) {
     super(message);
     this.name = 'LinearError';
@@ -47,16 +47,13 @@ export class LinearError extends Error {
 
 export class NotFoundError extends LinearError {
   constructor(resource: string, id?: string) {
-    super(
-      id ? `${resource} with id ${id} not found` : `${resource} not found`,
-      'NOT_FOUND'
-    );
+    super(id ? `${resource} with id ${id} not found` : `${resource} not found`, 'NOT_FOUND');
     this.name = 'NotFoundError';
   }
 }
 
 export class ValidationError extends LinearError {
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: unknown) {
     super(message, 'VALIDATION_ERROR', details);
     this.name = 'ValidationError';
   }
@@ -66,7 +63,7 @@ export class PermissionError extends LinearError {
   constructor(action: string, resource?: string) {
     super(
       `Permission denied: Cannot ${action}${resource ? ` ${resource}` : ''}`,
-      'PERMISSION_DENIED'
+      'PERMISSION_DENIED',
     );
     this.name = 'PermissionError';
   }

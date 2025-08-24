@@ -1,5 +1,5 @@
 import { IssueCreate, IssueUpdate, IssueFilter } from '@features/issue/schemas';
-import { ProjectCreate, ProjectUpdate } from '@features/project/service';
+import { ProjectCreate, ProjectUpdate } from '@features/project/schemas';
 import { CycleCreate, CycleUpdate, CycleFilter } from '@features/cycle/schemas';
 
 // Factory functions for creating test data
@@ -16,8 +16,8 @@ export class TestFactory {
 
   static uuid(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   }
@@ -204,22 +204,17 @@ export class TestFactory {
 // Test data sets
 export const testDataSets = {
   priorities: [0, 1, 2, 3, 4],
-  
+
   issueStates: ['backlog', 'unstarted', 'started', 'completed', 'canceled'],
-  
+
   projectStates: ['planned', 'started', 'paused', 'completed', 'canceled'],
-  
+
   teamKeys: ['ENG', 'PROD', 'DESIGN', 'QA'],
-  
-  userEmails: [
-    'john@example.com',
-    'jane@example.com',
-    'bob@example.com',
-    'alice@example.com',
-  ],
-  
+
+  userEmails: ['john@example.com', 'jane@example.com', 'bob@example.com', 'alice@example.com'],
+
   labelNames: ['Bug', 'Feature', 'Enhancement', 'Documentation', 'Tech Debt'],
-  
+
   cycleNames: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
 
   validEmojis: ['👍', '👎', '❤️', '🎉', '👀'],

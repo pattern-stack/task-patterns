@@ -1,5 +1,15 @@
 import { TeamService } from '@features/team/service';
-import { createMockLinearClient, createMockTeam, createMockUser, createMockConnection, createMockPayload, createMockWorkflowState, createMockCycle, createMockProject, createMockLabel } from '../utils/mocks';
+import {
+  createMockLinearClient,
+  createMockTeam,
+  createMockUser,
+  createMockConnection,
+  createMockPayload,
+  createMockWorkflowState,
+  createMockCycle,
+  createMockProject,
+  createMockLabel,
+} from '../utils/mocks';
 import { TestFactory } from '../fixtures/factories';
 import { linearClient } from '@atoms/client/linear-client';
 import { NotFoundError, ValidationError, PermissionError } from '@atoms/types/common';
@@ -56,7 +66,7 @@ describe('TeamService', () => {
         expect(result).toEqual(expectedTeam);
         expect(mockClient.teams).toHaveBeenCalledWith({
           filter: { key: { eq: teamKey } },
-          first: 1
+          first: 1,
         });
       });
 
@@ -104,7 +114,7 @@ describe('TeamService', () => {
           cyclesEnabled: true,
           cycleStartDay: 1,
           cycleDuration: 14,
-          triageEnabled: false
+          triageEnabled: false,
         };
         const createdTeam = createMockTeam({ ...teamData, id: 'team-new' });
         const payload = createMockPayload(true, createdTeam);
@@ -121,7 +131,7 @@ describe('TeamService', () => {
       it('should throw validation error for invalid data', async () => {
         const invalidData = {
           name: '', // Invalid - empty name
-          key: 'A' // Invalid - key too short
+          key: 'A', // Invalid - key too short
         };
 
         await expect(service.create(invalidData as any)).rejects.toThrow(ValidationError);
@@ -130,7 +140,7 @@ describe('TeamService', () => {
       it('should throw error when team key already exists', async () => {
         const teamData = {
           name: 'Engineering',
-          key: 'ENG'
+          key: 'ENG',
         };
         // Mock getByKey to return an existing team
         const existingTeam = createMockTeam({ key: 'ENG' });
@@ -142,7 +152,7 @@ describe('TeamService', () => {
       it('should handle API errors during creation', async () => {
         const teamData = {
           name: 'Engineering',
-          key: 'ENGZ'
+          key: 'ENGZ',
         };
         // Mock getByKey to return no existing team
         mockClient.teams.mockResolvedValue(createMockConnection([]));
@@ -158,7 +168,7 @@ describe('TeamService', () => {
         const updateData = {
           name: 'Updated Engineering',
           description: 'Updated description',
-          cyclesEnabled: false
+          cyclesEnabled: false,
         };
         const updatedTeam = createMockTeam({ ...updateData, id: teamId });
         const payload = createMockPayload(true, updatedTeam);
@@ -173,7 +183,7 @@ describe('TeamService', () => {
       it('should throw validation error for invalid update data', async () => {
         const teamId = 'team-123';
         const invalidData = {
-          name: '' // Invalid - empty name
+          name: '', // Invalid - empty name
         };
 
         await expect(service.update(teamId, invalidData as any)).rejects.toThrow(ValidationError);
@@ -230,7 +240,9 @@ describe('TeamService', () => {
         const sourceId = 'team-source';
         const targetId = 'team-target';
 
-        await expect(service.merge(sourceId, targetId)).rejects.toThrow('Team merge not implemented');
+        await expect(service.merge(sourceId, targetId)).rejects.toThrow(
+          'Team merge not implemented',
+        );
       });
 
       // Merge functionality tests removed since merge is not implemented in Linear SDK
@@ -244,7 +256,7 @@ describe('TeamService', () => {
         const team = createMockTeam({ id: teamId });
         const webhooks = createMockConnection([
           { id: 'webhook-1', url: 'https://example.com/webhook' },
-          { id: 'webhook-2', url: 'https://api.example.com/linear' }
+          { id: 'webhook-2', url: 'https://api.example.com/linear' },
         ]);
         mockClient.team.mockResolvedValue(team);
         team.webhooks = jest.fn().mockResolvedValue(webhooks);
@@ -272,7 +284,7 @@ describe('TeamService', () => {
           cyclesEnabled: undefined, // From team properties
           cycleStartDay: undefined,
           cycleDuration: undefined,
-          triageEnabled: undefined
+          triageEnabled: undefined,
         };
         mockClient.team.mockResolvedValue(team);
 
@@ -295,7 +307,7 @@ describe('TeamService', () => {
         const settingsUpdate = {
           cyclesEnabled: false,
           cycleDuration: 7,
-          triageEnabled: false
+          triageEnabled: false,
         };
         const updatedTeam = createMockTeam({ id: teamId, ...settingsUpdate });
         const payload = createMockPayload(true, updatedTeam);
@@ -310,10 +322,12 @@ describe('TeamService', () => {
       it('should throw validation error for invalid settings', async () => {
         const teamId = 'team-123';
         const invalidSettings = {
-          cycleDuration: -1 // Invalid - negative duration
+          cycleDuration: -1, // Invalid - negative duration
         };
 
-        await expect(service.updateSettings(teamId, invalidSettings as any)).rejects.toThrow(ValidationError);
+        await expect(service.updateSettings(teamId, invalidSettings as any)).rejects.toThrow(
+          ValidationError,
+        );
       });
     });
 
@@ -322,8 +336,16 @@ describe('TeamService', () => {
         const teamId = 'team-123';
         const team = createMockTeam({ id: teamId });
         const templates = createMockConnection([
-          { id: 'template-1', name: 'Bug Report', templateData: { title: 'Bug: ', description: 'Steps to reproduce:\n\n' } },
-          { id: 'template-2', name: 'Feature Request', templateData: { title: 'Feature: ', description: 'User story:\n\n' } }
+          {
+            id: 'template-1',
+            name: 'Bug Report',
+            templateData: { title: 'Bug: ', description: 'Steps to reproduce:\n\n' },
+          },
+          {
+            id: 'template-2',
+            name: 'Feature Request',
+            templateData: { title: 'Feature: ', description: 'User story:\n\n' },
+          },
         ]);
         mockClient.team.mockResolvedValue(team);
         team.templates = jest.fn().mockResolvedValue(templates);
@@ -350,14 +372,14 @@ describe('TeamService', () => {
           description: 'Template for bug reports',
           templateData: {
             title: 'Bug: ',
-            description: 'Steps to reproduce:\n\n'
+            description: 'Steps to reproduce:\n\n',
           },
-          type: 'issue' as const
+          type: 'issue' as const,
         };
         const createdTemplate = {
           id: 'template-new',
           __typename: 'Template',
-          ...templateData
+          ...templateData,
         };
         const payload = createMockPayload(true, createdTemplate);
         mockClient.createTemplate.mockResolvedValue(payload);
@@ -372,10 +394,12 @@ describe('TeamService', () => {
         const teamId = 'team-123';
         const invalidTemplate = {
           name: '', // Invalid - empty name
-          templateData: {}
+          templateData: {},
         };
 
-        await expect(service.createIssueTemplate(teamId, invalidTemplate as any)).rejects.toThrow(ValidationError);
+        await expect(service.createIssueTemplate(teamId, invalidTemplate as any)).rejects.toThrow(
+          ValidationError,
+        );
       });
 
       it('should handle API errors during template creation', async () => {
@@ -383,11 +407,13 @@ describe('TeamService', () => {
         const templateData = {
           name: 'Bug Report',
           templateData: { title: 'Bug: ' },
-          type: 'issue' as const
+          type: 'issue' as const,
         };
         mockClient.createTemplate.mockRejectedValue(new Error('API Error'));
 
-        await expect(service.createIssueTemplate(teamId, templateData)).rejects.toThrow('API Error');
+        await expect(service.createIssueTemplate(teamId, templateData)).rejects.toThrow(
+          'API Error',
+        );
       });
     });
   });
@@ -405,7 +431,7 @@ describe('TeamService', () => {
     it('should validate team key format in create', async () => {
       const invalidKeyData = {
         name: 'Test Team',
-        key: 'invalid-key-with-lowercase'
+        key: 'invalid-key-with-lowercase',
       };
 
       await expect(service.create(invalidKeyData as any)).rejects.toThrow(ValidationError);
@@ -426,15 +452,11 @@ describe('TeamService', () => {
       mockClient.team.mockResolvedValue(team);
 
       // Simulate concurrent calls
-      const promises = [
-        service.get(teamId),
-        service.get(teamId),
-        service.get(teamId)
-      ];
+      const promises = [service.get(teamId), service.get(teamId), service.get(teamId)];
 
       const results = await Promise.all(promises);
 
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result).toEqual(team);
       });
       expect(mockClient.team).toHaveBeenCalledTimes(3);
@@ -445,9 +467,9 @@ describe('TeamService', () => {
     it('should ensure team key uniqueness validation', async () => {
       const teamData = {
         name: 'Engineering',
-        key: 'ENG'
+        key: 'ENG',
       };
-      
+
       // Mock existing team with same key
       const existingTeam = createMockTeam({ key: 'ENG' });
       const connection = createMockConnection([existingTeam]);
@@ -460,7 +482,7 @@ describe('TeamService', () => {
     it('should handle special characters in team names', async () => {
       const teamData = {
         name: 'Engineering & Design 🎨',
-        key: 'ED'
+        key: 'ED',
       };
       const createdTeam = createMockTeam({ ...teamData, id: 'team-special' });
       const payload = createMockPayload(true, createdTeam);

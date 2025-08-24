@@ -1,24 +1,27 @@
-import { Issue as LinearIssue, Comment, Attachment, User } from '@linear/sdk';
+import {
+  Issue as LinearIssue,
+  Comment,
+  Attachment,
+  User,
+  Team,
+  Project,
+  IssueLabel,
+} from '@linear/sdk';
 import { IssueService } from '@features/issue/service';
 import { TeamService } from '@features/team/service';
 import { ProjectService } from '@features/project/service';
-import { 
-  IssueCreate, 
-  IssueUpdate, 
-  IssueFilter,
-  IssueBulkUpdate 
-} from '@features/issue/schemas';
+import { IssueCreate, IssueUpdate, IssueFilter, IssueBulkUpdate } from '@features/issue/schemas';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, Pagination } from '@atoms/types/common';
 
 export interface IssueWithRelations {
   issue: LinearIssue;
-  team?: any;
-  project?: any;
+  team?: Team;
+  project?: Project;
   assignee?: User;
   comments?: Comment[];
   attachments?: Attachment[];
-  labels?: any[];
+  labels?: IssueLabel[];
 }
 
 export class IssueEntity {
@@ -34,7 +37,7 @@ export class IssueEntity {
 
   async create(data: IssueCreate): Promise<LinearIssue> {
     logger.info(`Creating issue: ${data.title}`);
-    
+
     const team = await this.teamService.get(data.teamId);
     if (!team) {
       throw new NotFoundError('Team', data.teamId);
@@ -72,7 +75,7 @@ export class IssueEntity {
       issue.labels(),
     ]);
 
-    let project = null;
+    let project: Project | undefined = undefined;
     if (issue.project) {
       project = await issue.project;
     }
@@ -90,7 +93,7 @@ export class IssueEntity {
 
   async update(id: string, data: IssueUpdate): Promise<LinearIssue> {
     logger.info(`Updating issue: ${id}`);
-    
+
     if (data.projectId) {
       const project = await this.projectService.get(data.projectId);
       if (!project) {
@@ -115,7 +118,7 @@ export class IssueEntity {
     const connection = await this.issueService.list(filter, pagination);
     const nodes = await connection.nodes;
     const pageInfo = await connection.pageInfo;
-    
+
     return {
       issues: nodes,
       pageInfo,
@@ -217,7 +220,7 @@ export class IssueEntity {
     const subIssueData: IssueCreate = {
       ...data,
       parentId,
-      teamId: teamId!,
+      teamId: teamId,
     };
 
     return await this.issueService.create(subIssueData);

@@ -2,13 +2,13 @@ import { CycleService } from '@features/cycle/service';
 import { linearClient } from '@atoms/client/linear-client';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
 import { TestFactory } from '../fixtures/factories';
-import { 
-  createMockCycle, 
-  createMockPayload, 
+import {
+  createMockCycle,
+  createMockPayload,
   createMockCycleConnection,
   createMockLinearClient,
   createMockIssueConnection,
-  createMockIssue
+  createMockIssue,
 } from '../utils/mocks';
 
 jest.mock('@atoms/client/linear-client');
@@ -36,21 +36,17 @@ describe('CycleService', () => {
         startsAt: '2024-01-01T00:00:00Z',
         endsAt: '2024-01-14T00:00:00Z',
       });
-      
-      const mockCycle = createMockCycle({ 
-        id: 'cycle-123', 
+
+      const mockCycle = createMockCycle({
+        id: 'cycle-123',
         ...cycleData,
-        __typename: 'Cycle'
+        __typename: 'Cycle',
       });
-      
+
       // Mock cycles call to check for overlapping cycles (should return empty for new cycle creation)
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([])
-      );
-      
-      mockClient.createCycle.mockResolvedValue(
-        createMockPayload(true, mockCycle)
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([]));
+
+      mockClient.createCycle.mockResolvedValue(createMockPayload(true, mockCycle));
 
       const result = await service.create(cycleData);
 
@@ -67,10 +63,8 @@ describe('CycleService', () => {
 
     it('should throw ValidationError when creation fails', async () => {
       const cycleData = TestFactory.cycleCreate();
-      
-      mockClient.createCycle.mockResolvedValue(
-        createMockPayload(false)
-      );
+
+      mockClient.createCycle.mockResolvedValue(createMockPayload(false));
 
       await expect(service.create(cycleData)).rejects.toThrow(ValidationError);
     });
@@ -79,12 +73,10 @@ describe('CycleService', () => {
       const existingCycle = createMockCycle({
         startsAt: '2024-01-10T00:00:00Z',
         endsAt: '2024-01-24T00:00:00Z',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
-      
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([existingCycle])
-      );
+
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([existingCycle]));
 
       const cycleData = TestFactory.cycleCreate({
         name: 'Sprint 2',
@@ -100,12 +92,10 @@ describe('CycleService', () => {
       const existingCycle = createMockCycle({
         startsAt: '2024-01-01T00:00:00Z',
         endsAt: '2024-01-14T00:00:00Z',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
-      
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([existingCycle])
-      );
+
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([existingCycle]));
 
       const cycleData = TestFactory.cycleCreate({
         name: 'Sprint 2',
@@ -114,15 +104,13 @@ describe('CycleService', () => {
         endsAt: '2024-01-29T00:00:00Z',
       });
 
-      const mockCycle = createMockCycle({ 
-        id: 'cycle-123', 
+      const mockCycle = createMockCycle({
+        id: 'cycle-123',
         ...cycleData,
-        __typename: 'Cycle'
+        __typename: 'Cycle',
       });
-      
-      mockClient.createCycle.mockResolvedValue(
-        createMockPayload(true, mockCycle)
-      );
+
+      mockClient.createCycle.mockResolvedValue(createMockPayload(true, mockCycle));
 
       const result = await service.create(cycleData);
       expect(result.id).toBe('cycle-123');
@@ -132,13 +120,11 @@ describe('CycleService', () => {
       const existingCycle = createMockCycle({
         startsAt: '2024-01-01T00:00:00Z',
         endsAt: '2024-01-14T00:00:00Z',
-        teamId: 'team-456' // Different team
+        teamId: 'team-456', // Different team
       });
-      
+
       // Mock cycles call will filter by team, so should return empty since we're creating for team-123
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([]));
 
       const cycleData = TestFactory.cycleCreate({
         name: 'Sprint 1',
@@ -147,15 +133,13 @@ describe('CycleService', () => {
         endsAt: '2024-01-14T00:00:00Z',
       });
 
-      const mockCycle = createMockCycle({ 
-        id: 'cycle-123', 
+      const mockCycle = createMockCycle({
+        id: 'cycle-123',
         ...cycleData,
-        __typename: 'Cycle'
+        __typename: 'Cycle',
       });
-      
-      mockClient.createCycle.mockResolvedValue(
-        createMockPayload(true, mockCycle)
-      );
+
+      mockClient.createCycle.mockResolvedValue(createMockPayload(true, mockCycle));
 
       const result = await service.create(cycleData);
       expect(result.id).toBe('cycle-123');
@@ -186,10 +170,10 @@ describe('CycleService', () => {
     it('should update a cycle successfully', async () => {
       const mockCycle = createMockCycle();
       const updateData = TestFactory.cycleUpdate();
-      
+
       mockClient.cycle.mockResolvedValue(mockCycle);
       mockClient.updateCycle.mockResolvedValue(
-        createMockPayload(true, { ...mockCycle, ...updateData })
+        createMockPayload(true, { ...mockCycle, ...updateData }),
       );
 
       const result = await service.update('cycle-123', updateData);
@@ -199,7 +183,7 @@ describe('CycleService', () => {
         expect.objectContaining({
           name: updateData.name,
           description: updateData.description,
-        })
+        }),
       );
       expect(result.name).toBe(updateData.name);
     });
@@ -207,48 +191,42 @@ describe('CycleService', () => {
     it('should throw NotFoundError when cycle does not exist', async () => {
       mockClient.cycle.mockRejectedValue(new Error('Not found'));
 
-      await expect(
-        service.update('nonexistent', TestFactory.cycleUpdate())
-      ).rejects.toThrow(NotFoundError);
+      await expect(service.update('nonexistent', TestFactory.cycleUpdate())).rejects.toThrow(
+        NotFoundError,
+      );
     });
 
     it('should throw ValidationError when update fails', async () => {
       const mockCycle = createMockCycle();
       mockClient.cycle.mockResolvedValue(mockCycle);
-      mockClient.updateCycle.mockResolvedValue(
-        createMockPayload(false)
-      );
+      mockClient.updateCycle.mockResolvedValue(createMockPayload(false));
 
-      await expect(
-        service.update('cycle-123', TestFactory.cycleUpdate())
-      ).rejects.toThrow(ValidationError);
+      await expect(service.update('cycle-123', TestFactory.cycleUpdate())).rejects.toThrow(
+        ValidationError,
+      );
     });
 
     it('should prevent creating overlapping cycles when updating dates', async () => {
       const existingCycle = createMockCycle({
         startsAt: '2024-01-15T00:00:00Z',
         endsAt: '2024-01-29T00:00:00Z',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
-      
+
       const cycleToUpdate = createMockCycle({
         id: 'cycle-update',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       mockClient.cycle.mockResolvedValue(cycleToUpdate);
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([existingCycle])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([existingCycle]));
 
       const updateData = TestFactory.cycleUpdate({
         startsAt: '2024-01-20T00:00:00Z', // Would overlap
         endsAt: '2024-02-03T00:00:00Z',
       });
 
-      await expect(
-        service.update('cycle-update', updateData)
-      ).rejects.toThrow(ValidationError);
+      await expect(service.update('cycle-update', updateData)).rejects.toThrow(ValidationError);
     });
   });
 
@@ -256,9 +234,7 @@ describe('CycleService', () => {
     it('should archive a cycle successfully', async () => {
       const mockCycle = createMockCycle();
       mockClient.cycle.mockResolvedValue(mockCycle);
-      mockClient.archiveCycle.mockResolvedValue(
-        createMockPayload(true)
-      );
+      mockClient.archiveCycle.mockResolvedValue(createMockPayload(true));
 
       const result = await service.archive('cycle-123');
 
@@ -275,13 +251,8 @@ describe('CycleService', () => {
 
   describe('list', () => {
     it('should list cycles with filters', async () => {
-      const mockCycles = [
-        createMockCycle({ id: '1' }),
-        createMockCycle({ id: '2' }),
-      ];
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection(mockCycles)
-      );
+      const mockCycles = [createMockCycle({ id: '1' }), createMockCycle({ id: '2' })];
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection(mockCycles));
 
       const filter = TestFactory.cycleFilter({
         teamId: 'team-123',
@@ -301,9 +272,7 @@ describe('CycleService', () => {
     });
 
     it('should handle pagination parameters', async () => {
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([]));
 
       await service.list(undefined, { first: 50, after: 'cursor-123' });
 
@@ -323,12 +292,10 @@ describe('CycleService', () => {
         id: 'cycle-active',
         startsAt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(),
         endsAt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([activeCycle])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([activeCycle]));
 
       const result = await service.getActive('team-123');
 
@@ -342,9 +309,7 @@ describe('CycleService', () => {
     });
 
     it('should return null when no active cycle exists', async () => {
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([]));
 
       const result = await service.getActive('team-123');
 
@@ -356,12 +321,10 @@ describe('CycleService', () => {
       const pastCycle = createMockCycle({
         startsAt: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString(),
         endsAt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([pastCycle])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([pastCycle]));
 
       const result = await service.getActive('team-123');
 
@@ -373,12 +336,10 @@ describe('CycleService', () => {
       const futureCycle = createMockCycle({
         startsAt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         endsAt: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([futureCycle])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([futureCycle]));
 
       const result = await service.getActive('team-123');
 
@@ -394,9 +355,7 @@ describe('CycleService', () => {
         endsAt: new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000).toISOString(),
       });
 
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([upcomingCycle])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([upcomingCycle]));
 
       const result = await service.getUpcoming('team-123');
 
@@ -410,9 +369,7 @@ describe('CycleService', () => {
     });
 
     it('should return empty list when no upcoming cycles exist', async () => {
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([]));
 
       const result = await service.getUpcoming('team-123');
 
@@ -426,9 +383,7 @@ describe('CycleService', () => {
         completedAt: '2024-01-14T00:00:00Z',
       });
 
-      mockClient.cycles.mockResolvedValue(
-        createMockCycleConnection([completedCycle])
-      );
+      mockClient.cycles.mockResolvedValue(createMockCycleConnection([completedCycle]));
 
       const result = await service.getCompleted('team-123');
 
@@ -448,10 +403,8 @@ describe('CycleService', () => {
         createMockIssue({ id: '1', cycleId: 'cycle-123' }),
         createMockIssue({ id: '2', cycleId: 'cycle-123' }),
       ];
-      
-      mockClient.issues.mockResolvedValue(
-        createMockIssueConnection(mockIssues)
-      );
+
+      mockClient.issues.mockResolvedValue(createMockIssueConnection(mockIssues));
 
       const result = await service.getIssues('cycle-123');
 
@@ -465,14 +418,12 @@ describe('CycleService', () => {
     });
 
     it('should apply additional filters when getting cycle issues', async () => {
-      mockClient.issues.mockResolvedValue(
-        createMockIssueConnection([])
-      );
+      mockClient.issues.mockResolvedValue(createMockIssueConnection([]));
 
       await service.getIssues('cycle-123', {
         state: 'completed',
         assigneeId: 'user-123',
-        includeArchived: false
+        includeArchived: false,
       });
 
       expect(mockClient.issues).toHaveBeenCalledWith({
@@ -490,61 +441,49 @@ describe('CycleService', () => {
     it('should add an issue to a cycle', async () => {
       const mockIssue = createMockIssue({ id: 'issue-123' });
       const mockCycle = createMockCycle({ id: 'cycle-123' });
-      const updatedIssue = createMockIssue({ 
+      const updatedIssue = createMockIssue({
         id: 'issue-123',
         cycleId: 'cycle-123',
-        cycle: mockCycle
+        cycle: mockCycle,
       });
 
       mockClient.issue.mockResolvedValue(mockIssue);
-      mockClient.updateIssue.mockResolvedValue(
-        createMockPayload(true, updatedIssue)
-      );
+      mockClient.updateIssue.mockResolvedValue(createMockPayload(true, updatedIssue));
 
       const result = await service.addIssue('cycle-123', 'issue-123');
 
-      expect(mockClient.updateIssue).toHaveBeenCalledWith(
-        'issue-123',
-        { cycleId: 'cycle-123' }
-      );
-      
+      expect(mockClient.updateIssue).toHaveBeenCalledWith('issue-123', { cycleId: 'cycle-123' });
+
       expect(result.cycle).toBe(mockCycle);
     });
 
     it('should throw NotFoundError when issue does not exist', async () => {
       mockClient.issue.mockRejectedValue(new Error('Not found'));
 
-      await expect(
-        service.addIssue('cycle-123', 'nonexistent')
-      ).rejects.toThrow(NotFoundError);
+      await expect(service.addIssue('cycle-123', 'nonexistent')).rejects.toThrow(NotFoundError);
     });
   });
 
   describe('removeIssue', () => {
     it('should remove an issue from a cycle', async () => {
       const mockCycle = createMockCycle({ id: 'cycle-123' });
-      const mockIssue = createMockIssue({ 
+      const mockIssue = createMockIssue({
         id: 'issue-123',
-        cycleId: 'cycle-123'
+        cycleId: 'cycle-123',
       });
-      const updatedIssue = createMockIssue({ 
+      const updatedIssue = createMockIssue({
         id: 'issue-123',
         cycleId: null,
-        cycle: null
+        cycle: null,
       });
 
       mockClient.issue.mockResolvedValue(mockIssue);
-      mockClient.updateIssue.mockResolvedValue(
-        createMockPayload(true, updatedIssue)
-      );
+      mockClient.updateIssue.mockResolvedValue(createMockPayload(true, updatedIssue));
 
       const result = await service.removeIssue('cycle-123', 'issue-123');
 
-      expect(mockClient.updateIssue).toHaveBeenCalledWith(
-        'issue-123',
-        { cycleId: null }
-      );
-      
+      expect(mockClient.updateIssue).toHaveBeenCalledWith('issue-123', { cycleId: null });
+
       expect(result.cycle).toBeNull();
     });
   });
@@ -563,9 +502,7 @@ describe('CycleService', () => {
       ];
 
       mockClient.cycle.mockResolvedValue(mockCycle);
-      mockClient.issues.mockResolvedValue(
-        createMockIssueConnection(mockIssues)
-      );
+      mockClient.issues.mockResolvedValue(createMockIssueConnection(mockIssues));
 
       const progress = await service.getProgress('cycle-123');
 
@@ -578,11 +515,9 @@ describe('CycleService', () => {
 
     it('should handle cycle with no issues', async () => {
       const mockCycle = createMockCycle();
-      
+
       mockClient.cycle.mockResolvedValue(mockCycle);
-      mockClient.issues.mockResolvedValue(
-        createMockIssueConnection([])
-      );
+      mockClient.issues.mockResolvedValue(createMockIssueConnection([]));
 
       const progress = await service.getProgress('cycle-123');
 
@@ -615,9 +550,7 @@ describe('CycleService', () => {
       ];
 
       mockClient.cycle.mockResolvedValue(mockCycle);
-      mockClient.issues.mockResolvedValue(
-        createMockIssueConnection(mockIssues)
-      );
+      mockClient.issues.mockResolvedValue(createMockIssueConnection(mockIssues));
 
       const velocity = await service.getVelocity('cycle-123');
 
@@ -627,12 +560,10 @@ describe('CycleService', () => {
 
     it('should return 0 velocity when no points completed', async () => {
       const mockCycle = createMockCycle();
-      
+
       mockClient.cycle.mockResolvedValue(mockCycle);
       mockClient.issues.mockResolvedValue(
-        createMockIssueConnection([
-          createMockIssue({ completedAt: null, estimate: 5 })
-        ])
+        createMockIssueConnection([createMockIssue({ completedAt: null, estimate: 5 })]),
       );
 
       const velocity = await service.getVelocity('cycle-123');
@@ -649,8 +580,8 @@ describe('CycleService', () => {
       mockClient.cycle.mockResolvedValue(mockCycle);
       mockClient.issues.mockResolvedValue(
         createMockIssueConnection([
-          createMockIssue({ completedAt: '2024-01-01T00:00:00Z', estimate: 5 })
-        ])
+          createMockIssue({ completedAt: '2024-01-01T00:00:00Z', estimate: 5 }),
+        ]),
       );
 
       const velocity = await service.getVelocity('cycle-123');

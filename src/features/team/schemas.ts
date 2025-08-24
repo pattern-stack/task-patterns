@@ -3,11 +3,12 @@ import { z } from 'zod';
 // Team creation schema
 export const TeamCreateSchema = z.object({
   name: z.string().min(1, 'Team name is required'),
-  key: z.string()
+  key: z
+    .string()
     .min(2, 'Team key must be at least 2 characters')
     .max(5, 'Team key must be at most 5 characters')
     .regex(/^[A-Z]+$/, 'Team key must contain only uppercase letters')
-    .transform(str => str.toUpperCase()),
+    .transform((str) => str.toUpperCase()),
   description: z.string().optional(),
   icon: z.string().optional(),
   color: z.string().optional(),
@@ -43,7 +44,9 @@ export const TeamSettingsUpdateSchema = z.object({
   cycleCalenderUrl: z.string().url().optional(),
   cycleLockToActive: z.boolean().optional(),
   triageEnabled: z.boolean().optional(),
-  issueEstimationType: z.enum(['notUsed', 'exponential', 'fibonacci', 'linear', 'tShirt']).optional(),
+  issueEstimationType: z
+    .enum(['notUsed', 'exponential', 'fibonacci', 'linear', 'tShirt'])
+    .optional(),
   issueOrderingNeedsToBeRescoped: z.boolean().optional(),
   defaultIssueEstimate: z.number().min(0).optional(),
   defaultTemplateForMembersId: z.string().optional(),
@@ -76,15 +79,19 @@ export type TemplateCreate = z.infer<typeof TemplateCreateSchema>;
 
 // Filter schemas
 export const TeamFilterSchema = z.object({
-  key: z.object({
-    eq: z.string().optional(),
-    in: z.array(z.string()).optional(),
-    contains: z.string().optional(),
-  }).optional(),
-  name: z.object({
-    contains: z.string().optional(),
-    containsIgnoreCase: z.string().optional(),
-  }).optional(),
+  key: z
+    .object({
+      eq: z.string().optional(),
+      in: z.array(z.string()).optional(),
+      contains: z.string().optional(),
+    })
+    .optional(),
+  name: z
+    .object({
+      contains: z.string().optional(),
+      containsIgnoreCase: z.string().optional(),
+    })
+    .optional(),
   private: z.boolean().optional(),
   includeArchived: z.boolean().default(false),
 });
@@ -102,22 +109,22 @@ export const TeamSortSchema = z.object({
 export type TeamSort = z.infer<typeof TeamSortSchema>;
 
 // Validation functions
-export function validateTeamCreate(data: any): TeamCreate {
+export function validateTeamCreate(data: unknown): TeamCreate {
   return TeamCreateSchema.parse(data);
 }
 
-export function validateTeamUpdate(data: any): TeamUpdate {
+export function validateTeamUpdate(data: unknown): TeamUpdate {
   return TeamUpdateSchema.parse(data);
 }
 
-export function validateTeamSettingsUpdate(data: any): TeamSettingsUpdate {
+export function validateTeamSettingsUpdate(data: unknown): TeamSettingsUpdate {
   return TeamSettingsUpdateSchema.parse(data);
 }
 
-export function validateTemplateCreate(data: any): TemplateCreate {
+export function validateTemplateCreate(data: unknown): TemplateCreate {
   return TemplateCreateSchema.parse(data);
 }
 
-export function validateTeamFilter(data: any): TeamFilter {
+export function validateTeamFilter(data: unknown): TeamFilter {
   return TeamFilterSchema.parse(data);
 }

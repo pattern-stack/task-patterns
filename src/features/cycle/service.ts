@@ -1,10 +1,4 @@
-import { 
-  Cycle, 
-  CycleConnection,
-  Issue,
-  IssueConnection,
-  LinearDocument
-} from '@linear/sdk';
+import { Cycle, CycleConnection, Issue, IssueConnection, LinearDocument } from '@linear/sdk';
 
 type CycleCreateInput = LinearDocument.CycleCreateInput;
 type CycleUpdateInput = LinearDocument.CycleUpdateInput;
@@ -13,17 +7,8 @@ type LinearIssueFilter = LinearDocument.IssueFilter;
 
 import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
-import { 
-  NotFoundError, 
-  ValidationError,
-  Pagination 
-} from '@atoms/types/common';
-import { 
-  CycleCreate, 
-  CycleUpdate, 
-  CycleFilter,
-  CycleProgress
-} from './schemas';
+import { NotFoundError, ValidationError, Pagination } from '@atoms/types/common';
+import { CycleCreate, CycleUpdate, CycleFilter, CycleProgress } from './schemas';
 import { IssueFilter } from '@features/issue/schemas';
 
 export class CycleService {
@@ -32,10 +17,10 @@ export class CycleService {
   async create(data: CycleCreate): Promise<Cycle> {
     try {
       logger.debug('Creating cycle', data);
-      
+
       // Check for overlapping cycles within the same team
       await this.validateNonOverlapping(data.teamId, data.startsAt, data.endsAt);
-      
+
       const input: CycleCreateInput = {
         name: data.name,
         teamId: data.teamId,
@@ -45,14 +30,14 @@ export class CycleService {
       };
 
       const payload = await this.client.createCycle(input);
-      
+
       if (!payload.success || !payload.cycle) {
         throw new ValidationError('Failed to create cycle');
       }
 
       const cycle = await payload.cycle;
       logger.success(`Cycle created: ${cycle.name}`);
-      
+
       return cycle;
     } catch (error) {
       logger.error('Failed to create cycle', error);
@@ -74,7 +59,7 @@ export class CycleService {
   async update(id: string, data: CycleUpdate): Promise<Cycle> {
     try {
       logger.debug(`Updating cycle: ${id}`, data);
-      
+
       const cycle = await this.get(id);
       if (!cycle) {
         throw new NotFoundError('Cycle', id);
@@ -88,7 +73,7 @@ export class CycleService {
         if (!team) {
           throw new NotFoundError('Team for cycle', id);
         }
-        
+
         await this.validateNonOverlapping(team.id, startDate, endDate, id);
       }
 
@@ -100,14 +85,14 @@ export class CycleService {
       };
 
       const payload = await this.client.updateCycle(id, input);
-      
+
       if (!payload.success || !payload.cycle) {
         throw new ValidationError('Failed to update cycle');
       }
 
       const updatedCycle = await payload.cycle;
       logger.success(`Cycle updated: ${updatedCycle.name}`);
-      
+
       return updatedCycle;
     } catch (error) {
       logger.error(`Failed to update cycle ${id}`, error);
@@ -118,14 +103,14 @@ export class CycleService {
   async archive(id: string): Promise<boolean> {
     try {
       logger.debug(`Archiving cycle: ${id}`);
-      
+
       const cycle = await this.get(id);
       if (!cycle) {
         throw new NotFoundError('Cycle', id);
       }
 
       const payload = await this.client.archiveCycle(id);
-      
+
       if (!payload.success) {
         throw new ValidationError('Failed to archive cycle');
       }
@@ -141,9 +126,9 @@ export class CycleService {
   async list(filter?: CycleFilter, pagination?: Pagination): Promise<CycleConnection> {
     try {
       logger.debug('Listing cycles', { filter, pagination });
-      
+
       const linearFilter: LinearCycleFilter = {};
-      
+
       if (filter) {
         if (filter.teamId) {
           linearFilter.team = { id: { eq: filter.teamId } };
@@ -169,7 +154,7 @@ export class CycleService {
   async getActive(teamId: string): Promise<Cycle | null> {
     try {
       logger.debug(`Getting active cycle for team: ${teamId}`);
-      
+
       const cycles = await this.client.cycles({
         filter: {
           team: { id: { eq: teamId } },
@@ -179,9 +164,9 @@ export class CycleService {
 
       const cycleNodes = await cycles.nodes;
       const now = new Date();
-      
+
       // Find cycle where current time is between start and end dates
-      const activeCycle = cycleNodes.find(cycle => {
+      const activeCycle = cycleNodes.find((cycle) => {
         const startDate = new Date(cycle.startsAt);
         const endDate = new Date(cycle.endsAt);
         return now >= startDate && now <= endDate;
@@ -197,7 +182,7 @@ export class CycleService {
   async getUpcoming(teamId: string): Promise<CycleConnection> {
     try {
       logger.debug(`Getting upcoming cycles for team: ${teamId}`);
-      
+
       const cycles = await this.client.cycles({
         filter: {
           team: { id: { eq: teamId } },
@@ -207,9 +192,9 @@ export class CycleService {
 
       const cycleNodes = await cycles.nodes;
       const now = new Date();
-      
+
       // Filter cycles that start in the future
-      const upcomingCycles = cycleNodes.filter(cycle => {
+      const upcomingCycles = cycleNodes.filter((cycle) => {
         const startDate = new Date(cycle.startsAt);
         return startDate > now;
       });
@@ -228,7 +213,7 @@ export class CycleService {
   async getCompleted(teamId: string): Promise<CycleConnection> {
     try {
       logger.debug(`Getting completed cycles for team: ${teamId}`);
-      
+
       const cycles = await this.client.cycles({
         filter: {
           team: { id: { eq: teamId } },
@@ -237,9 +222,9 @@ export class CycleService {
       });
 
       const cycleNodes = await cycles.nodes;
-      
+
       // Filter cycles that have a completedAt date
-      const completedCycles = cycleNodes.filter(cycle => cycle.completedAt);
+      const completedCycles = cycleNodes.filter((cycle) => cycle.completedAt);
 
       // Return as connection format (simplified mock for now)
       return {
@@ -255,11 +240,11 @@ export class CycleService {
   async getIssues(cycleId: string, filter?: IssueFilter): Promise<IssueConnection> {
     try {
       logger.debug(`Getting issues for cycle: ${cycleId}`);
-      
+
       const linearFilter: LinearIssueFilter = {
         cycle: { id: { eq: cycleId } },
       };
-      
+
       if (filter) {
         if (filter.state) {
           linearFilter.state = { type: { eq: filter.state } };
@@ -284,7 +269,7 @@ export class CycleService {
   async addIssue(cycleId: string, issueId: string): Promise<Issue> {
     try {
       logger.debug(`Adding issue ${issueId} to cycle ${cycleId}`);
-      
+
       try {
         const issue = await this.client.issue(issueId);
         if (!issue) {
@@ -304,7 +289,7 @@ export class CycleService {
 
       const updatedIssue = await payload.issue;
       logger.success(`Issue added to cycle: ${updatedIssue.identifier}`);
-      
+
       return updatedIssue;
     } catch (error) {
       logger.error(`Failed to add issue ${issueId} to cycle ${cycleId}`, error);
@@ -315,7 +300,7 @@ export class CycleService {
   async removeIssue(cycleId: string, issueId: string): Promise<Issue> {
     try {
       logger.debug(`Removing issue ${issueId} from cycle ${cycleId}`);
-      
+
       try {
         const issue = await this.client.issue(issueId);
         if (!issue) {
@@ -335,7 +320,7 @@ export class CycleService {
 
       const updatedIssue = await payload.issue;
       logger.success(`Issue removed from cycle: ${updatedIssue.identifier}`);
-      
+
       return updatedIssue;
     } catch (error) {
       logger.error(`Failed to remove issue ${issueId} from cycle ${cycleId}`, error);
@@ -346,7 +331,7 @@ export class CycleService {
   async getProgress(cycleId: string): Promise<CycleProgress> {
     try {
       logger.debug(`Calculating progress for cycle: ${cycleId}`);
-      
+
       const cycle = await this.get(cycleId);
       if (!cycle) {
         throw new NotFoundError('Cycle', cycleId);
@@ -363,14 +348,15 @@ export class CycleService {
       for (const issue of issueNodes) {
         const estimate = issue.estimate || 0;
         totalPoints += estimate;
-        
+
         if (issue.completedAt) {
           completedPoints += estimate;
           completedIssues++;
         }
       }
 
-      const percentComplete = totalPoints > 0 ? Math.round((completedPoints / totalPoints) * 100) : 0;
+      const percentComplete =
+        totalPoints > 0 ? Math.round((completedPoints / totalPoints) * 100) : 0;
 
       return {
         completedPoints,
@@ -388,7 +374,7 @@ export class CycleService {
   async getVelocity(cycleId: string): Promise<number> {
     try {
       logger.debug(`Calculating velocity for cycle: ${cycleId}`);
-      
+
       const cycle = await this.get(cycleId);
       if (!cycle) {
         throw new NotFoundError('Cycle', cycleId);
@@ -420,7 +406,12 @@ export class CycleService {
     }
   }
 
-  private async validateNonOverlapping(teamId: string, startsAt: string, endsAt: string, excludeCycleId?: string): Promise<void> {
+  private async validateNonOverlapping(
+    teamId: string,
+    startsAt: string,
+    endsAt: string,
+    excludeCycleId?: string,
+  ): Promise<void> {
     const existingCycles = await this.client.cycles({
       filter: {
         team: { id: { eq: teamId } },
@@ -442,7 +433,7 @@ export class CycleService {
 
       // Check for overlap: new cycle starts before existing ends AND new cycle ends after existing starts
       const hasOverlap = newStart < existingEnd && newEnd > existingStart;
-      
+
       if (hasOverlap) {
         throw new ValidationError(`Cycle dates overlap with existing cycle: ${cycle.name}`);
       }

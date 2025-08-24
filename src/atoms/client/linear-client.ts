@@ -8,7 +8,7 @@ export class LinearClientManager {
 
   private constructor() {
     const apiKey = config.apiKey;
-    
+
     if (!apiKey) {
       throw new Error('Linear API key is required');
     }

@@ -9,7 +9,7 @@ export class TestHelpers {
    * Waits for all promises in the current event loop to resolve
    */
   static async flushPromises(): Promise<void> {
-    return new Promise(resolve => setImmediate(resolve));
+    return new Promise((resolve) => setImmediate(resolve));
   }
 
   /**
@@ -18,7 +18,7 @@ export class TestHelpers {
   static createAsyncMock<T>(value: T, delay = 0): jest.Mock {
     return jest.fn().mockImplementation(async () => {
       if (delay > 0) {
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
       return value;
     });
@@ -36,9 +36,7 @@ export class TestHelpers {
    * Asserts that a mock was called with partial object match
    */
   static expectCalledWithPartial(mock: jest.Mock, partial: any): void {
-    expect(mock).toHaveBeenCalledWith(
-      expect.objectContaining(partial)
-    );
+    expect(mock).toHaveBeenCalledWith(expect.objectContaining(partial));
   }
 
   /**
@@ -46,9 +44,7 @@ export class TestHelpers {
    */
   static expectCalledWithArrayContaining(mock: jest.Mock, items: any[]): void {
     expect(mock).toHaveBeenCalledWith(
-      expect.arrayContaining(items.map(item => 
-        expect.objectContaining(item)
-      ))
+      expect.arrayContaining(items.map((item) => expect.objectContaining(item))),
     );
   }
 
@@ -57,7 +53,7 @@ export class TestHelpers {
    */
   static createSequenceMock<T>(values: T[]): jest.Mock {
     const mock = jest.fn();
-    values.forEach(value => {
+    values.forEach((value) => {
       mock.mockResolvedValueOnce(value);
     });
     return mock;
@@ -69,7 +65,7 @@ export class TestHelpers {
   static async expectAsyncThrows(
     fn: () => Promise<any>,
     errorClass?: any,
-    message?: string
+    message?: string,
   ): Promise<void> {
     let thrown = false;
     try {
@@ -102,17 +98,13 @@ export class TestHelpers {
   /**
    * Waits for condition to be true
    */
-  static async waitFor(
-    condition: () => boolean,
-    timeout = 5000,
-    interval = 100
-  ): Promise<void> {
+  static async waitFor(condition: () => boolean, timeout = 5000, interval = 100): Promise<void> {
     const startTime = Date.now();
     while (!condition()) {
       if (Date.now() - startTime > timeout) {
         throw new Error('Timeout waiting for condition');
       }
-      await new Promise(resolve => setTimeout(resolve, interval));
+      await new Promise((resolve) => setTimeout(resolve, interval));
     }
   }
 
@@ -131,7 +123,7 @@ export class TestHelpers {
     return {
       ...mocks,
       restore: () => {
-        Object.values(mocks).forEach(mock => mock.mockRestore());
+        Object.values(mocks).forEach((mock) => mock.mockRestore());
       },
     };
   }
@@ -141,7 +133,7 @@ export class TestHelpers {
    */
   static useFakeTimers() {
     jest.useFakeTimers();
-    
+
     return {
       advance: (ms: number) => jest.advanceTimersByTime(ms),
       runAll: () => jest.runAllTimers(),
@@ -155,7 +147,7 @@ export class TestHelpers {
    */
   static mockEnv(overrides: Record<string, string>) {
     const original = process.env;
-    
+
     beforeEach(() => {
       process.env = { ...original, ...overrides };
     });
@@ -188,8 +180,8 @@ export const customMatchers = {
       pass,
       message: () =>
         pass
-          ? `expected ${received} not to be a valid Date`
-          : `expected ${received} to be a valid Date`,
+          ? `expected ${String(received)} not to be a valid Date`
+          : `expected ${String(received)} to be a valid Date`,
     };
   },
 
@@ -199,14 +191,14 @@ export const customMatchers = {
       pass,
       message: () =>
         pass
-          ? `expected ${received} not to be within range ${min}-${max}`
-          : `expected ${received} to be within range ${min}-${max}`,
+          ? `expected ${String(received)} not to be within range ${min}-${max}`
+          : `expected ${String(received)} to be within range ${min}-${max}`,
     };
   },
 
   toContainObject(received: any[], partial: any) {
-    const pass = received.some(item =>
-      Object.keys(partial).every(key => item[key] === partial[key])
+    const pass = received.some((item) =>
+      Object.keys(partial).every((key) => item[key] === partial[key]),
     );
     return {
       pass,
@@ -227,7 +219,9 @@ export class TestDataBuilder {
     let id = 1;
 
     const createLevel = (parentId: string | null, currentDepth: number) => {
-      if (currentDepth > depth) return;
+      if (currentDepth > depth) {
+        return;
+      }
 
       for (let i = 0; i < breadth; i++) {
         const issueId = `issue-${id++}`;
@@ -247,11 +241,7 @@ export class TestDataBuilder {
     return issues;
   }
 
-  static createPaginatedResponse<T>(
-    items: T[],
-    pageSize = 10,
-    currentPage = 1
-  ) {
+  static createPaginatedResponse<T>(items: T[], pageSize = 10, currentPage = 1) {
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     const pageItems = items.slice(start, end);
@@ -268,12 +258,9 @@ export class TestDataBuilder {
     };
   }
 
-  static createBulkOperationScenario(
-    successCount: number,
-    failureCount: number
-  ) {
+  static createBulkOperationScenario(successCount: number, failureCount: number) {
     const operations: any[] = [];
-    
+
     for (let i = 0; i < successCount; i++) {
       operations.push({
         id: `success-${i}`,
@@ -303,19 +290,12 @@ export class PerformanceTestUtils {
     return performance.now() - start;
   }
 
-  static async assertPerformance(
-    fn: () => Promise<any>,
-    maxMs: number
-  ): Promise<void> {
+  static async assertPerformance(fn: () => Promise<any>, maxMs: number): Promise<void> {
     const time = await this.measureExecutionTime(fn);
     expect(time).toBeLessThan(maxMs);
   }
 
-  static createLoadTest(
-    fn: () => Promise<any>,
-    concurrency: number,
-    iterations: number
-  ) {
+  static createLoadTest(fn: () => Promise<any>, concurrency: number, iterations: number) {
     return async () => {
       const results = [];
       for (let i = 0; i < iterations; i++) {

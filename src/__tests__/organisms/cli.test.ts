@@ -32,7 +32,7 @@ describe('CLI Commands', () => {
     TestFactory.reset();
     program = new Command();
     program.exitOverride(); // Prevent actual process exit
-    
+
     mockConsoleLog = jest.spyOn(console, 'log').mockImplementation();
     mockConsoleError = jest.spyOn(console, 'error').mockImplementation();
     mockProcessExit = jest.spyOn(process, 'exit').mockImplementation();
@@ -60,7 +60,7 @@ describe('CLI Commands', () => {
           title: 'New Feature',
           url: 'https://linear.app/team/issue/ENG-123',
         });
-        
+
         mockIssueEntity.create.mockResolvedValue(mockIssue);
 
         await program.parseAsync([
@@ -68,15 +68,17 @@ describe('CLI Commands', () => {
           'test',
           'issue',
           'create',
-          '-t', 'New Feature',
-          '--team', 'team-123',
+          '-t',
+          'New Feature',
+          '--team',
+          'team-123',
         ]);
 
         expect(mockIssueEntity.create).toHaveBeenCalledWith(
           expect.objectContaining({
             title: 'New Feature',
             teamId: 'team-123',
-          })
+          }),
         );
       });
 
@@ -89,15 +91,24 @@ describe('CLI Commands', () => {
           'test',
           'issue',
           'create',
-          '-t', 'Bug Fix',
-          '--team', 'team-123',
-          '-d', 'Description text',
-          '-a', 'user-123',
-          '-p', '3',
-          '--project', 'project-123',
-          '--cycle', 'cycle-123',
-          '--estimate', '5',
-          '--labels', 'label-1,label-2',
+          '-t',
+          'Bug Fix',
+          '--team',
+          'team-123',
+          '-d',
+          'Description text',
+          '-a',
+          'user-123',
+          '-p',
+          '3',
+          '--project',
+          'project-123',
+          '--cycle',
+          'cycle-123',
+          '--estimate',
+          '5',
+          '--labels',
+          'label-1,label-2',
         ]);
 
         expect(mockIssueEntity.create).toHaveBeenCalledWith(
@@ -111,7 +122,7 @@ describe('CLI Commands', () => {
             cycleId: 'cycle-123',
             estimate: 5,
             labelIds: ['label-1', 'label-2'],
-          })
+          }),
         );
       });
     });
@@ -121,13 +132,7 @@ describe('CLI Commands', () => {
         const mockIssue = createMockIssue();
         mockIssueEntity.getByIdentifier.mockResolvedValue(mockIssue);
 
-        await program.parseAsync([
-          'node',
-          'test',
-          'issue',
-          'get',
-          'issue-123',
-        ]);
+        await program.parseAsync(['node', 'test', 'issue', 'get', 'issue-123']);
 
         expect(mockIssueEntity.getByIdentifier).toHaveBeenCalledWith('issue-123');
       });
@@ -136,13 +141,7 @@ describe('CLI Commands', () => {
         const mockIssue = createMockIssue({ identifier: 'ENG-123' });
         mockIssueEntity.getByIdentifier.mockResolvedValue(mockIssue);
 
-        await program.parseAsync([
-          'node',
-          'test',
-          'issue',
-          'get',
-          'ENG-123',
-        ]);
+        await program.parseAsync(['node', 'test', 'issue', 'get', 'ENG-123']);
 
         expect(mockIssueEntity.getByIdentifier).toHaveBeenCalledWith('ENG-123');
       });
@@ -157,7 +156,7 @@ describe('CLI Commands', () => {
           attachments: [],
           labels: [],
         };
-        
+
         mockIssueEntity.getWithRelations.mockResolvedValue(mockIssueWithRelations);
 
         await program.parseAsync([
@@ -165,7 +164,7 @@ describe('CLI Commands', () => {
           'test',
           'issue',
           'get',
-          'abc123def456',  // Use ID without hyphen to trigger getWithRelations
+          'abc123def456', // Use ID without hyphen to trigger getWithRelations
           '--with-relations',
         ]);
 
@@ -184,9 +183,12 @@ describe('CLI Commands', () => {
           'issue',
           'update',
           'issue-123',
-          '-t', 'Updated Title',
-          '-p', '4',
-          '--estimate', '8',
+          '-t',
+          'Updated Title',
+          '-p',
+          '4',
+          '--estimate',
+          '8',
         ]);
 
         expect(mockIssueEntity.update).toHaveBeenCalledWith(
@@ -195,7 +197,7 @@ describe('CLI Commands', () => {
             title: 'Updated Title',
             priority: 4,
             estimate: 8,
-          })
+          }),
         );
       });
     });
@@ -206,7 +208,7 @@ describe('CLI Commands', () => {
           createMockIssue({ identifier: 'ENG-1' }),
           createMockIssue({ identifier: 'ENG-2' }),
         ];
-        
+
         mockIssueEntity.list.mockResolvedValue({
           issues: mockIssues,
           pageInfo: {} as any,
@@ -218,9 +220,12 @@ describe('CLI Commands', () => {
           'test',
           'issue',
           'list',
-          '--team', 'team-123',
-          '--state', 'started',
-          '--limit', '10',
+          '--team',
+          'team-123',
+          '--state',
+          'started',
+          '--limit',
+          '10',
         ]);
 
         expect(mockIssueEntity.list).toHaveBeenCalledWith(
@@ -230,7 +235,7 @@ describe('CLI Commands', () => {
           }),
           expect.objectContaining({
             first: 10,
-          })
+          }),
         );
       });
     });
@@ -240,14 +245,7 @@ describe('CLI Commands', () => {
         const mockIssue = createMockIssue({ identifier: 'ENG-123' });
         mockIssueEntity.assignToUser.mockResolvedValue(mockIssue);
 
-        await program.parseAsync([
-          'node',
-          'test',
-          'issue',
-          'assign',
-          'issue-123',
-          'user-456',
-        ]);
+        await program.parseAsync(['node', 'test', 'issue', 'assign', 'issue-123', 'user-456']);
 
         expect(mockIssueEntity.assignToUser).toHaveBeenCalledWith('issue-123', 'user-456');
       });
@@ -268,7 +266,7 @@ describe('CLI Commands', () => {
 
         expect(mockIssueEntity.addComment).toHaveBeenCalledWith(
           'issue-123',
-          'This is a test comment'
+          'This is a test comment',
         );
       });
     });
@@ -289,20 +287,14 @@ describe('CLI Commands', () => {
           createMockTeam({ key: 'ENG', name: 'Engineering' }),
           createMockTeam({ key: 'PROD', name: 'Product' }),
         ];
-        
+
         mockTeamService.list.mockResolvedValue({
           nodes: mockTeams,
           pageInfo: {} as any,
           totalCount: 2,
         } as any);
 
-        await program.parseAsync([
-          'node',
-          'test',
-          'team',
-          'list',
-          '--limit', '20',
-        ]);
+        await program.parseAsync(['node', 'test', 'team', 'list', '--limit', '20']);
 
         expect(mockTeamService.list).toHaveBeenCalledWith({ first: 20 });
       });
@@ -313,13 +305,7 @@ describe('CLI Commands', () => {
         const mockTeam = createMockTeam({ key: 'ENG' });
         mockTeamService.getByKey.mockResolvedValue(mockTeam);
 
-        await program.parseAsync([
-          'node',
-          'test',
-          'team',
-          'get',
-          'ENG',
-        ]);
+        await program.parseAsync(['node', 'test', 'team', 'get', 'ENG']);
 
         expect(mockTeamService.getByKey).toHaveBeenCalledWith('ENG');
       });
@@ -328,13 +314,7 @@ describe('CLI Commands', () => {
         const mockTeam = createMockTeam();
         mockTeamService.get.mockResolvedValue(mockTeam);
 
-        await program.parseAsync([
-          'node',
-          'test',
-          'team',
-          'get',
-          'team-uuid-123456789',
-        ]);
+        await program.parseAsync(['node', 'test', 'team', 'get', 'team-uuid-123456789']);
 
         expect(mockTeamService.get).toHaveBeenCalledWith('team-uuid-123456789');
       });
@@ -356,7 +336,7 @@ describe('CLI Commands', () => {
           name: 'New Project',
           url: 'https://linear.app/project',
         });
-        
+
         mockProjectService.create.mockResolvedValue(mockProject);
 
         await program.parseAsync([
@@ -364,10 +344,14 @@ describe('CLI Commands', () => {
           'test',
           'project',
           'create',
-          '-n', 'New Project',
-          '--teams', 'team-1,team-2',
-          '-d', 'Project description',
-          '--priority', '2',
+          '-n',
+          'New Project',
+          '--teams',
+          'team-1,team-2',
+          '-d',
+          'Project description',
+          '--priority',
+          '2',
         ]);
 
         expect(mockProjectService.create).toHaveBeenCalledWith(
@@ -376,7 +360,7 @@ describe('CLI Commands', () => {
             teamIds: ['team-1', 'team-2'],
             description: 'Project description',
             priority: 2,
-          })
+          }),
         );
       });
     });
@@ -387,19 +371,14 @@ describe('CLI Commands', () => {
           createMockProject({ name: 'Project 1' }),
           createMockProject({ name: 'Project 2' }),
         ];
-        
+
         mockProjectService.list.mockResolvedValue({
           nodes: mockProjects,
           pageInfo: {} as any,
           totalCount: 2,
         } as any);
 
-        await program.parseAsync([
-          'node',
-          'test',
-          'project',
-          'list',
-        ]);
+        await program.parseAsync(['node', 'test', 'project', 'list']);
 
         expect(mockProjectService.list).toHaveBeenCalled();
       });
@@ -413,11 +392,9 @@ describe('CLI Commands', () => {
 
       const testProgram = new Command();
       testProgram.exitOverride();
-      testProgram
-        .command('test-connection')
-        .action(async () => {
-          await linearClient.testConnection();
-        });
+      testProgram.command('test-connection').action(async () => {
+        await linearClient.testConnection();
+      });
 
       await testProgram.parseAsync(['node', 'test', 'test-connection']);
 

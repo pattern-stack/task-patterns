@@ -18,12 +18,12 @@ export class ConfigManager {
 
   private constructor() {
     const parsed = envSchema.safeParse(process.env);
-    
+
     if (!parsed.success) {
       console.error('Invalid environment configuration:', parsed.error.flatten());
       process.exit(1);
     }
-    
+
     this.config = parsed.data;
   }
 

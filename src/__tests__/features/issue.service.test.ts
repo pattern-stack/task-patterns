@@ -2,11 +2,11 @@ import { IssueService } from '@features/issue/service';
 import { linearClient } from '@atoms/client/linear-client';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
 import { TestFactory } from '../fixtures/factories';
-import { 
-  createMockIssue, 
-  createMockPayload, 
+import {
+  createMockIssue,
+  createMockPayload,
   createMockIssueConnection,
-  createMockLinearClient 
+  createMockLinearClient,
 } from '../utils/mocks';
 
 jest.mock('@atoms/client/linear-client');
@@ -26,10 +26,8 @@ describe('IssueService', () => {
     it('should create an issue successfully', async () => {
       const issueData = TestFactory.issueCreate();
       const mockIssue = createMockIssue(issueData);
-      
-      mockClient.createIssue.mockResolvedValue(
-        createMockPayload(true, mockIssue)
-      );
+
+      mockClient.createIssue.mockResolvedValue(createMockPayload(true, mockIssue));
 
       const result = await service.create(issueData);
 
@@ -38,17 +36,15 @@ describe('IssueService', () => {
           title: issueData.title,
           teamId: issueData.teamId,
           description: issueData.description,
-        })
+        }),
       );
       expect(result).toEqual(mockIssue);
     });
 
     it('should throw ValidationError when creation fails', async () => {
       const issueData = TestFactory.issueCreate();
-      
-      mockClient.createIssue.mockResolvedValue(
-        createMockPayload(false)
-      );
+
+      mockClient.createIssue.mockResolvedValue(createMockPayload(false));
 
       await expect(service.create(issueData)).rejects.toThrow(ValidationError);
     });
@@ -61,11 +57,9 @@ describe('IssueService', () => {
         parentId: 'parent-123',
         dueDate: '2024-12-31',
       });
-      
+
       const mockIssue = createMockIssue(issueData);
-      mockClient.createIssue.mockResolvedValue(
-        createMockPayload(true, mockIssue)
-      );
+      mockClient.createIssue.mockResolvedValue(createMockPayload(true, mockIssue));
 
       await service.create(issueData);
 
@@ -76,7 +70,7 @@ describe('IssueService', () => {
           cycleId: 'cycle-123',
           parentId: 'parent-123',
           dueDate: '2024-12-31',
-        })
+        }),
       );
     });
   });
@@ -104,25 +98,21 @@ describe('IssueService', () => {
   describe('getByIdentifier', () => {
     it('should return an issue by identifier', async () => {
       const mockIssue = createMockIssue({ identifier: 'ENG-123' });
-      mockClient.issues.mockResolvedValue(
-        createMockIssueConnection([mockIssue])
-      );
+      mockClient.issues.mockResolvedValue(createMockIssueConnection([mockIssue]));
 
       const result = await service.getByIdentifier('ENG-123');
 
       expect(mockClient.issues).toHaveBeenCalledWith({
         filter: {
-          searchableContent: { contains: 'ENG-123' }
+          searchableContent: { contains: 'ENG-123' },
         },
-        first: 1
+        first: 1,
       });
       expect(result).toEqual(mockIssue);
     });
 
     it('should return null when no issue matches identifier', async () => {
-      mockClient.issues.mockResolvedValue(
-        createMockIssueConnection([])
-      );
+      mockClient.issues.mockResolvedValue(createMockIssueConnection([]));
 
       const result = await service.getByIdentifier('ENG-999');
 
@@ -134,10 +124,10 @@ describe('IssueService', () => {
     it('should update an issue successfully', async () => {
       const mockIssue = createMockIssue();
       const updateData = TestFactory.issueUpdate();
-      
+
       mockClient.issue.mockResolvedValue(mockIssue);
       mockClient.updateIssue.mockResolvedValue(
-        createMockPayload(true, { ...mockIssue, ...updateData })
+        createMockPayload(true, { ...mockIssue, ...updateData }),
       );
 
       const result = await service.update('issue-123', updateData);
@@ -147,7 +137,7 @@ describe('IssueService', () => {
         expect.objectContaining({
           title: updateData.title,
           priority: updateData.priority,
-        })
+        }),
       );
       expect(result.title).toBe(updateData.title);
     });
@@ -155,21 +145,19 @@ describe('IssueService', () => {
     it('should throw NotFoundError when issue does not exist', async () => {
       mockClient.issue.mockRejectedValue(new Error('Not found'));
 
-      await expect(
-        service.update('nonexistent', TestFactory.issueUpdate())
-      ).rejects.toThrow(NotFoundError);
+      await expect(service.update('nonexistent', TestFactory.issueUpdate())).rejects.toThrow(
+        NotFoundError,
+      );
     });
 
     it('should throw ValidationError when update fails', async () => {
       const mockIssue = createMockIssue();
       mockClient.issue.mockResolvedValue(mockIssue);
-      mockClient.updateIssue.mockResolvedValue(
-        createMockPayload(false)
-      );
+      mockClient.updateIssue.mockResolvedValue(createMockPayload(false));
 
-      await expect(
-        service.update('issue-123', TestFactory.issueUpdate())
-      ).rejects.toThrow(ValidationError);
+      await expect(service.update('issue-123', TestFactory.issueUpdate())).rejects.toThrow(
+        ValidationError,
+      );
     });
   });
 
@@ -177,9 +165,7 @@ describe('IssueService', () => {
     it('should delete an issue successfully', async () => {
       const mockIssue = createMockIssue();
       mockClient.issue.mockResolvedValue(mockIssue);
-      mockClient.deleteIssue.mockResolvedValue(
-        createMockPayload(true)
-      );
+      mockClient.deleteIssue.mockResolvedValue(createMockPayload(true));
 
       const result = await service.delete('issue-123');
 
@@ -198,9 +184,7 @@ describe('IssueService', () => {
     it('should archive an issue successfully', async () => {
       const mockIssue = createMockIssue();
       mockClient.issue.mockResolvedValue(mockIssue);
-      mockClient.archiveIssue.mockResolvedValue(
-        createMockPayload(true)
-      );
+      mockClient.archiveIssue.mockResolvedValue(createMockPayload(true));
 
       const result = await service.archive('issue-123');
 
@@ -211,13 +195,8 @@ describe('IssueService', () => {
 
   describe('list', () => {
     it('should list issues with filters', async () => {
-      const mockIssues = [
-        createMockIssue({ id: '1' }),
-        createMockIssue({ id: '2' }),
-      ];
-      mockClient.issues.mockResolvedValue(
-        createMockIssueConnection(mockIssues)
-      );
+      const mockIssues = [createMockIssue({ id: '1' }), createMockIssue({ id: '2' })];
+      mockClient.issues.mockResolvedValue(createMockIssueConnection(mockIssues));
 
       const filter = TestFactory.issueFilter({
         teamId: 'team-123',
@@ -240,9 +219,7 @@ describe('IssueService', () => {
     });
 
     it('should handle pagination parameters', async () => {
-      mockClient.issues.mockResolvedValue(
-        createMockIssueConnection([])
-      );
+      mockClient.issues.mockResolvedValue(createMockIssueConnection([]));
 
       await service.list(undefined, { first: 50, after: 'cursor-123' });
 
@@ -259,14 +236,12 @@ describe('IssueService', () => {
     it('should update multiple issues successfully', async () => {
       const issueIds = TestFactory.bulkIssueIds(3);
       const updateData = TestFactory.issueUpdate();
-      
-      issueIds.forEach(id => {
+
+      issueIds.forEach((id) => {
         const mockIssue = createMockIssue({ id });
-        mockClient.issue
-          .mockResolvedValueOnce(mockIssue)
-          .mockResolvedValueOnce(mockIssue);
+        mockClient.issue.mockResolvedValueOnce(mockIssue).mockResolvedValueOnce(mockIssue);
         mockClient.updateIssue.mockResolvedValueOnce(
-          createMockPayload(true, { ...mockIssue, ...updateData })
+          createMockPayload(true, { ...mockIssue, ...updateData }),
         );
       });
 
@@ -284,21 +259,17 @@ describe('IssueService', () => {
     it('should handle partial failures in bulk update', async () => {
       const issueIds = ['id-1', 'id-2', 'id-3'];
       const updateData = TestFactory.issueUpdate();
-      
+
       // First issue succeeds
       mockClient.issue.mockResolvedValueOnce(createMockIssue({ id: 'id-1' }));
-      mockClient.updateIssue.mockResolvedValueOnce(
-        createMockPayload(true, createMockIssue())
-      );
-      
+      mockClient.updateIssue.mockResolvedValueOnce(createMockPayload(true, createMockIssue()));
+
       // Second issue not found
       mockClient.issue.mockRejectedValueOnce(new Error('Not found'));
-      
+
       // Third issue succeeds
       mockClient.issue.mockResolvedValueOnce(createMockIssue({ id: 'id-3' }));
-      mockClient.updateIssue.mockResolvedValueOnce(
-        createMockPayload(true, createMockIssue())
-      );
+      mockClient.updateIssue.mockResolvedValueOnce(createMockPayload(true, createMockIssue()));
 
       const result = await service.bulkUpdate({
         issueIds,
@@ -315,9 +286,7 @@ describe('IssueService', () => {
 
   describe('addComment', () => {
     it('should add a comment successfully', async () => {
-      mockClient.createComment.mockResolvedValue(
-        createMockPayload(true)
-      );
+      mockClient.createComment.mockResolvedValue(createMockPayload(true));
 
       const result = await service.addComment('issue-123', 'Test comment');
 
@@ -329,13 +298,11 @@ describe('IssueService', () => {
     });
 
     it('should throw ValidationError when comment creation fails', async () => {
-      mockClient.createComment.mockResolvedValue(
-        createMockPayload(false)
-      );
+      mockClient.createComment.mockResolvedValue(createMockPayload(false));
 
-      await expect(
-        service.addComment('issue-123', 'Test comment')
-      ).rejects.toThrow(ValidationError);
+      await expect(service.addComment('issue-123', 'Test comment')).rejects.toThrow(
+        ValidationError,
+      );
     });
   });
 
@@ -346,12 +313,10 @@ describe('IssueService', () => {
         { id: 'label-1', name: 'Bug' },
         { id: 'label-2', name: 'High Priority' },
       ];
-      
+
       mockIssue.labels.mockResolvedValue({ nodes: existingLabels });
       mockClient.issue.mockResolvedValue(mockIssue);
-      mockClient.updateIssue.mockResolvedValue(
-        createMockPayload(true, mockIssue)
-      );
+      mockClient.updateIssue.mockResolvedValue(createMockPayload(true, mockIssue));
 
       await service.addLabels('issue-123', ['label-3', 'label-4']);
 
@@ -359,19 +324,17 @@ describe('IssueService', () => {
         'issue-123',
         expect.objectContaining({
           labelIds: ['label-1', 'label-2', 'label-3', 'label-4'],
-        })
+        }),
       );
     });
 
     it('should not duplicate existing labels', async () => {
       const mockIssue = createMockIssue();
       const existingLabels = [{ id: 'label-1', name: 'Bug' }];
-      
+
       mockIssue.labels.mockResolvedValue({ nodes: existingLabels });
       mockClient.issue.mockResolvedValue(mockIssue);
-      mockClient.updateIssue.mockResolvedValue(
-        createMockPayload(true, mockIssue)
-      );
+      mockClient.updateIssue.mockResolvedValue(createMockPayload(true, mockIssue));
 
       await service.addLabels('issue-123', ['label-1', 'label-2']);
 
@@ -379,7 +342,7 @@ describe('IssueService', () => {
         'issue-123',
         expect.objectContaining({
           labelIds: ['label-1', 'label-2'],
-        })
+        }),
       );
     });
   });
@@ -392,12 +355,10 @@ describe('IssueService', () => {
         { id: 'label-2', name: 'High Priority' },
         { id: 'label-3', name: 'Frontend' },
       ];
-      
+
       mockIssue.labels.mockResolvedValue({ nodes: existingLabels });
       mockClient.issue.mockResolvedValue(mockIssue);
-      mockClient.updateIssue.mockResolvedValue(
-        createMockPayload(true, mockIssue)
-      );
+      mockClient.updateIssue.mockResolvedValue(createMockPayload(true, mockIssue));
 
       await service.removeLabels('issue-123', ['label-1', 'label-3']);
 
@@ -405,7 +366,7 @@ describe('IssueService', () => {
         'issue-123',
         expect.objectContaining({
           labelIds: ['label-2'],
-        })
+        }),
       );
     });
   });

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import chalk from 'chalk';
 import ora from 'ora';
 import { issueCommands } from './commands/issue.commands';
 import { teamCommands } from './commands/team.commands';

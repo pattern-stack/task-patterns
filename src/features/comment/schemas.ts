@@ -24,8 +24,8 @@ export const CommentFilterSchema = z.object({
 
 export const ReactionCreateSchema = z.object({
   commentId: z.string().min(1, 'Comment ID is required'),
-  emoji: z.enum(VALID_EMOJI_REACTIONS, { 
-    message: `Invalid emoji. Must be one of: ${VALID_EMOJI_REACTIONS.join(', ')}` 
+  emoji: z.enum(VALID_EMOJI_REACTIONS, {
+    message: `Invalid emoji. Must be one of: ${VALID_EMOJI_REACTIONS.join(', ')}`,
   }),
 });
 

@@ -2,7 +2,10 @@ import { z } from 'zod';
 
 export const LabelCreateSchema = z.object({
   name: z.string().min(1).max(30),
-  color: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-F]{6}$/i)
+    .optional(),
   description: z.string().optional(),
   teamId: z.string().optional(), // null for workspace-wide
   parentId: z.string().optional(), // For label hierarchy
@@ -12,7 +15,10 @@ export type LabelCreate = z.infer<typeof LabelCreateSchema>;
 
 export const LabelUpdateSchema = z.object({
   name: z.string().min(1).max(30).optional(),
-  color: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-F]{6}$/i)
+    .optional(),
   description: z.string().optional(),
 });
 

@@ -2,12 +2,12 @@ import { CommentService } from '@features/comment/service';
 import { linearClient } from '@atoms/client/linear-client';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
 import { TestFactory } from '../fixtures/factories';
-import { 
+import {
   createMockComment,
   createMockPayload,
   createMockConnection,
   createMockLinearClient,
-  createMockUser
+  createMockUser,
 } from '../utils/mocks';
 
 jest.mock('@atoms/client/linear-client');
@@ -36,12 +36,10 @@ describe('CommentService', () => {
       const mockComment = createMockComment({
         id: 'comment-123',
         ...commentData,
-        __typename: 'Comment'
+        __typename: 'Comment',
       });
 
-      mockClient.createComment.mockResolvedValue(
-        createMockPayload(true, mockComment)
-      );
+      mockClient.createComment.mockResolvedValue(createMockPayload(true, mockComment));
 
       const result = await service.create(commentData);
 
@@ -49,7 +47,7 @@ describe('CommentService', () => {
         expect.objectContaining({
           issueId: 'issue-123',
           body: 'This is a test comment',
-        })
+        }),
       );
       expect(result.id).toBe('comment-123');
       expect(result.body).toBe('This is a test comment');
@@ -63,12 +61,10 @@ describe('CommentService', () => {
       const mockComment = createMockComment({
         id: 'comment-123',
         ...commentData,
-        __typename: 'Comment'
+        __typename: 'Comment',
       });
 
-      mockClient.createComment.mockResolvedValue(
-        createMockPayload(true, mockComment)
-      );
+      mockClient.createComment.mockResolvedValue(createMockPayload(true, mockComment));
 
       const result = await service.create(commentData);
 
@@ -85,12 +81,10 @@ describe('CommentService', () => {
       const mockReply = createMockComment({
         id: 'comment-reply',
         ...replyData,
-        __typename: 'Comment'
+        __typename: 'Comment',
       });
 
-      mockClient.createComment.mockResolvedValue(
-        createMockPayload(true, mockReply)
-      );
+      mockClient.createComment.mockResolvedValue(createMockPayload(true, mockReply));
 
       const result = await service.create(replyData);
 
@@ -99,7 +93,7 @@ describe('CommentService', () => {
           issueId: 'issue-123',
           body: 'This is a reply',
           parentId: 'comment-parent',
-        })
+        }),
       );
       // Comment includes the parentId in the creation data
       expect(result.body).toBe('This is a reply');
@@ -114,19 +108,17 @@ describe('CommentService', () => {
       const mockComment = createMockComment({
         id: 'comment-123',
         ...commentData,
-        __typename: 'Comment'
+        __typename: 'Comment',
       });
 
-      mockClient.createComment.mockResolvedValue(
-        createMockPayload(true, mockComment)
-      );
+      mockClient.createComment.mockResolvedValue(createMockPayload(true, mockComment));
 
       await service.create(commentData);
 
       expect(mockClient.createComment).toHaveBeenCalledWith(
         expect.objectContaining({
           createAsUser: 'user-456',
-        })
+        }),
       );
     });
 
@@ -139,19 +131,17 @@ describe('CommentService', () => {
       const mockComment = createMockComment({
         id: 'comment-123',
         ...commentData,
-        __typename: 'Comment'
+        __typename: 'Comment',
       });
 
-      mockClient.createComment.mockResolvedValue(
-        createMockPayload(true, mockComment)
-      );
+      mockClient.createComment.mockResolvedValue(createMockPayload(true, mockComment));
 
       await service.create(commentData);
 
       expect(mockClient.createComment).toHaveBeenCalledWith(
         expect.objectContaining({
           displayIconUrl: 'https://example.com/icon.png',
-        })
+        }),
       );
     });
 
@@ -161,31 +151,35 @@ describe('CommentService', () => {
         body: 'Test comment',
       };
 
-      mockClient.createComment.mockResolvedValue(
-        createMockPayload(false)
-      );
+      mockClient.createComment.mockResolvedValue(createMockPayload(false));
 
       await expect(service.create(commentData)).rejects.toThrow(ValidationError);
     });
 
     it('should validate required fields', async () => {
-      await expect(service.create({
-        issueId: '',
-        body: 'Test comment',
-      })).rejects.toThrow(ValidationError);
+      await expect(
+        service.create({
+          issueId: '',
+          body: 'Test comment',
+        }),
+      ).rejects.toThrow(ValidationError);
 
-      await expect(service.create({
-        issueId: 'issue-123',
-        body: '',
-      })).rejects.toThrow(ValidationError);
+      await expect(
+        service.create({
+          issueId: 'issue-123',
+          body: '',
+        }),
+      ).rejects.toThrow(ValidationError);
     });
 
     it('should validate displayIconUrl format when provided', async () => {
-      await expect(service.create({
-        issueId: 'issue-123',
-        body: 'Test comment',
-        displayIconUrl: 'invalid-url',
-      })).rejects.toThrow(ValidationError);
+      await expect(
+        service.create({
+          issueId: 'issue-123',
+          body: 'Test comment',
+          displayIconUrl: 'invalid-url',
+        }),
+      ).rejects.toThrow(ValidationError);
     });
   });
 
@@ -217,13 +211,13 @@ describe('CommentService', () => {
         id: 'comment-123',
         body: 'Updated comment text',
         edited: true,
-        __typename: 'Comment'
+        __typename: 'Comment',
       });
 
       mockClient.comment = jest.fn().mockResolvedValue(mockComment);
-      mockClient.updateComment = jest.fn().mockResolvedValue(
-        createMockPayload(true, updatedComment)
-      );
+      mockClient.updateComment = jest
+        .fn()
+        .mockResolvedValue(createMockPayload(true, updatedComment));
 
       const result = await service.update('comment-123', updateData);
 
@@ -231,7 +225,7 @@ describe('CommentService', () => {
         'comment-123',
         expect.objectContaining({
           body: 'Updated comment text',
-        })
+        }),
       );
       expect(result.body).toBe('Updated comment text');
       expect(result.editedAt).toBeDefined();
@@ -240,27 +234,23 @@ describe('CommentService', () => {
     it('should throw NotFoundError when comment does not exist', async () => {
       mockClient.comment = jest.fn().mockRejectedValue(new Error('Not found'));
 
-      await expect(
-        service.update('nonexistent', { body: 'Updated text' })
-      ).rejects.toThrow(NotFoundError);
+      await expect(service.update('nonexistent', { body: 'Updated text' })).rejects.toThrow(
+        NotFoundError,
+      );
     });
 
     it('should throw ValidationError when update fails', async () => {
       const mockComment = createMockComment({ id: 'comment-123' });
       mockClient.comment = jest.fn().mockResolvedValue(mockComment);
-      mockClient.updateComment = jest.fn().mockResolvedValue(
-        createMockPayload(false)
-      );
+      mockClient.updateComment = jest.fn().mockResolvedValue(createMockPayload(false));
 
-      await expect(
-        service.update('comment-123', { body: 'Updated text' })
-      ).rejects.toThrow(ValidationError);
+      await expect(service.update('comment-123', { body: 'Updated text' })).rejects.toThrow(
+        ValidationError,
+      );
     });
 
     it('should validate update data', async () => {
-      await expect(
-        service.update('comment-123', { body: '' })
-      ).rejects.toThrow(ValidationError);
+      await expect(service.update('comment-123', { body: '' })).rejects.toThrow(ValidationError);
     });
   });
 
@@ -268,9 +258,7 @@ describe('CommentService', () => {
     it('should delete a comment successfully', async () => {
       const mockComment = createMockComment({ id: 'comment-123' });
       mockClient.comment = jest.fn().mockResolvedValue(mockComment);
-      mockClient.deleteComment = jest.fn().mockResolvedValue(
-        createMockPayload(true)
-      );
+      mockClient.deleteComment = jest.fn().mockResolvedValue(createMockPayload(true));
 
       const result = await service.delete('comment-123');
 
@@ -287,9 +275,7 @@ describe('CommentService', () => {
     it('should return false when deletion fails', async () => {
       const mockComment = createMockComment({ id: 'comment-123' });
       mockClient.comment = jest.fn().mockResolvedValue(mockComment);
-      mockClient.deleteComment = jest.fn().mockResolvedValue(
-        createMockPayload(false)
-      );
+      mockClient.deleteComment = jest.fn().mockResolvedValue(createMockPayload(false));
 
       const result = await service.delete('comment-123');
 
@@ -311,7 +297,7 @@ describe('CommentService', () => {
 
       expect(mockClient.comments).toHaveBeenCalledWith({
         filter: {
-          issue: { id: { eq: 'issue-123' } }
+          issue: { id: { eq: 'issue-123' } },
         },
         first: 50,
       });
@@ -319,15 +305,13 @@ describe('CommentService', () => {
     });
 
     it('should handle pagination parameters for issue comments', async () => {
-      mockClient.comments = jest.fn().mockResolvedValue(
-        createMockConnection([])
-      );
+      mockClient.comments = jest.fn().mockResolvedValue(createMockConnection([]));
 
       await service.listByIssue('issue-123', { first: 20, after: 'cursor-123' });
 
       expect(mockClient.comments).toHaveBeenCalledWith({
         filter: {
-          issue: { id: { eq: 'issue-123' } }
+          issue: { id: { eq: 'issue-123' } },
         },
         first: 20,
         after: 'cursor-123',
@@ -349,7 +333,7 @@ describe('CommentService', () => {
 
       expect(mockClient.comments).toHaveBeenCalledWith({
         filter: {
-          user: { id: { eq: 'user-123' } }
+          user: { id: { eq: 'user-123' } },
         },
         first: 50,
       });
@@ -357,15 +341,13 @@ describe('CommentService', () => {
     });
 
     it('should handle pagination parameters for user comments', async () => {
-      mockClient.comments = jest.fn().mockResolvedValue(
-        createMockConnection([])
-      );
+      mockClient.comments = jest.fn().mockResolvedValue(createMockConnection([]));
 
       await service.listByUser('user-123', { first: 30, after: 'cursor-456' });
 
       expect(mockClient.comments).toHaveBeenCalledWith({
         filter: {
-          user: { id: { eq: 'user-123' } }
+          user: { id: { eq: 'user-123' } },
         },
         first: 30,
         after: 'cursor-456',
@@ -378,12 +360,12 @@ describe('CommentService', () => {
       const mockReaction = {
         id: 'reaction-123',
         emoji: '👍',
-        __typename: 'Reaction'
+        __typename: 'Reaction',
       };
 
-      mockClient.createReaction = jest.fn().mockResolvedValue(
-        createMockPayload(true, mockReaction)
-      );
+      mockClient.createReaction = jest
+        .fn()
+        .mockResolvedValue(createMockPayload(true, mockReaction));
 
       const result = await service.createReaction('comment-123', '👍');
 
@@ -401,12 +383,12 @@ describe('CommentService', () => {
         const mockReaction = {
           id: `reaction-${emoji}`,
           emoji,
-          __typename: 'Reaction'
+          __typename: 'Reaction',
         };
 
-        mockClient.createReaction = jest.fn().mockResolvedValue(
-          createMockPayload(true, mockReaction)
-        );
+        mockClient.createReaction = jest
+          .fn()
+          .mockResolvedValue(createMockPayload(true, mockReaction));
 
         const result = await service.createReaction('comment-123', emoji);
         expect(result.emoji).toBe(emoji);
@@ -417,28 +399,20 @@ describe('CommentService', () => {
       const invalidEmojis = ['🚀', '💀', '🤔', 'invalid', ''];
 
       for (const emoji of invalidEmojis) {
-        await expect(
-          service.createReaction('comment-123', emoji)
-        ).rejects.toThrow(ValidationError);
+        await expect(service.createReaction('comment-123', emoji)).rejects.toThrow(ValidationError);
       }
     });
 
     it('should throw ValidationError when reaction creation fails', async () => {
-      mockClient.createReaction = jest.fn().mockResolvedValue(
-        createMockPayload(false)
-      );
+      mockClient.createReaction = jest.fn().mockResolvedValue(createMockPayload(false));
 
-      await expect(
-        service.createReaction('comment-123', '👍')
-      ).rejects.toThrow(ValidationError);
+      await expect(service.createReaction('comment-123', '👍')).rejects.toThrow(ValidationError);
     });
   });
 
   describe('deleteReaction', () => {
     it('should delete a reaction successfully', async () => {
-      mockClient.deleteReaction = jest.fn().mockResolvedValue(
-        createMockPayload(true)
-      );
+      mockClient.deleteReaction = jest.fn().mockResolvedValue(createMockPayload(true));
 
       const result = await service.deleteReaction('reaction-123');
 
@@ -447,9 +421,7 @@ describe('CommentService', () => {
     });
 
     it('should return false when reaction deletion fails', async () => {
-      mockClient.deleteReaction = jest.fn().mockResolvedValue(
-        createMockPayload(false)
-      );
+      mockClient.deleteReaction = jest.fn().mockResolvedValue(createMockPayload(false));
 
       const result = await service.deleteReaction('reaction-123');
 
@@ -457,9 +429,7 @@ describe('CommentService', () => {
     });
 
     it('should handle non-existent reaction gracefully', async () => {
-      mockClient.deleteReaction = jest.fn().mockRejectedValue(
-        new Error('Reaction not found')
-      );
+      mockClient.deleteReaction = jest.fn().mockRejectedValue(new Error('Reaction not found'));
 
       const result = await service.deleteReaction('nonexistent');
 
@@ -481,7 +451,7 @@ describe('CommentService', () => {
 
       expect(mockClient.comments).toHaveBeenCalledWith({
         filter: {
-          parent: { id: { eq: 'comment-123' } }
+          parent: { id: { eq: 'comment-123' } },
         },
         first: 50,
       });
@@ -489,15 +459,13 @@ describe('CommentService', () => {
     });
 
     it('should handle pagination for replies', async () => {
-      mockClient.comments = jest.fn().mockResolvedValue(
-        createMockConnection([])
-      );
+      mockClient.comments = jest.fn().mockResolvedValue(createMockConnection([]));
 
       await service.getReplies('comment-123', { first: 25, after: 'cursor-789' });
 
       expect(mockClient.comments).toHaveBeenCalledWith({
         filter: {
-          parent: { id: { eq: 'comment-123' } }
+          parent: { id: { eq: 'comment-123' } },
         },
         first: 25,
         after: 'cursor-789',
@@ -510,11 +478,11 @@ describe('CommentService', () => {
       const parentComment = createMockComment({ id: 'comment-parent' });
       const childComment = createMockComment({
         id: 'comment-child',
-        parentId: 'comment-parent'
+        parentId: 'comment-parent',
       });
       // Override the parent getter to return the parent comment
       Object.defineProperty(childComment, 'parent', {
-        get: jest.fn().mockResolvedValue(parentComment)
+        get: jest.fn().mockResolvedValue(parentComment),
       });
 
       mockClient.comment = jest.fn().mockResolvedValue(childComment);
@@ -531,7 +499,7 @@ describe('CommentService', () => {
       });
       // Override the parent getter to return null (no parent)
       Object.defineProperty(topLevelComment, 'parent', {
-        get: jest.fn().mockResolvedValue(null)
+        get: jest.fn().mockResolvedValue(null),
       });
 
       mockClient.comment = jest.fn().mockResolvedValue(topLevelComment);
@@ -553,11 +521,11 @@ describe('CommentService', () => {
     it('should return null when parent comment does not exist', async () => {
       const childComment = createMockComment({
         id: 'comment-child',
-        parentId: 'nonexistent-parent'
+        parentId: 'nonexistent-parent',
       });
       // Override the parent getter to throw an error
       Object.defineProperty(childComment, 'parent', {
-        get: jest.fn().mockRejectedValue(new Error('Parent not found'))
+        get: jest.fn().mockRejectedValue(new Error('Parent not found')),
       });
 
       mockClient.comment = jest.fn().mockResolvedValue(childComment);
@@ -596,12 +564,12 @@ describe('CommentService', () => {
     it('should handle empty or no mentions', () => {
       expect(service.parseMentions('Just a regular comment')).toEqual({
         users: [],
-        issues: []
+        issues: [],
       });
 
       expect(service.parseMentions('')).toEqual({
         users: [],
-        issues: []
+        issues: [],
       });
     });
 
@@ -614,7 +582,7 @@ describe('CommentService', () => {
     });
 
     it('should handle mentions in markdown contexts', () => {
-      const body = 'See [@alice\'s comment](link) and issue [#ENG-456](link).';
+      const body = "See [@alice's comment](link) and issue [#ENG-456](link).";
       const mentions = service.parseMentions(body);
 
       expect(mentions.users).toEqual(['alice']);
