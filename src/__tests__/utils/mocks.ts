@@ -65,6 +65,15 @@ export const createMockTeam = (overrides = {}): any => ({
   cycles: jest.fn().mockResolvedValue(createMockConnection([])),
   states: jest.fn().mockResolvedValue(createMockConnection([createMockWorkflowState()])),
   labels: jest.fn().mockResolvedValue(createMockConnection([])),
+  webhooks: jest.fn().mockResolvedValue(createMockConnection([])),
+  settings: jest.fn().mockResolvedValue({ 
+    id: 'settings-123',
+    cyclesEnabled: true,
+    cycleStartDay: 1,
+    cycleDuration: 14,
+    triageEnabled: true 
+  }),
+  templates: jest.fn().mockResolvedValue(createMockConnection([])),
   ...overrides,
 });
 
@@ -89,10 +98,21 @@ export const createMockUser = (overrides = {}): any => ({
   __typename: "User",
   id: 'user-123',
   name: 'Test User',
+  displayName: 'Test User',
   email: 'test@example.com',
   avatarUrl: 'https://avatar.example.com',
   admin: false,
   active: true,
+  statusEmoji: null,
+  statusLabel: null,
+  statusUntilAt: null,
+  timezone: 'UTC',
+  settings: jest.fn().mockResolvedValue({
+    id: 'settings-123',
+    notificationPreferences: { email: true, slack: false },
+    timezone: 'America/New_York',
+    theme: 'dark'
+  }),
   ...overrides,
 });
 
@@ -184,6 +204,11 @@ export const createMockPayload = (success = true, entity?: any) => ({
   issueLabel: entity?.__typename === "IssueLabel" ? entity : undefined,
   comment: entity?.__typename === "Comment" ? entity : undefined,
   reaction: entity?.__typename === "Reaction" ? entity : undefined,
+  user: entity?.__typename === "User" ? entity : undefined,
+  teamMembership: entity?.__typename === "TeamMembership" ? entity : undefined,
+  template: entity?.__typename === "Template" ? entity : undefined,
+  // Fallback for settings and other objects without __typename
+  ...(entity && !entity.__typename ? entity : {}),
 });
 
 // Mock Linear Client with proper return types
@@ -220,6 +245,18 @@ export const createMockLinearClient = () => ({
   ),
   teams: jest.fn().mockImplementation((options = {}) => 
     Promise.resolve(createMockTeamConnection([createMockTeam()]))
+  ),
+  createTeam: jest.fn().mockImplementation((input) => 
+    Promise.resolve(createMockPayload(true, createMockTeam({ __typename: "Team", ...input })))
+  ),
+  updateTeam: jest.fn().mockImplementation((id, input) => 
+    Promise.resolve(createMockPayload(true, createMockTeam({ __typename: "Team", id, ...input })))
+  ),
+  deleteTeam: jest.fn().mockImplementation(() => 
+    Promise.resolve(createMockPayload(true))
+  ),
+  createTemplate: jest.fn().mockImplementation((input) => 
+    Promise.resolve(createMockPayload(true, { id: 'template-new', __typename: "Template", ...input }))
   ),
   
   // Project methods
@@ -296,6 +333,43 @@ export const createMockLinearClient = () => ({
   ),
   deleteIssueLabel: jest.fn().mockImplementation(() => 
     Promise.resolve(createMockPayload(true))
+  ),
+  
+  // User methods
+  user: jest.fn().mockImplementation((id: string) => 
+    Promise.resolve(createMockUser({ id }))
+  ),
+  users: jest.fn().mockImplementation((options = {}) => 
+    Promise.resolve(createMockUserConnection([createMockUser()]))
+  ),
+  updateUser: jest.fn().mockImplementation((id, input) => 
+    Promise.resolve(createMockPayload(true, createMockUser({ __typename: "User", id, ...input })))
+  ),
+  
+  // Team membership methods
+  teamMemberships: jest.fn().mockImplementation((options = {}) => 
+    Promise.resolve(createMockConnection([{
+      id: 'membership-123',
+      user: jest.fn().mockResolvedValue(createMockUser()),
+      team: jest.fn().mockResolvedValue(createMockTeam()),
+      __typename: 'TeamMembership'
+    }]))
+  ),
+  createTeamMembership: jest.fn().mockImplementation((input) => 
+    Promise.resolve(createMockPayload(true, {
+      id: 'membership-123',
+      user: createMockUser({ id: input.userId }),
+      team: createMockTeam({ id: input.teamId }),
+      __typename: 'TeamMembership'
+    }))
+  ),
+  deleteTeamMembership: jest.fn().mockImplementation(() => 
+    Promise.resolve(createMockPayload(true))
+  ),
+  
+  // User settings methods
+  updateUserSettings: jest.fn().mockImplementation((id, input) => 
+    Promise.resolve(createMockPayload(true, { id: 'settings-123', ...input }))
   ),
 });
 
