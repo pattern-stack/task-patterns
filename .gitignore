@@ -79,3 +79,9 @@ temp/
 
 # Local development
 .local
+
+# Claude Code session data
+.claude/
+
+# Development logs
+logs/
