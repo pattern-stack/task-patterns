@@ -160,6 +160,45 @@ export class TestFactory {
       ...overrides,
     };
   }
+
+  static userUpdate(overrides: any = {}) {
+    return {
+      displayName: `Updated User ${this.nextId()}`,
+      statusEmoji: '🚀',
+      statusLabel: 'Working',
+      ...overrides,
+    };
+  }
+
+  static userFilter(overrides: any = {}) {
+    return {
+      active: true,
+      admin: false,
+      teamId: this.uuid(),
+      ...overrides,
+    };
+  }
+
+  static userSettings(overrides: any = {}) {
+    return {
+      timezone: 'America/New_York',
+      theme: 'dark' as const,
+      notificationPreferences: {
+        email: true,
+        slack: false,
+        push: true,
+      },
+      ...overrides,
+    };
+  }
+
+  static userSettingsUpdate(overrides: any = {}) {
+    return {
+      timezone: 'Europe/London',
+      theme: 'light' as const,
+      ...overrides,
+    };
+  }
 }
 
 // Test data sets
