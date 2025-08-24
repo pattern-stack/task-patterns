@@ -43,7 +43,7 @@ export class SprintPlanningWorkflow {
     }
 
     const cycles = await this.teamService.getCycles(options.teamId);
-    const cycle = cycles.nodes.find(c => c.id === options.cycleId);
+    const cycle = cycles.nodes.find((c) => c.id === options.cycleId);
     if (!cycle) {
       throw new NotFoundError('Cycle', options.cycleId);
     }
@@ -79,25 +79,25 @@ export class SprintPlanningWorkflow {
           continue;
         }
 
-        const updateData: any = { cycleId: options.cycleId };
+        const updateData: Record<string, unknown> = { cycleId: options.cycleId };
         if (options.projectId) {
           updateData.projectId = options.projectId;
         }
 
         await this.issueEntity.update(issueId, updateData);
-        
+
         result.movedIssues.push(issueId);
         result.summary.successCount++;
-        
+
         if (issue.estimate) {
           result.summary.totalEstimate! += issue.estimate;
         }
 
         logger.success(`Issue ${issue.identifier} added to sprint`);
-      } catch (error: any) {
+      } catch (error: unknown) {
         result.failedIssues.push({
           issueId,
-          error: error.message || 'Unknown error',
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
         result.summary.failureCount++;
         logger.error(`Failed to add issue ${issueId} to sprint`, error);
@@ -143,11 +143,17 @@ export class SprintPlanningWorkflow {
       }
 
       const priority = issue.priority || 0;
-      if (priority === 4) capacity.byPriority.urgent++;
-      else if (priority === 3) capacity.byPriority.high++;
-      else if (priority === 2) capacity.byPriority.medium++;
-      else if (priority === 1) capacity.byPriority.low++;
-      else capacity.byPriority.none++;
+      if (priority === 4) {
+        capacity.byPriority.urgent++;
+      } else if (priority === 3) {
+        capacity.byPriority.high++;
+      } else if (priority === 2) {
+        capacity.byPriority.medium++;
+      } else if (priority === 1) {
+        capacity.byPriority.low++;
+      } else {
+        capacity.byPriority.none++;
+      }
 
       if (issue.assignee) {
         const assignee = await issue.assignee;
@@ -170,13 +176,13 @@ export class SprintPlanningWorkflow {
 
     const members = await this.teamService.getMembers(teamId);
     const memberNodes = await members.nodes;
-    
+
     if (memberNodes.length === 0) {
       throw new Error('Team has no members');
     }
 
     const workload = new Map<string, number>();
-    memberNodes.forEach(member => workload.set(member.id, 0));
+    memberNodes.forEach((member) => workload.set(member.id, 0));
 
     const existingIssues = await this.issueEntity.list({
       teamId,
@@ -204,8 +210,7 @@ export class SprintPlanningWorkflow {
           continue;
         }
 
-        const [assigneeId] = [...workload.entries()]
-          .sort((a, b) => a[1] - b[1])[0];
+        const [assigneeId] = [...workload.entries()].sort((a, b) => a[1] - b[1])[0];
 
         await this.issueEntity.assignToUser(issueId, assigneeId);
 
@@ -214,8 +219,12 @@ export class SprintPlanningWorkflow {
 
         results.push({ issueId, success: true, assigneeId });
         logger.success(`Issue ${issue.identifier} assigned`);
-      } catch (error: any) {
-        results.push({ issueId, success: false, error: error.message });
+      } catch (error: unknown) {
+        results.push({
+          issueId,
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
       }
     }
 
