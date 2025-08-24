@@ -80,8 +80,8 @@ temp/
 # Local development
 .local
 
-# Claude Code session data
-.claude/
+# Claude Code session data (but keep tickets)
+.claude/data/
 
 # Development logs
 logs/
