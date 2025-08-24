@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -5,9 +6,7 @@ import { TeamService } from '@features/team/service';
 import { logger } from '@atoms/shared/logger';
 
 export function teamCommands(program: Command) {
-  const team = program
-    .command('team')
-    .description('Manage Linear teams');
+  const team = program.command('team').description('Manage Linear teams');
 
   team
     .command('list')
@@ -19,9 +18,9 @@ export function teamCommands(program: Command) {
         const teamService = new TeamService();
         const teams = await teamService.list({ first: options.limit });
         const nodes = await teams.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} teams`);
-        
+
         if (nodes.length > 0) {
           console.log('\nTeams:');
           for (const team of nodes) {
@@ -31,7 +30,7 @@ export function teamCommands(program: Command) {
             }
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch teams');
         logger.error('Error', error);
       }
@@ -44,7 +43,7 @@ export function teamCommands(program: Command) {
       const spinner = ora('Fetching team...').start();
       try {
         const teamService = new TeamService();
-        
+
         let team;
         if (idOrKey.length < 10) {
           team = await teamService.getByKey(idOrKey);
@@ -62,7 +61,7 @@ export function teamCommands(program: Command) {
         } else {
           spinner.fail('Team not found');
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch team');
         logger.error('Error', error);
       }
@@ -78,9 +77,9 @@ export function teamCommands(program: Command) {
         const teamService = new TeamService();
         const members = await teamService.getMembers(teamId, { first: options.limit });
         const nodes = await members.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} members`);
-        
+
         if (nodes.length > 0) {
           console.log('\nTeam Members:');
           for (const member of nodes) {
@@ -90,7 +89,7 @@ export function teamCommands(program: Command) {
             console.log(`    ID: ${member.id}`);
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch team members');
         logger.error('Error', error);
       }
@@ -106,9 +105,9 @@ export function teamCommands(program: Command) {
         const teamService = new TeamService();
         const projects = await teamService.getProjects(teamId, { first: options.limit });
         const nodes = await projects.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} projects`);
-        
+
         if (nodes.length > 0) {
           console.log('\nTeam Projects:');
           for (const project of nodes) {
@@ -120,7 +119,7 @@ export function teamCommands(program: Command) {
             console.log(`    ID: ${project.id}`);
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch team projects');
         logger.error('Error', error);
       }
@@ -136,9 +135,9 @@ export function teamCommands(program: Command) {
         const teamService = new TeamService();
         const cycles = await teamService.getCycles(teamId, { first: options.limit });
         const nodes = await cycles.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} cycles`);
-        
+
         if (nodes.length > 0) {
           console.log('\nTeam Cycles:');
           for (const cycle of nodes) {
@@ -154,7 +153,7 @@ export function teamCommands(program: Command) {
             }
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch team cycles');
         logger.error('Error', error);
       }
@@ -170,13 +169,13 @@ export function teamCommands(program: Command) {
         const teamService = new TeamService();
         const labels = await teamService.getLabels(teamId, { first: options.limit });
         const nodes = await labels.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} labels`);
-        
+
         if (nodes.length > 0) {
           console.log('\nTeam Labels:');
-          const grouped = new Map<string, any[]>();
-          
+          const grouped = new Map<string, unknown[]>();
+
           for (const label of nodes) {
             const parentLabel = label.parent ? await label.parent : null;
             const parent = parentLabel?.name || 'Ungrouped';
@@ -195,7 +194,7 @@ export function teamCommands(program: Command) {
             }
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch team labels');
         logger.error('Error', error);
       }
@@ -210,13 +209,13 @@ export function teamCommands(program: Command) {
         const teamService = new TeamService();
         const states = await teamService.getWorkflowStates(teamId);
         const nodes = await states.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} workflow states`);
-        
+
         if (nodes.length > 0) {
           console.log('\nWorkflow States:');
-          
-          const byType = new Map<string, any[]>();
+
+          const byType = new Map<string, unknown[]>();
           for (const state of nodes) {
             const type = state.type || 'other';
             if (!byType.has(type)) {
@@ -235,7 +234,7 @@ export function teamCommands(program: Command) {
             }
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch workflow states');
         logger.error('Error', error);
       }

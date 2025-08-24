@@ -33,7 +33,7 @@ class Logger {
     return level >= this.level;
   }
 
-  private formatMessage(level: string, message: string, data?: any): string {
+  private formatMessage(level: string, message: string, data?: unknown): string {
     const timestamp = new Date().toISOString();
     const base = `[${timestamp}] [${level}] ${message}`;
     if (data) {
@@ -42,33 +42,39 @@ class Logger {
     return base;
   }
 
-  debug(message: string, data?: any): void {
+  debug(message: string, data?: unknown): void {
     if (this.shouldLog(LogLevel.DEBUG)) {
+      // eslint-disable-next-line no-console
       console.log(chalk.gray(this.formatMessage('DEBUG', message, data)));
     }
   }
 
-  info(message: string, data?: any): void {
+  info(message: string, data?: unknown): void {
     if (this.shouldLog(LogLevel.INFO)) {
+      // eslint-disable-next-line no-console
       console.log(chalk.blue(this.formatMessage('INFO', message, data)));
     }
   }
 
-  warn(message: string, data?: any): void {
+  warn(message: string, data?: unknown): void {
     if (this.shouldLog(LogLevel.WARN)) {
+      // eslint-disable-next-line no-console
       console.warn(chalk.yellow(this.formatMessage('WARN', message, data)));
     }
   }
 
-  error(message: string, error?: any): void {
+  error(message: string, error?: unknown): void {
     if (this.shouldLog(LogLevel.ERROR)) {
+      // eslint-disable-next-line no-console
       console.error(chalk.red(this.formatMessage('ERROR', message, error)));
     }
   }
 
-  success(message: string, data?: any): void {
+  success(message: string, data?: unknown): void {
+    // eslint-disable-next-line no-console
     console.log(chalk.green(`✓ ${message}`));
     if (data && this.shouldLog(LogLevel.DEBUG)) {
+      // eslint-disable-next-line no-console
       console.log(chalk.gray(JSON.stringify(data, null, 2)));
     }
   }

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -6,9 +7,7 @@ import { IssueCreate, IssueUpdate } from '@features/issue/schemas';
 import { logger } from '@atoms/shared/logger';
 
 export function issueCommands(program: Command) {
-  const issue = program
-    .command('issue')
-    .description('Manage Linear issues');
+  const issue = program.command('issue').description('Manage Linear issues');
 
   issue
     .command('create')
@@ -26,7 +25,7 @@ export function issueCommands(program: Command) {
       const spinner = ora('Creating issue...').start();
       try {
         const issueEntity = new IssueEntity();
-        
+
         const data: IssueCreate = {
           title: options.title,
           teamId: options.team,
@@ -42,7 +41,7 @@ export function issueCommands(program: Command) {
         const issue = await issueEntity.create(data);
         spinner.succeed(`Issue created: ${chalk.green(issue.identifier)} - ${issue.title}`);
         console.log(chalk.gray(`URL: ${issue.url}`));
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to create issue');
         logger.error('Error', error);
       }
@@ -56,7 +55,7 @@ export function issueCommands(program: Command) {
       const spinner = ora('Fetching issue...').start();
       try {
         const issueEntity = new IssueEntity();
-        
+
         let issue;
         if (identifier.includes('-')) {
           issue = await issueEntity.getByIdentifier(identifier);
@@ -74,7 +73,7 @@ export function issueCommands(program: Command) {
               console.log(`  Team: ${result.team?.name || 'Unknown'}`);
               console.log(`  Project: ${result.project?.name || 'None'}`);
               console.log(`  Comments: ${result.comments?.length || 0}`);
-              console.log(`  Labels: ${result.labels?.map(l => l.name).join(', ') || 'None'}`);
+              console.log(`  Labels: ${result.labels?.map((l) => l.name).join(', ') || 'None'}`);
               console.log(`  URL: ${result.issue.url}`);
               return;
             }
@@ -94,7 +93,7 @@ export function issueCommands(program: Command) {
         } else {
           spinner.fail('Issue not found');
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch issue');
         logger.error('Error', error);
       }
@@ -115,20 +114,36 @@ export function issueCommands(program: Command) {
       const spinner = ora('Updating issue...').start();
       try {
         const issueEntity = new IssueEntity();
-        
+
         const data: IssueUpdate = {};
-        if (options.title) data.title = options.title;
-        if (options.description) data.description = options.description;
-        if (options.assignee) data.assigneeId = options.assignee;
-        if (options.priority !== undefined) data.priority = options.priority;
-        if (options.project) data.projectId = options.project;
-        if (options.cycle) data.cycleId = options.cycle;
-        if (options.estimate !== undefined) data.estimate = options.estimate;
-        if (options.state) data.stateId = options.state;
+        if (options.title) {
+          data.title = options.title;
+        }
+        if (options.description) {
+          data.description = options.description;
+        }
+        if (options.assignee) {
+          data.assigneeId = options.assignee;
+        }
+        if (options.priority !== undefined) {
+          data.priority = options.priority;
+        }
+        if (options.project) {
+          data.projectId = options.project;
+        }
+        if (options.cycle) {
+          data.cycleId = options.cycle;
+        }
+        if (options.estimate !== undefined) {
+          data.estimate = options.estimate;
+        }
+        if (options.state) {
+          data.stateId = options.state;
+        }
 
         const issue = await issueEntity.update(id, data);
         spinner.succeed(`Issue updated: ${chalk.green(issue.identifier)}`);
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to update issue');
         logger.error('Error', error);
       }
@@ -149,20 +164,34 @@ export function issueCommands(program: Command) {
       const spinner = ora('Fetching issues...').start();
       try {
         const issueEntity = new IssueEntity();
-        
-        const filter: any = {};
-        if (options.team) filter.teamId = options.team;
-        if (options.assignee) filter.assigneeId = options.assignee;
-        if (options.project) filter.projectId = options.project;
-        if (options.cycle) filter.cycleId = options.cycle;
-        if (options.state) filter.state = options.state;
-        if (options.priority !== undefined) filter.priority = options.priority;
-        if (options.search) filter.searchQuery = options.search;
+
+        const filter: Record<string, unknown> = {};
+        if (options.team) {
+          filter.teamId = options.team;
+        }
+        if (options.assignee) {
+          filter.assigneeId = options.assignee;
+        }
+        if (options.project) {
+          filter.projectId = options.project;
+        }
+        if (options.cycle) {
+          filter.cycleId = options.cycle;
+        }
+        if (options.state) {
+          filter.state = options.state;
+        }
+        if (options.priority !== undefined) {
+          filter.priority = options.priority;
+        }
+        if (options.search) {
+          filter.searchQuery = options.search;
+        }
 
         const result = await issueEntity.list(filter, { first: options.limit });
-        
+
         spinner.succeed(`Found ${result.issues.length} issues`);
-        
+
         if (result.issues.length > 0) {
           console.log('\nIssues:');
           for (const issue of result.issues) {
@@ -171,10 +200,12 @@ export function issueCommands(program: Command) {
             const assignee = assigneeObj?.name || 'Unassigned';
             const stateObj = issue.state ? await issue.state : null;
             console.log(`  ${chalk.green(issue.identifier)} - ${issue.title}`);
-            console.log(`    Priority: ${priority} | Assignee: ${assignee} | State: ${stateObj?.name || 'Unknown'}`);
+            console.log(
+              `    Priority: ${priority} | Assignee: ${assignee} | State: ${stateObj?.name || 'Unknown'}`,
+            );
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch issues');
         logger.error('Error', error);
       }
@@ -196,7 +227,7 @@ export function issueCommands(program: Command) {
         const issueEntity = new IssueEntity();
         await issueEntity.delete(id);
         spinner.succeed('Issue deleted successfully');
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to delete issue');
         logger.error('Error', error);
       }
@@ -211,7 +242,7 @@ export function issueCommands(program: Command) {
         const issueEntity = new IssueEntity();
         await issueEntity.addComment(id, message);
         spinner.succeed('Comment added successfully');
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to add comment');
         logger.error('Error', error);
       }
@@ -226,7 +257,7 @@ export function issueCommands(program: Command) {
         const issueEntity = new IssueEntity();
         const issue = await issueEntity.assignToUser(id, userId);
         spinner.succeed(`Issue assigned: ${chalk.green(issue.identifier)}`);
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to assign issue');
         logger.error('Error', error);
       }
@@ -241,7 +272,7 @@ export function issueCommands(program: Command) {
         const issueEntity = new IssueEntity();
         const issue = await issueEntity.unassign(id);
         spinner.succeed(`Issue unassigned: ${chalk.green(issue.identifier)}`);
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to unassign issue');
         logger.error('Error', error);
       }

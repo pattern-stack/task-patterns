@@ -1,13 +1,13 @@
+/* eslint-disable no-console */
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { ProjectService, ProjectCreate } from '@features/project/service';
+import { ProjectService } from '@features/project/service';
+import { ProjectCreate } from '@features/project/schemas';
 import { logger } from '@atoms/shared/logger';
 
 export function projectCommands(program: Command) {
-  const project = program
-    .command('project')
-    .description('Manage Linear projects');
+  const project = program.command('project').description('Manage Linear projects');
 
   project
     .command('create')
@@ -23,7 +23,7 @@ export function projectCommands(program: Command) {
       const spinner = ora('Creating project...').start();
       try {
         const projectService = new ProjectService();
-        
+
         const data: ProjectCreate = {
           name: options.name,
           teamIds: options.teams.split(','),
@@ -38,7 +38,7 @@ export function projectCommands(program: Command) {
         spinner.succeed(`Project created: ${chalk.green(project.name)}`);
         console.log(chalk.gray(`ID: ${project.id}`));
         console.log(chalk.gray(`URL: ${project.url}`));
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to create project');
         logger.error('Error', error);
       }
@@ -54,9 +54,9 @@ export function projectCommands(program: Command) {
         const projectService = new ProjectService();
         const projects = await projectService.list({ first: options.limit });
         const nodes = await projects.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} projects`);
-        
+
         if (nodes.length > 0) {
           console.log('\nProjects:');
           for (const project of nodes) {
@@ -72,7 +72,7 @@ export function projectCommands(program: Command) {
             console.log(`    ID: ${project.id}`);
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch projects');
         logger.error('Error', error);
       }
@@ -94,25 +94,25 @@ export function projectCommands(program: Command) {
           console.log(`  Description: ${project.description || 'No description'}`);
           console.log(`  State: ${project.state || 'Unknown'}`);
           console.log(`  Priority: ${project.priority || 'None'}`);
-          
+
           if (project.startDate) {
             console.log(`  Start Date: ${new Date(project.startDate).toLocaleDateString()}`);
           }
           if (project.targetDate) {
             console.log(`  Target Date: ${new Date(project.targetDate).toLocaleDateString()}`);
           }
-          
+
           const lead = await project.lead;
           if (lead) {
             console.log(`  Lead: ${lead.name} (${lead.email})`);
           }
-          
+
           console.log(`  ID: ${project.id}`);
           console.log(`  URL: ${project.url}`);
         } else {
           spinner.fail('Project not found');
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch project');
         logger.error('Error', error);
       }
@@ -132,19 +132,33 @@ export function projectCommands(program: Command) {
       const spinner = ora('Updating project...').start();
       try {
         const projectService = new ProjectService();
-        
-        const data: any = {};
-        if (options.name) data.name = options.name;
-        if (options.description) data.description = options.description;
-        if (options.lead) data.leadId = options.lead;
-        if (options.start) data.startDate = options.start;
-        if (options.target) data.targetDate = options.target;
-        if (options.priority !== undefined) data.priority = options.priority;
-        if (options.state) data.state = options.state;
+
+        const data: Record<string, unknown> = {};
+        if (options.name) {
+          data.name = options.name;
+        }
+        if (options.description) {
+          data.description = options.description;
+        }
+        if (options.lead) {
+          data.leadId = options.lead;
+        }
+        if (options.start) {
+          data.startDate = options.start;
+        }
+        if (options.target) {
+          data.targetDate = options.target;
+        }
+        if (options.priority !== undefined) {
+          data.priority = options.priority;
+        }
+        if (options.state) {
+          data.state = options.state;
+        }
 
         const project = await projectService.update(id, data);
         spinner.succeed(`Project updated: ${chalk.green(project.name)}`);
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to update project');
         logger.error('Error', error);
       }
@@ -166,7 +180,7 @@ export function projectCommands(program: Command) {
         const projectService = new ProjectService();
         await projectService.delete(id);
         spinner.succeed('Project deleted successfully');
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to delete project');
         logger.error('Error', error);
       }
@@ -182,9 +196,9 @@ export function projectCommands(program: Command) {
         const projectService = new ProjectService();
         const issues = await projectService.getIssues(projectId, { first: options.limit });
         const nodes = await issues.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} issues`);
-        
+
         if (nodes.length > 0) {
           console.log('\nProject Issues:');
           for (const issue of nodes) {
@@ -193,10 +207,12 @@ export function projectCommands(program: Command) {
             const assignee = assigneeObj?.name || 'Unassigned';
             const stateObj = issue.state ? await issue.state : null;
             console.log(`  ${chalk.green(issue.identifier)} - ${issue.title}`);
-            console.log(`    Priority: ${priority} | Assignee: ${assignee} | State: ${stateObj?.name || 'Unknown'}`);
+            console.log(
+              `    Priority: ${priority} | Assignee: ${assignee} | State: ${stateObj?.name || 'Unknown'}`,
+            );
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch project issues');
         logger.error('Error', error);
       }
@@ -212,9 +228,9 @@ export function projectCommands(program: Command) {
         const projectService = new ProjectService();
         const milestones = await projectService.getMilestones(projectId, { first: options.limit });
         const nodes = await milestones.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} milestones`);
-        
+
         if (nodes.length > 0) {
           console.log('\nProject Milestones:');
           for (const milestone of nodes) {
@@ -228,7 +244,7 @@ export function projectCommands(program: Command) {
             console.log(`    ID: ${milestone.id}`);
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch project milestones');
         logger.error('Error', error);
       }
@@ -243,9 +259,9 @@ export function projectCommands(program: Command) {
         const projectService = new ProjectService();
         const teams = await projectService.getTeams(projectId);
         const nodes = await teams.nodes;
-        
+
         spinner.succeed(`Found ${nodes.length} teams`);
-        
+
         if (nodes.length > 0) {
           console.log('\nProject Teams:');
           for (const team of nodes) {
@@ -255,7 +271,7 @@ export function projectCommands(program: Command) {
             }
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         spinner.fail('Failed to fetch project teams');
         logger.error('Error', error);
       }
