@@ -1,0 +1,9 @@
+{
+  "session_id": "5513b489-9744-4fed-a0e0-164c4a4ca999",
+  "prompts": [
+    "ok",
+    "Do they not offer thewe types? I want to be type safe if possible",
+    "Delegate a subagent to review the linear documents again and get a clear understanding of the SDKs types so you can adjust the mocks accordingly "
+  ],
+  "agent_name": "Zenith"
+}

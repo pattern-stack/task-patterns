@@ -1,0 +1,58 @@
+[
+  {
+    "session_id": "9cc5a614-136d-4b11-9d63-e26b0cf339fe",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/9cc5a614-136d-4b11-9d63-e26b0cf339fe.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "9cc5a614-136d-4b11-9d63-e26b0cf339fe",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/9cc5a614-136d-4b11-9d63-e26b0cf339fe.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "9cc5a614-136d-4b11-9d63-e26b0cf339fe",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/9cc5a614-136d-4b11-9d63-e26b0cf339fe.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "9cc5a614-136d-4b11-9d63-e26b0cf339fe",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/9cc5a614-136d-4b11-9d63-e26b0cf339fe.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "5513b489-9744-4fed-a0e0-164c4a4ca999",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/5513b489-9744-4fed-a0e0-164c4a4ca999.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+  "prompts": [
+    "You will be creating commits for the atomic bodies of work within this applicaiton. We've built it without any scm but that needs to change now.\\\n\\\nPlease first review the file tree and undertand the strucutre, then propose atomic commits structured by domain/layer"
+  ],
+  "agent_name": "Prism"
+}

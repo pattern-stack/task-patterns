@@ -1,0 +1,15 @@
+{
+  "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+  "prompts": [
+    "Use context7 and review te linear docs both sdk and regular to get a strong understanding for remaining steps. Report back - then we'll create tickets for the remaining work",
+    "Save this to .claude/tickets/ \\\n\\\nUse a folder structure that will mirror our eventual linear impementation. This will be a living set of tickets for now for our development -update yorur memory accoridngly",
+    "Make sure each is TDD doing tests first",
+    "Great - now delegate parallel agents to work on tickets 1 through 3",
+    "that was just 1 - do it in parallel. ",
+    "continue",
+    "moe the tickets to complete ",
+    "I dont have any users other than me right now - is it worth implemetnig still? Does this control agents too? I will be adding agents ",
+    "Yes - delegate 2 siubagents running in parallel to implement the User and Team service."
+  ],
+  "agent_name": "Nova"
+}

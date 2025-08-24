@@ -1,0 +1,2873 @@
+[
+  {
+    "timestamp": "2025-08-24T15:53:33.027066",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 7.608126950000001,
+        "total_duration_ms": 1503270,
+        "total_api_duration_ms": 870354,
+        "total_lines_added": 2389,
+        "total_lines_removed": 1
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T15:53:33.136143",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 7.608126950000001,
+        "total_duration_ms": 1503381,
+        "total_api_duration_ms": 870354,
+        "total_lines_added": 2389,
+        "total_lines_removed": 1
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:06:01.377373",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 7.608306150000001,
+        "total_duration_ms": 2251597,
+        "total_api_duration_ms": 871534,
+        "total_lines_added": 2389,
+        "total_lines_removed": 1
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:06:05.036633",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.2190999,
+        "total_duration_ms": 2255286,
+        "total_api_duration_ms": 878916,
+        "total_lines_added": 2389,
+        "total_lines_removed": 1
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:06:05.312808",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.2190999,
+        "total_duration_ms": 2255551,
+        "total_api_duration_ms": 878916,
+        "total_lines_added": 2389,
+        "total_lines_removed": 1
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:06:46.180575",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.4850619,
+        "total_duration_ms": 2296425,
+        "total_api_duration_ms": 919640,
+        "total_lines_added": 2389,
+        "total_lines_removed": 1
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:06:46.312672",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.4850619,
+        "total_duration_ms": 2296567,
+        "total_api_duration_ms": 919640,
+        "total_lines_added": 2389,
+        "total_lines_removed": 1
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:10:09.647046",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.4850619,
+        "total_duration_ms": 2499737,
+        "total_api_duration_ms": 919640,
+        "total_lines_added": 2513,
+        "total_lines_removed": 2
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:10:09.846270",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.4850619,
+        "total_duration_ms": 2500043,
+        "total_api_duration_ms": 919640,
+        "total_lines_added": 2513,
+        "total_lines_removed": 2
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:10:10.651865",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.4850619,
+        "total_duration_ms": 2500818,
+        "total_api_duration_ms": 919640,
+        "total_lines_added": 2513,
+        "total_lines_removed": 2
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:10:42.858898",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.76276215,
+        "total_duration_ms": 2533084,
+        "total_api_duration_ms": 951636,
+        "total_lines_added": 2629,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:10:43.414535",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.76276215,
+        "total_duration_ms": 2533665,
+        "total_api_duration_ms": 951636,
+        "total_lines_added": 2629,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:10:48.548432",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.76276215,
+        "total_duration_ms": 2538786,
+        "total_api_duration_ms": 951636,
+        "total_lines_added": 2629,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:10:50.771034",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.941039400000001,
+        "total_duration_ms": 2541023,
+        "total_api_duration_ms": 958323,
+        "total_lines_added": 2629,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:10:51.027960",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 9.941039400000001,
+        "total_duration_ms": 2541278,
+        "total_api_duration_ms": 958323,
+        "total_lines_added": 2629,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:11:26.780742",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.19861865,
+        "total_duration_ms": 2577001,
+        "total_api_duration_ms": 994120,
+        "total_lines_added": 2629,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:11:27.415174",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.19861865,
+        "total_duration_ms": 2577664,
+        "total_api_duration_ms": 994120,
+        "total_lines_added": 2835,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:11:34.810557",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.37467065,
+        "total_duration_ms": 2585058,
+        "total_api_duration_ms": 1000822,
+        "total_lines_added": 2835,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:11:35.079468",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.37467065,
+        "total_duration_ms": 2585325,
+        "total_api_duration_ms": 1000822,
+        "total_lines_added": 2835,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:11:44.909612",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.546185150000001,
+        "total_duration_ms": 2595162,
+        "total_api_duration_ms": 1010192,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:11:51.244537",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.7100129,
+        "total_duration_ms": 2601496,
+        "total_api_duration_ms": 1015813,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:11:51.510817",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.7100129,
+        "total_duration_ms": 2601763,
+        "total_api_duration_ms": 1015813,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:12:01.249967",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.872660900000001,
+        "total_duration_ms": 2611500,
+        "total_api_duration_ms": 1025501,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:12:01.346184",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.872660900000001,
+        "total_duration_ms": 2611598,
+        "total_api_duration_ms": 1025501,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:12:57.833874",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 10.872849700000002,
+        "total_duration_ms": 2668012,
+        "total_api_duration_ms": 1026794,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:13:08.110783",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.054289700000002,
+        "total_duration_ms": 2678362,
+        "total_api_duration_ms": 1041356,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:13:08.165920",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.054289700000002,
+        "total_duration_ms": 2678419,
+        "total_api_duration_ms": 1041356,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:00.492243",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.287242100000002,
+        "total_duration_ms": 2730721,
+        "total_api_duration_ms": 1081797,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:00.785637",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.287242100000002,
+        "total_duration_ms": 2731023,
+        "total_api_duration_ms": 1081797,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:00.853242",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.287242100000002,
+        "total_duration_ms": 2731105,
+        "total_api_duration_ms": 1081797,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:01.196436",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.287242100000002,
+        "total_duration_ms": 2731445,
+        "total_api_duration_ms": 1081797,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:01.492224",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.287242100000002,
+        "total_duration_ms": 2731746,
+        "total_api_duration_ms": 1081797,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:01.553284",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.287242100000002,
+        "total_duration_ms": 2731805,
+        "total_api_duration_ms": 1081797,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:14.099340",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.287424500000002,
+        "total_duration_ms": 2744340,
+        "total_api_duration_ms": 1083100,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:23.654287",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.287424500000002,
+        "total_duration_ms": 2753894,
+        "total_api_duration_ms": 1083100,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:31.497255",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.287424500000002,
+        "total_duration_ms": 2761747,
+        "total_api_duration_ms": 1083100,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:40.224016",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.543938000000002,
+        "total_duration_ms": 2770476,
+        "total_api_duration_ms": 1113580,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:14:40.420079",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 11.543938000000002,
+        "total_duration_ms": 2770666,
+        "total_api_duration_ms": 1113580,
+        "total_lines_added": 2842,
+        "total_lines_removed": 3
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:20:49.393249",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215397049999996,
+        "total_duration_ms": 3139588,
+        "total_api_duration_ms": 2100568,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:20:49.646244",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215397049999996,
+        "total_duration_ms": 3139890,
+        "total_api_duration_ms": 2100568,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:20:49.751270",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215397049999996,
+        "total_duration_ms": 3140003,
+        "total_api_duration_ms": 2100568,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:20:49.883425",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215397049999996,
+        "total_duration_ms": 3140130,
+        "total_api_duration_ms": 2100568,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:20:50.191059",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215397049999996,
+        "total_duration_ms": 3140432,
+        "total_api_duration_ms": 2100568,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:20:50.252266",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215397049999996,
+        "total_duration_ms": 3140501,
+        "total_api_duration_ms": 2100568,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:20:50.332710",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215397049999996,
+        "total_duration_ms": 3140582,
+        "total_api_duration_ms": 2100568,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:21:00.815599",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215553849999996,
+        "total_duration_ms": 3151019,
+        "total_api_duration_ms": 2102024,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:21:09.784436",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215553849999996,
+        "total_duration_ms": 3160025,
+        "total_api_duration_ms": 2102024,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:21:20.416659",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 14.215553849999996,
+        "total_duration_ms": 3170644,
+        "total_api_duration_ms": 2102024,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:21:31.088928",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 16.101241349999995,
+        "total_duration_ms": 3181340,
+        "total_api_duration_ms": 2136687,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:21:31.248863",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 16.101241349999995,
+        "total_duration_ms": 3181489,
+        "total_api_duration_ms": 2136687,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:21:31.334279",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 16.101241349999995,
+        "total_duration_ms": 3181574,
+        "total_api_duration_ms": 2136687,
+        "total_lines_added": 6216,
+        "total_lines_removed": 69
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:27:45.011995",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.08451035,
+        "total_duration_ms": 3555261,
+        "total_api_duration_ms": 2840682,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:27:45.115018",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.08451035,
+        "total_duration_ms": 3555369,
+        "total_api_duration_ms": 2840682,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:27:45.234951",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.08451035,
+        "total_duration_ms": 3555488,
+        "total_api_duration_ms": 2840682,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:29:35.185255",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.08451035,
+        "total_duration_ms": 3665407,
+        "total_api_duration_ms": 2840682,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:29:36.395303",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.08451035,
+        "total_duration_ms": 3666642,
+        "total_api_duration_ms": 2840682,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:29:46.379617",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.08468795,
+        "total_duration_ms": 3676620,
+        "total_api_duration_ms": 2841989,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:29:48.934441",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.4627457,
+        "total_duration_ms": 3679185,
+        "total_api_duration_ms": 2849692,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:29:49.209856",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.4627457,
+        "total_duration_ms": 3679451,
+        "total_api_duration_ms": 2849692,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:29:52.402254",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.49526975,
+        "total_duration_ms": 3682651,
+        "total_api_duration_ms": 2852884,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:29:53.412130",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.49526975,
+        "total_duration_ms": 3683650,
+        "total_api_duration_ms": 2852884,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:29:58.224894",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.5286129,
+        "total_duration_ms": 3688475,
+        "total_api_duration_ms": 2858519,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:29:59.166788",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.5286129,
+        "total_duration_ms": 3689413,
+        "total_api_duration_ms": 2858519,
+        "total_lines_added": 6372,
+        "total_lines_removed": 162
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:02.980427",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.562347799999998,
+        "total_duration_ms": 3693218,
+        "total_api_duration_ms": 2864106,
+        "total_lines_added": 6373,
+        "total_lines_removed": 163
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:03.909094",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.562347799999998,
+        "total_duration_ms": 3694155,
+        "total_api_duration_ms": 2864106,
+        "total_lines_added": 6373,
+        "total_lines_removed": 163
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:07.309426",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.59556455,
+        "total_duration_ms": 3697553,
+        "total_api_duration_ms": 2867218,
+        "total_lines_added": 6374,
+        "total_lines_removed": 164
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:08.207963",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.59556455,
+        "total_duration_ms": 3698458,
+        "total_api_duration_ms": 2867218,
+        "total_lines_added": 6374,
+        "total_lines_removed": 164
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:11.946539",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.6288575,
+        "total_duration_ms": 3702185,
+        "total_api_duration_ms": 2870707,
+        "total_lines_added": 6375,
+        "total_lines_removed": 165
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:12.840472",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.6288575,
+        "total_duration_ms": 3703092,
+        "total_api_duration_ms": 2870707,
+        "total_lines_added": 6375,
+        "total_lines_removed": 165
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:16.945790",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.66244355,
+        "total_duration_ms": 3707181,
+        "total_api_duration_ms": 2874512,
+        "total_lines_added": 6375,
+        "total_lines_removed": 165
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:17.993878",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.66244355,
+        "total_duration_ms": 3708242,
+        "total_api_duration_ms": 2874512,
+        "total_lines_added": 6375,
+        "total_lines_removed": 165
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:55.642164",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.84298955,
+        "total_duration_ms": 3745766,
+        "total_api_duration_ms": 2902593,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:55.895073",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.84298955,
+        "total_duration_ms": 3746070,
+        "total_api_duration_ms": 2902593,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:30:56.163475",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.84298955,
+        "total_duration_ms": 3746349,
+        "total_api_duration_ms": 2902593,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:31:28.554846",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.8826057,
+        "total_duration_ms": 3778803,
+        "total_api_duration_ms": 2919113,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:31:28.628956",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.8826057,
+        "total_duration_ms": 3778882,
+        "total_api_duration_ms": 2919113,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:31:28.754193",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.8826057,
+        "total_duration_ms": 3779007,
+        "total_api_duration_ms": 2919113,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:31:43.150382",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-sonnet-4-20250514",
+        "display_name": "Sonnet 4"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.8826057,
+        "total_duration_ms": 3793403,
+        "total_api_duration_ms": 2919113,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Sonnet 4]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:31:44.399877",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.8826057,
+        "total_duration_ms": 3794641,
+        "total_api_duration_ms": 2919113,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:32:09.027364",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.882806499999997,
+        "total_duration_ms": 3819256,
+        "total_api_duration_ms": 2920423,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:32:22.064663",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 21.882806499999997,
+        "total_duration_ms": 3832299,
+        "total_api_duration_ms": 2920423,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:32:28.799439",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0,
+        "total_duration_ms": 9497,
+        "total_api_duration_ms": 0,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:32:31.313588",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 23.64924025,
+        "total_duration_ms": 3841564,
+        "total_api_duration_ms": 2947616,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:32:31.432919",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 23.64924025,
+        "total_duration_ms": 3841687,
+        "total_api_duration_ms": 2947616,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:32:31.474922",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 23.64924025,
+        "total_duration_ms": 3841727,
+        "total_api_duration_ms": 2947616,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:32:31.545008",
+    "input_data": {
+      "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-opus-4-1-20250805",
+        "display_name": "Opus 4.1"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 23.64924025,
+        "total_duration_ms": 3841796,
+        "total_api_duration_ms": 2947616,
+        "total_lines_added": 6393,
+        "total_lines_removed": 168
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Opus 4.1]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:22.300855",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.00021920000000000002,
+        "total_duration_ms": 62988,
+        "total_api_duration_ms": 1163,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:23.142434",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.0187364,
+        "total_duration_ms": 63850,
+        "total_api_duration_ms": 5778,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:23.218485",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.0187364,
+        "total_duration_ms": 63926,
+        "total_api_duration_ms": 5778,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:29.315962",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.0193244,
+        "total_duration_ms": 69991,
+        "total_api_duration_ms": 6414,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:29.601243",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.0193244,
+        "total_duration_ms": 70310,
+        "total_api_duration_ms": 6414,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:29.715408",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.0193244,
+        "total_duration_ms": 70423,
+        "total_api_duration_ms": 6414,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:31.143045",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.0193244,
+        "total_duration_ms": 71836,
+        "total_api_duration_ms": 6414,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:31.661109",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.021287,
+        "total_duration_ms": 72342,
+        "total_api_duration_ms": 8337,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:31.728848",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.021287,
+        "total_duration_ms": 72430,
+        "total_api_duration_ms": 8337,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:31.889847",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.021287,
+        "total_duration_ms": 72594,
+        "total_api_duration_ms": 8337,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:35.186970",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.021287,
+        "total_duration_ms": 75890,
+        "total_api_duration_ms": 8337,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:36.086628",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.03431708,
+        "total_duration_ms": 76791,
+        "total_api_duration_ms": 12357,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  },
+  {
+    "timestamp": "2025-08-24T16:33:36.164903",
+    "input_data": {
+      "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+      "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+      "cwd": "/Users/dug/linear-agent",
+      "model": {
+        "id": "claude-3-5-haiku-20241022",
+        "display_name": "Haiku 3.5"
+      },
+      "workspace": {
+        "current_dir": "/Users/dug/linear-agent",
+        "project_dir": "/Users/dug/linear-agent"
+      },
+      "version": "1.0.89",
+      "output_style": {
+        "name": "default"
+      },
+      "cost": {
+        "total_cost_usd": 0.03431708,
+        "total_duration_ms": 76873,
+        "total_api_duration_ms": 12357,
+        "total_lines_added": 0,
+        "total_lines_removed": 0
+      },
+      "exceeds_200k_tokens": false
+    },
+    "status_line_output": "\u001b[36m[Haiku 3.5]\u001b[0m | \u001b[34m\ud83d\udcc1 linear-agent\u001b[0m | \u001b[90mv1.0.89\u001b[0m"
+  }
+]

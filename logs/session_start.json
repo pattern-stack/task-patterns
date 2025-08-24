@@ -1,0 +1,93 @@
+[
+  {
+    "session_id": "9cc5a614-136d-4b11-9d63-e26b0cf339fe",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/9cc5a614-136d-4b11-9d63-e26b0cf339fe.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "startup"
+  },
+  {
+    "session_id": "dc541c38-d129-49f2-bd5b-1bf422c1dca7",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/dc541c38-d129-49f2-bd5b-1bf422c1dca7.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "resume"
+  },
+  {
+    "session_id": "02cbc04d-79fb-4ba5-98e2-bad8721f47ed",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/02cbc04d-79fb-4ba5-98e2-bad8721f47ed.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "startup"
+  },
+  {
+    "session_id": "5513b489-9744-4fed-a0e0-164c4a4ca999",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/5513b489-9744-4fed-a0e0-164c4a4ca999.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "resume"
+  },
+  {
+    "session_id": "27fc89f5-4265-4c8f-9ca9-bcecca50b6e6",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/27fc89f5-4265-4c8f-9ca9-bcecca50b6e6.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "startup"
+  },
+  {
+    "session_id": "72a456f1-8ca8-45a4-9a8f-9b33f9a33bd8",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/72a456f1-8ca8-45a4-9a8f-9b33f9a33bd8.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "startup"
+  },
+  {
+    "session_id": "57d460d9-8158-47b2-88a0-96ee114b9686",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/57d460d9-8158-47b2-88a0-96ee114b9686.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "startup"
+  },
+  {
+    "session_id": "998db3cd-d3a7-4c3d-940b-c5b260281b5f",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/998db3cd-d3a7-4c3d-940b-c5b260281b5f.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "startup"
+  },
+  {
+    "session_id": "263940d8-4431-44ba-9f77-4eb54b5f81f0",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/263940d8-4431-44ba-9f77-4eb54b5f81f0.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "resume"
+  },
+  {
+    "session_id": "7d55d1c4-4ddd-49f5-a546-212f35be2b43",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/7d55d1c4-4ddd-49f5-a546-212f35be2b43.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "resume"
+  },
+  {
+    "session_id": "a954469f-d557-4eda-894c-c4c55f62adf3",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/a954469f-d557-4eda-894c-c4c55f62adf3.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "resume"
+  },
+  {
+    "session_id": "28363e95-04b6-4ff0-94de-c3c0e5e5326b",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/28363e95-04b6-4ff0-94de-c3c0e5e5326b.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "resume"
+  },
+  {
+    "session_id": "3619b4ac-c459-4b99-8678-1b3ad418144b",
+    "transcript_path": "/Users/dug/.claude/projects/-Users-dug-linear-agent/3619b4ac-c459-4b99-8678-1b3ad418144b.jsonl",
+    "cwd": "/Users/dug/linear-agent",
+    "hook_event_name": "SessionStart",
+    "source": "startup"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "session_id": "998db3cd-d3a7-4c3d-940b-c5b260281b5f",
+  "prompts": [
+    "Review the project and provide me a summary of current state - i believe i'ts partially implemented. We dont have any actual design docs - we;re building from a single intiial prompt fed with linear research that we continued to iterate on",
+    "Help me refine the plan - there are a few things we can cut for now. I dont need wprint planning yet.  Do we want graphQL? I thought the TS interface worked but if we go graphQL i may wanna go python instead. \\\n\\\nLets frame up remaining work into MVPs"
+  ],
+  "agent_name": "Prism"
+}
