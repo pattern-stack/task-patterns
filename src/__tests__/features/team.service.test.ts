@@ -315,7 +315,7 @@ describe('TeamService', () => {
 
         const result = await service.updateSettings(teamId, settingsUpdate);
 
-        expect(result).toEqual(payload);
+        expect(result).toEqual(updatedTeam);
         expect(mockClient.updateTeam).toHaveBeenCalledWith(teamId, settingsUpdate);
       });
 

@@ -144,7 +144,7 @@ describe('IssueEntity', () => {
 
       const result = await entity.getWithRelations('issue-123');
 
-      expect(result?.project).toBeNull();
+      expect(result?.project).toBeUndefined();
     });
   });
 
