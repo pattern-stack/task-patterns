@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { TeamService } from '@features/team/service';
 import { logger } from '@atoms/shared/logger';
+import type { WorkflowState, IssueLabel } from '@linear/sdk';
 
 export function teamCommands(program: Command) {
   const team = program.command('team').description('Manage Linear teams');
@@ -174,7 +175,7 @@ export function teamCommands(program: Command) {
 
         if (nodes.length > 0) {
           console.log('\nTeam Labels:');
-          const grouped = new Map<string, unknown[]>();
+          const grouped = new Map<string, IssueLabel[]>();
 
           for (const label of nodes) {
             const parentLabel = label.parent ? await label.parent : null;
@@ -215,7 +216,7 @@ export function teamCommands(program: Command) {
         if (nodes.length > 0) {
           console.log('\nWorkflow States:');
 
-          const byType = new Map<string, unknown[]>();
+          const byType = new Map<string, WorkflowState[]>();
           for (const state of nodes) {
             const type = state.type || 'other';
             if (!byType.has(type)) {
