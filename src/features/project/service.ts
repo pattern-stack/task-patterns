@@ -52,7 +52,9 @@ export class ProjectService {
         'name' in error &&
         (error as { name: string }).name === 'ZodError'
       ) {
-        throw new ValidationError(`Validation failed: ${(error as { message: string }).message}`);
+        throw new ValidationError(
+          `Validation failed: ${(error as { name: string; message: string }).message}`,
+        );
       }
       logger.error('Failed to create project', error);
       throw error;
@@ -113,7 +115,9 @@ export class ProjectService {
         'name' in error &&
         (error as { name: string }).name === 'ZodError'
       ) {
-        throw new ValidationError(`Validation failed: ${(error as { message: string }).message}`);
+        throw new ValidationError(
+          `Validation failed: ${(error as { name: string; message: string }).message}`,
+        );
       }
       logger.error(`Failed to update project ${id}`, error);
       throw error;
