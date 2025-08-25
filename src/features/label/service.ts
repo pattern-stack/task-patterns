@@ -264,7 +264,7 @@ export class LabelService {
         error &&
         typeof error === 'object' &&
         'message' in error &&
-        (error as any).message === 'Not found'
+        (error as { message: string }).message === 'Not found'
       ) {
         throw new NotFoundError('Issue', issueId);
       }
@@ -306,7 +306,7 @@ export class LabelService {
         error &&
         typeof error === 'object' &&
         'message' in error &&
-        (error as any).message === 'Not found'
+        (error as { message: string }).message === 'Not found'
       ) {
         throw new NotFoundError('Issue', issueId);
       }

@@ -93,7 +93,7 @@ export class WorkflowStateService {
         error &&
         typeof error === 'object' &&
         'name' in error &&
-        (error as any).name === 'ZodError'
+        (error as { name: string }).name === 'ZodError'
       ) {
         throw new ValidationError(
           `Invalid filter: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -166,7 +166,7 @@ export class WorkflowStateService {
         error &&
         typeof error === 'object' &&
         'name' in error &&
-        (error as any).name === 'ZodError'
+        (error as { name: string }).name === 'ZodError'
       ) {
         throw new ValidationError(
           `Validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -232,7 +232,7 @@ export class WorkflowStateService {
         error &&
         typeof error === 'object' &&
         'name' in error &&
-        (error as any).name === 'ZodError'
+        (error as { name: string }).name === 'ZodError'
       ) {
         throw new ValidationError(`Invalid workflow state type: ${type}`);
       }
@@ -289,7 +289,7 @@ export class WorkflowStateService {
         error &&
         typeof error === 'object' &&
         'name' in error &&
-        (error as any).name === 'ZodError'
+        (error as { name: string }).name === 'ZodError'
       ) {
         throw new ValidationError(`Invalid category: ${category}`);
       }

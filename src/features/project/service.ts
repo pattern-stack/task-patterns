@@ -50,9 +50,9 @@ export class ProjectService {
         error &&
         typeof error === 'object' &&
         'name' in error &&
-        (error as any).name === 'ZodError'
+        (error as { name: string }).name === 'ZodError'
       ) {
-        throw new ValidationError(`Validation failed: ${(error as any).message}`);
+        throw new ValidationError(`Validation failed: ${(error as { message: string }).message}`);
       }
       logger.error('Failed to create project', error);
       throw error;
@@ -111,9 +111,9 @@ export class ProjectService {
         error &&
         typeof error === 'object' &&
         'name' in error &&
-        (error as any).name === 'ZodError'
+        (error as { name: string }).name === 'ZodError'
       ) {
-        throw new ValidationError(`Validation failed: ${(error as any).message}`);
+        throw new ValidationError(`Validation failed: ${(error as { message: string }).message}`);
       }
       logger.error(`Failed to update project ${id}`, error);
       throw error;
