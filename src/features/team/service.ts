@@ -56,6 +56,34 @@ export class TeamService {
     }
   }
 
+  /**
+   * Resolve a team identifier (key or UUID) to a team ID
+   * This helper method standardizes team resolution across the app
+   * @param keyOrId Team key (e.g., "DUG") or UUID
+   * @returns Team UUID or null if not found
+   */
+  async resolveTeamId(keyOrId: string): Promise<string | null> {
+    try {
+      // First try as a team key (most common case)
+      const teamByKey = await this.getByKey(keyOrId.toUpperCase());
+      if (teamByKey) {
+        return teamByKey.id;
+      }
+
+      // Then try as a UUID
+      const teamById = await this.get(keyOrId);
+      if (teamById) {
+        return teamById.id;
+      }
+
+      logger.debug(`Could not resolve team identifier: ${keyOrId}`);
+      return null;
+    } catch (error: unknown) {
+      logger.debug(`Failed to resolve team identifier: ${keyOrId}`, error);
+      return null;
+    }
+  }
+
   async list(pagination?: Pagination): Promise<TeamConnection> {
     try {
       logger.debug('Listing teams', pagination);
