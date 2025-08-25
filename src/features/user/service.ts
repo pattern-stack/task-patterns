@@ -363,7 +363,7 @@ export class UserService {
         throw new NotFoundError('User', userId);
       }
 
-      const settings = await (user as { settings(): Promise<unknown> }).settings();
+      const settings = await (user as unknown as { settings(): Promise<unknown> }).settings();
       return settings;
     } catch (error) {
       logger.error(`Failed to get settings for user ${userId}`, error);
