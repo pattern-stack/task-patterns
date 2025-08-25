@@ -9,6 +9,9 @@ import { QuickCreateOptions } from '@molecules/entities/types/issue-manager.type
 export function issueManagerCommands(program: Command) {
   const tool = new IssueManagerTool();
 
+  // Create bulk operations command group
+  const bulk = program.command('bulk').description('Bulk operations on issues');
+
   // Quick create command
   program
     .command('create <title>')
@@ -246,6 +249,120 @@ export function issueManagerCommands(program: Command) {
         }
       } catch (error: unknown) {
         spinner.fail('Failed to resolve identifier');
+        logger.error('Error', error);
+      }
+    });
+
+  // Bulk operations
+  bulk
+    .command('move <identifiers...>')
+    .description('Move multiple issues to a new status')
+    .requiredOption('--to <status>', 'Target status name')
+    .option('--comment <comment>', 'Add comment to all moved issues')
+    .action(async (identifiers, options) => {
+      const spinner = ora(`Moving ${identifiers.length} issues to ${options.to}...`).start();
+      try {
+        const result = await tool.moveToStatus(identifiers, options.to, options.comment);
+        
+        if (result.successCount > 0) {
+          spinner.succeed(`Moved ${result.successCount}/${result.totalCount} issues to ${options.to}`);
+        } else {
+          spinner.fail(`Failed to move issues`);
+        }
+
+        if (result.failed && result.failed.length > 0) {
+          console.log(chalk.red('\nFailed issues:'));
+          for (const failure of result.failed) {
+            console.log(`  ✗ ${failure.identifier}: ${failure.error}`);
+          }
+        }
+      } catch (error: unknown) {
+        spinner.fail('Bulk move failed');
+        logger.error('Error', error);
+      }
+    });
+
+  bulk
+    .command('assign <identifiers...>')
+    .description('Assign multiple issues to a user')
+    .requiredOption('--to <email>', 'Assignee email or username')
+    .action(async (identifiers, options) => {
+      const spinner = ora(`Assigning ${identifiers.length} issues to ${options.to}...`).start();
+      try {
+        const result = await tool.bulkAssign(identifiers, options.to);
+        
+        if (result.successCount > 0) {
+          spinner.succeed(`Assigned ${result.successCount}/${result.totalCount} issues to ${options.to}`);
+        } else {
+          spinner.fail(`Failed to assign issues`);
+        }
+
+        if (result.failed && result.failed.length > 0) {
+          console.log(chalk.red('\nFailed issues:'));
+          for (const failure of result.failed) {
+            console.log(`  ✗ ${failure.identifier}: ${failure.error}`);
+          }
+        }
+      } catch (error: unknown) {
+        spinner.fail('Bulk assign failed');
+        logger.error('Error', error);
+      }
+    });
+
+  bulk
+    .command('close <identifiers...>')
+    .description('Close multiple issues')
+    .option('--comment <comment>', 'Add comment to all closed issues')
+    .action(async (identifiers, options) => {
+      const spinner = ora(`Closing ${identifiers.length} issues...`).start();
+      try {
+        // Use moveToStatus with "Done" or "Closed" status
+        const result = await tool.moveToStatus(identifiers, 'Done', options.comment);
+        
+        if (result.successCount > 0) {
+          spinner.succeed(`Closed ${result.successCount}/${result.totalCount} issues`);
+        } else {
+          spinner.fail(`Failed to close issues`);
+        }
+
+        if (result.failed && result.failed.length > 0) {
+          console.log(chalk.red('\nFailed issues:'));
+          for (const failure of result.failed) {
+            console.log(`  ✗ ${failure.identifier}: ${failure.error}`);
+          }
+        }
+      } catch (error: unknown) {
+        spinner.fail('Bulk close failed');
+        logger.error('Error', error);
+      }
+    });
+
+  bulk
+    .command('priority <identifiers...>')
+    .description('Change priority of multiple issues')
+    .requiredOption('--level <level>', 'Priority level (urgent, high, medium, low, none)')
+    .action(async (identifiers, options) => {
+      const spinner = ora(`Changing priority of ${identifiers.length} issues to ${options.level}...`).start();
+      try {
+        const priorityMap: Record<string, number> = {
+          urgent: 1,
+          high: 2,
+          medium: 3,
+          low: 4,
+          none: 0,
+        };
+
+        const priority = priorityMap[options.level.toLowerCase()];
+        if (priority === undefined) {
+          throw new Error('Invalid priority level. Use: urgent, high, medium, low, or none');
+        }
+
+        // This would need a new method in IssueManagerTool
+        // For now, we'll log that it's not implemented
+        spinner.warn('Bulk priority change not yet implemented in IssueManagerTool');
+        console.log(chalk.yellow('This feature requires adding a bulkUpdatePriority method to IssueManagerTool'));
+      } catch (error: unknown) {
+        spinner.fail('Bulk priority change failed');
         logger.error('Error', error);
       }
     });
