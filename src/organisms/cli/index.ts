@@ -6,6 +6,9 @@ import { issueCommands } from './commands/issue.commands';
 import { issueManagerCommands } from './commands/issue-manager.commands';
 import { teamCommands } from './commands/team.commands';
 import { projectCommands } from './commands/project.commands';
+import { userCommands } from './commands/user.commands';
+import { labelCommands } from './commands/label.commands';
+import { cycleCommands } from './commands/cycle.commands';
 import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 
@@ -37,10 +40,13 @@ program
 // Enhanced issue management commands (primary tool)
 issueManagerCommands(program);
 
-// Original commands (kept for backward compatibility)
+// Core commands
 issueCommands(program);
 teamCommands(program);
 projectCommands(program);
+userCommands(program);
+labelCommands(program);
+cycleCommands(program);
 
 program.parseAsync(process.argv).catch((error) => {
   logger.error('CLI error', error);
