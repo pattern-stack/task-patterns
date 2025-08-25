@@ -436,4 +436,51 @@ export class WorkflowStateService {
       throw error;
     }
   }
+
+  /**
+   * Get workflow state by name (case-insensitive)
+   */
+  async getByName(name: string, teamId?: string): Promise<WorkflowState | null> {
+    try {
+      logger.debug(`Getting workflow state by name: ${name}`);
+
+      const filter: LinearWorkflowStateFilter = {
+        name: { eq: name },
+      };
+
+      if (teamId) {
+        filter.team = { id: { eq: teamId } };
+      }
+
+      const states = await this.client.workflowStates({
+        filter,
+        first: 1,
+      });
+
+      const nodes = await states.nodes;
+      if (nodes.length === 0) {
+        // Try case-insensitive search
+        const allStates = await this.client.workflowStates({
+          filter: teamId ? { team: { id: { eq: teamId } } } : undefined,
+          first: 100,
+        });
+
+        const allNodes = await allStates.nodes;
+        const found = allNodes.find((s) => s.name.toLowerCase() === name.toLowerCase());
+        return found || null;
+      }
+
+      return nodes[0];
+    } catch (error) {
+      logger.debug(`Workflow state not found by name: ${name}`);
+      return null;
+    }
+  }
+
+  /**
+   * Get workflow state by team and name
+   */
+  async getByTeamAndName(teamId: string, name: string): Promise<WorkflowState | null> {
+    return this.getByName(name, teamId);
+  }
 }

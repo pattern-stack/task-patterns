@@ -304,4 +304,78 @@ export class IssueService {
       throw error;
     }
   }
+
+  async getByIdentifiers(identifiers: string[]): Promise<Map<string, Issue | null>> {
+    const results = new Map<string, Issue | null>();
+
+    for (const identifier of identifiers) {
+      try {
+        const issue = await this.getByIdentifier(identifier);
+        results.set(identifier, issue);
+      } catch (error) {
+        logger.debug(`Failed to fetch issue: ${identifier}`);
+        results.set(identifier, null);
+      }
+    }
+
+    return results;
+  }
+
+  async bulkUpdateStatus(
+    issueIds: string[],
+    stateId: string,
+  ): Promise<BatchOperationResult<Issue>> {
+    const results: BatchOperationResult<Issue> = {
+      success: false,
+      succeeded: [],
+      failed: [],
+      totalCount: issueIds.length,
+      successCount: 0,
+      failureCount: 0,
+    };
+
+    for (const issueId of issueIds) {
+      try {
+        const updated = await this.update(issueId, { stateId });
+        results.succeeded.push(updated);
+        results.successCount++;
+      } catch (error: unknown) {
+        results.failed.push({
+          item: issueId,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
+        results.failureCount++;
+      }
+    }
+
+    results.success = results.failureCount === 0;
+    logger.info(`Bulk status update: ${results.successCount}/${results.totalCount} succeeded`);
+
+    return results;
+  }
+
+  async searchNatural(query: string, teamId?: string): Promise<IssueConnection> {
+    try {
+      logger.debug(`Natural language search: ${query}`);
+
+      // Build filter based on natural language query
+      const linearFilter: LinearIssueFilter = {
+        searchableContent: { contains: query },
+      };
+
+      if (teamId) {
+        linearFilter.team = { id: { eq: teamId } };
+      }
+
+      const issues = await this.client.issues({
+        filter: linearFilter,
+        first: 50,
+      });
+
+      return issues;
+    } catch (error) {
+      logger.error('Failed to search issues', error);
+      throw error;
+    }
+  }
 }
