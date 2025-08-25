@@ -10,7 +10,7 @@ import {
   MentionParseResult,
   Pagination,
 } from './schemas';
-import type { Comment } from '@linear/sdk';
+import type { Comment, CommentConnection } from '@linear/sdk';
 
 export class CommentService {
   /**
@@ -147,7 +147,7 @@ export class CommentService {
   /**
    * List comments for an issue
    */
-  async listByIssue(issueId: string, pagination?: Partial<Pagination>): Promise<Comment[]> {
+  async listByIssue(issueId: string, pagination?: Partial<Pagination>): Promise<CommentConnection> {
     const client = linearClient.getClient();
 
     try {
@@ -169,7 +169,7 @@ export class CommentService {
   /**
    * List comments by a user
    */
-  async listByUser(userId: string, pagination?: Partial<Pagination>): Promise<Comment[]> {
+  async listByUser(userId: string, pagination?: Partial<Pagination>): Promise<CommentConnection> {
     const client = linearClient.getClient();
 
     try {
@@ -219,7 +219,7 @@ export class CommentService {
       }
 
       logger.info('Reaction created successfully', { commentId, emoji });
-      return response.reaction || { id: 'reaction-123', emoji };
+      return { success: true, reaction: response.reaction || { id: 'reaction-123', emoji } };
     } catch (error) {
       if (error instanceof ValidationError) {
         throw error;
@@ -254,7 +254,10 @@ export class CommentService {
   /**
    * Get replies to a comment
    */
-  async getReplies(commentId: string, pagination?: Partial<Pagination>): Promise<Comment[]> {
+  async getReplies(
+    commentId: string,
+    pagination?: Partial<Pagination>,
+  ): Promise<CommentConnection> {
     const client = linearClient.getClient();
 
     try {

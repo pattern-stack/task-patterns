@@ -373,7 +373,8 @@ describe('CommentService', () => {
         commentId: 'comment-123',
         emoji: '👍',
       });
-      expect(result.emoji).toBe('👍');
+      expect(result.success).toBe(true);
+      expect((result.reaction as any).emoji).toBe('👍');
     });
 
     it('should support all valid emoji reactions', async () => {
@@ -391,7 +392,8 @@ describe('CommentService', () => {
           .mockResolvedValue(createMockPayload(true, mockReaction));
 
         const result = await service.createReaction('comment-123', emoji);
-        expect(result.emoji).toBe(emoji);
+        expect(result.success).toBe(true);
+        expect((result.reaction as any).emoji).toBe(emoji);
       }
     });
 
