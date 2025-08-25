@@ -46,8 +46,13 @@ export class ProjectService {
 
       return project;
     } catch (error: unknown) {
-      if (error?.name === 'ZodError') {
-        throw new ValidationError(`Validation failed: ${error.message}`);
+      if (
+        error &&
+        typeof error === 'object' &&
+        'name' in error &&
+        (error as any).name === 'ZodError'
+      ) {
+        throw new ValidationError(`Validation failed: ${(error as any).message}`);
       }
       logger.error('Failed to create project', error);
       throw error;
@@ -102,8 +107,13 @@ export class ProjectService {
       if (error instanceof NotFoundError || error instanceof ValidationError) {
         throw error;
       }
-      if (error?.name === 'ZodError') {
-        throw new ValidationError(`Validation failed: ${error.message}`);
+      if (
+        error &&
+        typeof error === 'object' &&
+        'name' in error &&
+        (error as any).name === 'ZodError'
+      ) {
+        throw new ValidationError(`Validation failed: ${(error as any).message}`);
       }
       logger.error(`Failed to update project ${id}`, error);
       throw error;

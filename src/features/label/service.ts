@@ -61,7 +61,7 @@ export class LabelService {
       }
       // Handle Zod validation errors
       if (error && typeof error === 'object' && 'name' in error && error.name === 'ZodError') {
-        const zodError = error as { message: string };
+        const zodError = error as unknown as { message: string };
         throw new ValidationError(`Validation failed: ${zodError.message}`);
       }
       logger.error('Failed to create label', error);
@@ -143,7 +143,7 @@ export class LabelService {
       }
       // Handle Zod validation errors
       if (error && typeof error === 'object' && 'name' in error && error.name === 'ZodError') {
-        const zodError = error as { message: string };
+        const zodError = error as unknown as { message: string };
         throw new ValidationError(`Validation failed: ${zodError.message}`);
       }
       logger.error(`Failed to update label ${id}`, error);
@@ -260,7 +260,12 @@ export class LabelService {
         throw error;
       }
       // Handle issue not found errors from Linear client
-      if (error?.message === 'Not found') {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        (error as any).message === 'Not found'
+      ) {
         throw new NotFoundError('Issue', issueId);
       }
       logger.error(`Failed to add label to issue ${issueId}`, error);
@@ -297,7 +302,12 @@ export class LabelService {
         throw error;
       }
       // Handle issue not found errors from Linear client
-      if (error?.message === 'Not found') {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        (error as any).message === 'Not found'
+      ) {
         throw new NotFoundError('Issue', issueId);
       }
       logger.error(`Failed to remove label from issue ${issueId}`, error);
@@ -366,7 +376,7 @@ export class LabelService {
     } catch (error: unknown) {
       // Handle Zod validation errors
       if (error && typeof error === 'object' && 'name' in error && error.name === 'ZodError') {
-        const zodError = error as { message: string };
+        const zodError = error as unknown as { message: string };
         throw new ValidationError(`Validation failed: ${zodError.message}`);
       }
       throw error;

@@ -89,7 +89,12 @@ export class WorkflowStateService {
 
       return states;
     } catch (error: unknown) {
-      if (error?.name === 'ZodError') {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'name' in error &&
+        (error as any).name === 'ZodError'
+      ) {
         throw new ValidationError(
           `Invalid filter: ${error instanceof Error ? error.message : 'Unknown error'}`,
         );
@@ -157,7 +162,12 @@ export class WorkflowStateService {
       if (error instanceof NotFoundError || error instanceof ValidationError) {
         throw error;
       }
-      if (error?.name === 'ZodError') {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'name' in error &&
+        (error as any).name === 'ZodError'
+      ) {
         throw new ValidationError(
           `Validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         );
@@ -218,7 +228,12 @@ export class WorkflowStateService {
       const nodes = await states.nodes;
       return nodes;
     } catch (error: unknown) {
-      if (error?.name === 'ZodError') {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'name' in error &&
+        (error as any).name === 'ZodError'
+      ) {
         throw new ValidationError(`Invalid workflow state type: ${type}`);
       }
       logger.error(`Failed to get workflow states by type`, error);
@@ -245,11 +260,12 @@ export class WorkflowStateService {
 
       // Cast to interface to access these properties which exist at runtime
       // but are not typed in the Linear SDK
-      const teamWithStates = team as {
+      const teamWithStates = team as unknown as {
         triageState: Promise<WorkflowState>;
         backlogState: Promise<WorkflowState>;
         untriagedState: Promise<WorkflowState>;
         mergedState: Promise<WorkflowState>;
+        startedState: Promise<WorkflowState>;
       };
 
       switch (category) {
@@ -269,7 +285,12 @@ export class WorkflowStateService {
       if (error instanceof NotFoundError) {
         throw error;
       }
-      if (error?.name === 'ZodError') {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'name' in error &&
+        (error as any).name === 'ZodError'
+      ) {
         throw new ValidationError(`Invalid category: ${category}`);
       }
       logger.error(`Failed to get default state for ${category}`, error);
