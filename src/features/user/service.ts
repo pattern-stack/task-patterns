@@ -52,6 +52,13 @@ export class UserService {
     }
   }
 
+  /**
+   * Alias for getViewer for better naming consistency
+   */
+  async getMe(): Promise<User> {
+    return this.getViewer();
+  }
+
   async getByEmail(email: string): Promise<User | null> {
     try {
       logger.debug(`Fetching user by email: ${email}`);
