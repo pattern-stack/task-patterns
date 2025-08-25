@@ -3,7 +3,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { IssueEntity } from '@molecules/entities/issue.entity';
-import { IssueCreate, IssueUpdate } from '@features/issue/schemas';
+import { IssueCreate, IssueUpdate, IssueFilter } from '@features/issue/schemas';
 import { logger } from '@atoms/shared/logger';
 
 export function issueCommands(program: Command) {
@@ -165,7 +165,9 @@ export function issueCommands(program: Command) {
       try {
         const issueEntity = new IssueEntity();
 
-        const filter: Record<string, unknown> = {};
+        const filter: IssueFilter = {
+          includeArchived: false,
+        };
         if (options.team) {
           filter.teamId = options.team;
         }
