@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import ora from 'ora';
 import { issueCommands } from './commands/issue.commands';
+import { issueManagerCommands } from './commands/issue-manager.commands';
 import { teamCommands } from './commands/team.commands';
 import { projectCommands } from './commands/project.commands';
 import { linearClient } from '@atoms/client/linear-client';
@@ -33,6 +34,10 @@ program
     }
   });
 
+// Enhanced issue management commands (primary tool)
+issueManagerCommands(program);
+
+// Original commands (kept for backward compatibility)
 issueCommands(program);
 teamCommands(program);
 projectCommands(program);
