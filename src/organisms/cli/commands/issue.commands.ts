@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { IssueEntity } from '@molecules/entities/issue.entity';
 import { IssueCreate, IssueUpdate, IssueFilter } from '@features/issue/schemas';
+import { TeamService } from '@features/team/service';
 import { logger } from '@atoms/shared/logger';
 
 export function issueCommands(program: Command) {
@@ -13,7 +14,7 @@ export function issueCommands(program: Command) {
     .command('create')
     .description('Create a new issue')
     .requiredOption('-t, --title <title>', 'Issue title')
-    .requiredOption('--team <teamId>', 'Team ID')
+    .requiredOption('--team <team>', 'Team key or ID')
     .option('-d, --description <description>', 'Issue description')
     .option('-a, --assignee <assigneeId>', 'Assignee ID')
     .option('-p, --priority <priority>', 'Priority (0-4)', (value) => parseInt(value))
@@ -25,10 +26,17 @@ export function issueCommands(program: Command) {
       const spinner = ora('Creating issue...').start();
       try {
         const issueEntity = new IssueEntity();
+        const teamService = new TeamService();
+
+        // Resolve team ID from key or UUID
+        const teamId = await teamService.resolveTeamId(options.team);
+        if (!teamId) {
+          throw new Error(`Team not found: ${options.team}`);
+        }
 
         const data: IssueCreate = {
           title: options.title,
-          teamId: options.team,
+          teamId: teamId,
           description: options.description,
           assigneeId: options.assignee,
           priority: options.priority,
@@ -56,29 +64,34 @@ export function issueCommands(program: Command) {
       try {
         const issueEntity = new IssueEntity();
 
+        // First resolve the issue to get its ID
         let issue;
+        let issueId: string | null = null;
+        
         if (identifier.includes('-')) {
           issue = await issueEntity.getByIdentifier(identifier);
+          issueId = issue?.id || null;
         } else {
-          if (options.withRelations) {
-            const result = await issueEntity.getWithRelations(identifier);
-            if (result) {
-              spinner.succeed(`Found issue: ${chalk.green(result.issue.identifier)}`);
-              const state = result.issue.state ? await result.issue.state : null;
-              console.log('\nIssue Details:');
-              console.log(`  Title: ${result.issue.title}`);
-              console.log(`  State: ${state?.name || 'Unknown'}`);
-              console.log(`  Priority: ${result.issue.priority || 'None'}`);
-              console.log(`  Assignee: ${result.assignee?.name || 'Unassigned'}`);
-              console.log(`  Team: ${result.team?.name || 'Unknown'}`);
-              console.log(`  Project: ${result.project?.name || 'None'}`);
-              console.log(`  Comments: ${result.comments?.length || 0}`);
-              console.log(`  Labels: ${result.labels?.map((l) => l.name).join(', ') || 'None'}`);
-              console.log(`  URL: ${result.issue.url}`);
-              return;
-            }
-          } else {
-            issue = await issueEntity.get(identifier);
+          issueId = identifier;
+          issue = await issueEntity.get(identifier);
+        }
+
+        if (options.withRelations && issueId) {
+          const result = await issueEntity.getWithRelations(issueId);
+          if (result) {
+            spinner.succeed(`Found issue: ${chalk.green(result.issue.identifier)}`);
+            const state = result.issue.state ? await result.issue.state : null;
+            console.log('\nIssue Details:');
+            console.log(`  Title: ${result.issue.title}`);
+            console.log(`  State: ${state?.name || 'Unknown'}`);
+            console.log(`  Priority: ${result.issue.priority || 'None'}`);
+            console.log(`  Assignee: ${result.assignee?.name || 'Unassigned'}`);
+            console.log(`  Team: ${result.team?.name || 'Unknown'}`);
+            console.log(`  Project: ${result.project?.name || 'None'}`);
+            console.log(`  Comments: ${result.comments?.length || 0}`);
+            console.log(`  Labels: ${result.labels?.map((l) => l.name).join(', ') || 'None'}`);
+            console.log(`  URL: ${result.issue.url}`);
+            return;
           }
         }
 
@@ -152,7 +165,7 @@ export function issueCommands(program: Command) {
   issue
     .command('list')
     .description('List issues')
-    .option('--team <teamId>', 'Filter by team ID')
+    .option('--team <team>', 'Filter by team key or ID')
     .option('--assignee <assigneeId>', 'Filter by assignee ID')
     .option('--project <projectId>', 'Filter by project ID')
     .option('--cycle <cycleId>', 'Filter by cycle ID')
@@ -164,12 +177,18 @@ export function issueCommands(program: Command) {
       const spinner = ora('Fetching issues...').start();
       try {
         const issueEntity = new IssueEntity();
+        const teamService = new TeamService();
 
         const filter: IssueFilter = {
           includeArchived: false,
         };
         if (options.team) {
-          filter.teamId = options.team;
+          // Resolve team ID from key or UUID
+          const teamId = await teamService.resolveTeamId(options.team);
+          if (!teamId) {
+            throw new Error(`Team not found: ${options.team}`);
+          }
+          filter.teamId = teamId;
         }
         if (options.assignee) {
           filter.assigneeId = options.assignee;
