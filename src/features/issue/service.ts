@@ -65,22 +65,29 @@ export class IssueService {
     try {
       logger.debug(`Fetching issue by identifier: ${identifier}`);
 
+      // First try direct lookup by identifier (most efficient for TEAM-123 format)
+      try {
+        const issue = await this.client.issue(identifier);
+        if (issue && issue.identifier === identifier) {
+          return issue;
+        }
+      } catch {
+        // Not found by direct lookup, continue
+      }
+
+      // Fallback to search by searching in content
+      // Note: Linear doesn't have direct identifier filter, so we search by content
       const issues = await this.client.issues({
         filter: {
           searchableContent: { contains: identifier },
         },
-        first: 1,
+        first: 5, // Get a few to find exact match
       });
 
       const nodes = await issues.nodes;
-      if (nodes.length === 0) {
-        return null;
-      }
-
-      const issue = nodes.find((i) => i.identifier === identifier);
-      return issue || null;
+      return nodes.length > 0 ? nodes[0] : null;
     } catch (error) {
-      logger.debug(`Issue not found: ${identifier}`);
+      logger.debug(`Issue not found: ${identifier}`, error);
       return null;
     }
   }

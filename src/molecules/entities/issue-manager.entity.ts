@@ -435,17 +435,22 @@ export class IssueManagerEntity {
     try {
       const parsed = IssueIdentifierParser.parse(identifier);
       if (!parsed) {
-        return null;
+        // Try as-is in case it's a valid identifier we didn't parse
+        return await this.issueService.getByIdentifier(identifier);
       }
 
       switch (parsed.type) {
         case 'uuid':
           return await this.issueService.get(parsed.uuid!);
         case 'team-number':
-          return await this.issueService.getByIdentifier(`${parsed.teamKey}-${parsed.number}`);
+          // Use the properly formatted identifier
+          const fullIdentifier = `${parsed.teamKey}-${parsed.number}`;
+          return await this.issueService.getByIdentifier(fullIdentifier);
         case 'number-only':
-          // Try to find by number alone (less reliable)
-          return await this.issueService.getByIdentifier(`${parsed.number}`);
+          // For number-only, we can't reliably resolve without team context
+          // Try common team prefixes or return null
+          logger.warn(`Cannot resolve issue #${parsed.number} without team context`);
+          return null;
         default:
           return null;
       }
