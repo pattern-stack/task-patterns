@@ -31,12 +31,15 @@ export interface IssueWithRelations {
  * 
  * This entity focuses on:
  * - CRUD operations for issues
- * - Managing comments (issues own comments)
- * - Managing labels (through issue service)
- * - Fetching issue relations
+ * - Managing comments (issues own comments - can't exist without an issue)
+ * - Managing sub-issues (parent-child relationships)
+ * - Fetching issue relations for display
  * 
- * For cross-entity operations like validation, assignment, or team resolution,
- * use IssueRelationsWorkflow instead.
+ * Cross-entity operations that belong in IssueRelationsWorkflow:
+ * - Label management (labels are independent entities)
+ * - Team/Project/User assignment and validation
+ * - State transitions with validation
+ * - Any operation requiring validation of external entities
  */
 export class IssueEntity {
   private issueService: IssueService;
@@ -134,8 +137,8 @@ export class IssueEntity {
    */
   async list(filter?: IssueFilter, pagination?: Pagination) {
     const connection = await this.issueService.list(filter, pagination);
-    const nodes = await connection.nodes;
-    const pageInfo = await connection.pageInfo;
+    const nodes = connection.nodes;
+    const pageInfo = connection.pageInfo;
 
     return {
       issues: nodes,
@@ -197,20 +200,23 @@ export class IssueEntity {
   }
 
   // ============================================
-  // Label Management (delegated to IssueService)
+  // Deprecated Label Methods (for backward compatibility)
+  // Use IssueRelationsWorkflow for label operations
   // ============================================
 
   /**
-   * Add labels to an issue
+   * @deprecated Use IssueRelationsWorkflow.addLabels instead
    */
   async addLabels(issueId: string, labelIds: string[]): Promise<LinearIssue> {
+    logger.warn('IssueEntity.addLabels is deprecated. Use IssueRelationsWorkflow.addLabels');
     return await this.issueService.addLabels(issueId, labelIds);
   }
 
   /**
-   * Remove labels from an issue
+   * @deprecated Use IssueRelationsWorkflow.removeLabels instead  
    */
   async removeLabels(issueId: string, labelIds: string[]): Promise<LinearIssue> {
+    logger.warn('IssueEntity.removeLabels is deprecated. Use IssueRelationsWorkflow.removeLabels');
     return await this.issueService.removeLabels(issueId, labelIds);
   }
 

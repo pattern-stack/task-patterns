@@ -294,4 +294,82 @@ export class IssueRelationsWorkflow {
 
     return await this.issueService.update(issueId, { priority });
   }
+
+  /**
+   * Add labels to an issue with validation
+   */
+  async addLabels(issueId: string, labelIds: string[]): Promise<LinearIssue> {
+    logger.info(`Adding labels to issue ${issueId}`);
+    
+    const issue = await this.issueService.get(issueId);
+    if (!issue) {
+      throw new NotFoundError('Issue', issueId);
+    }
+
+    // Validate all labels exist
+    const labelValidations = await Promise.all(
+      labelIds.map(async (labelId) => {
+        const label = await this.labelService.get(labelId);
+        return { labelId, exists: !!label };
+      })
+    );
+    
+    const missingLabels = labelValidations.filter(v => !v.exists);
+    if (missingLabels.length > 0) {
+      throw new NotFoundError('Label(s)', missingLabels.map(l => l.labelId).join(', '));
+    }
+
+    // Get current labels and merge with new ones
+    const currentLabelIds = (await issue.labels()).nodes.map((l) => l.id);
+    const newLabelIds = [...new Set([...currentLabelIds, ...labelIds])];
+    
+    return await this.issueService.update(issueId, { labelIds: newLabelIds });
+  }
+
+  /**
+   * Remove labels from an issue
+   */
+  async removeLabels(issueId: string, labelIds: string[]): Promise<LinearIssue> {
+    logger.info(`Removing labels from issue ${issueId}`);
+    
+    const issue = await this.issueService.get(issueId);
+    if (!issue) {
+      throw new NotFoundError('Issue', issueId);
+    }
+
+    // Get current labels and remove specified ones
+    const currentLabelIds = (await issue.labels()).nodes.map((l) => l.id);
+    const newLabelIds = currentLabelIds.filter((id) => !labelIds.includes(id));
+    
+    return await this.issueService.update(issueId, { labelIds: newLabelIds });
+  }
+
+  /**
+   * Replace all labels on an issue
+   */
+  async setLabels(issueId: string, labelIds: string[]): Promise<LinearIssue> {
+    logger.info(`Setting labels for issue ${issueId}`);
+    
+    const issue = await this.issueService.get(issueId);
+    if (!issue) {
+      throw new NotFoundError('Issue', issueId);
+    }
+
+    // Validate all labels exist
+    if (labelIds.length > 0) {
+      const labelValidations = await Promise.all(
+        labelIds.map(async (labelId) => {
+          const label = await this.labelService.get(labelId);
+          return { labelId, exists: !!label };
+        })
+      );
+      
+      const missingLabels = labelValidations.filter(v => !v.exists);
+      if (missingLabels.length > 0) {
+        throw new NotFoundError('Label(s)', missingLabels.map(l => l.labelId).join(', '));
+      }
+    }
+
+    return await this.issueService.update(issueId, { labelIds });
+  }
 }
