@@ -43,11 +43,11 @@ export function userCommands(program: Command) {
       const spinner = ora('Fetching user...').start();
       try {
         const userService = new UserService();
-        
+
         // Search for user by email
         const users = await userService.list(undefined, { first: 100 });
         const nodes = await users.nodes;
-        const user = nodes.find(u => u.email === email);
+        const user = nodes.find((u) => u.email === email);
 
         if (user) {
           spinner.succeed(`Found user: ${chalk.green(user.email)}`);
@@ -57,13 +57,15 @@ export function userCommands(program: Command) {
           console.log(`  ID: ${user.id}`);
           console.log(`  Admin: ${user.admin ? 'Yes' : 'No'}`);
           console.log(`  Active: ${user.active ? 'Yes' : 'No'}`);
-          console.log(`  Created: ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}`);
-          
+          console.log(
+            `  Created: ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}`,
+          );
+
           // Get user's teams
           const teams = await user.teams();
           const teamNodes = await teams.nodes;
           if (teamNodes.length > 0) {
-            console.log(`  Teams: ${teamNodes.map(t => t.name).join(', ')}`);
+            console.log(`  Teams: ${teamNodes.map((t) => t.name).join(', ')}`);
           }
         } else {
           spinner.fail(`User not found: ${email}`);
@@ -90,12 +92,13 @@ export function userCommands(program: Command) {
           console.log(`  Email: ${user.email}`);
           console.log(`  ID: ${user.id}`);
           console.log(`  Admin: ${user.admin ? 'Yes' : 'No'}`);
-          
+
           // Get user's teams
           const teams = await user.teams();
           const teamNodes = await teams.nodes;
           if (teamNodes.length > 0) {
-            console.log(`  Teams: ${teamNodes.map((t: any) => `${t.key} (${t.name})`).join(', ')}`);          }
+            console.log(`  Teams: ${teamNodes.map((t: any) => `${t.key} (${t.name})`).join(', ')}`);
+          }
         } else {
           spinner.fail('Could not fetch current user');
         }
@@ -112,18 +115,18 @@ export function userCommands(program: Command) {
       const spinner = ora('Fetching user teams...').start();
       try {
         const userService = new UserService();
-        
+
         // Search for user by email
         const users = await userService.list(undefined, { first: 100 });
         const nodes = await users.nodes;
-        const user = nodes.find(u => u.email === email);
+        const user = nodes.find((u) => u.email === email);
 
         if (user) {
           const teams = await user.teams();
           const teamNodes = await teams.nodes;
-          
+
           spinner.succeed(`Found ${teamNodes.length} teams for ${email}`);
-          
+
           if (teamNodes.length > 0) {
             console.log('\nTeams:');
             for (const team of teamNodes) {

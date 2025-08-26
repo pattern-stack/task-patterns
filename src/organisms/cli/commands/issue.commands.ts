@@ -67,7 +67,7 @@ export function issueCommands(program: Command) {
         // First resolve the issue to get its ID
         let issue;
         let issueId: string | null = null;
-        
+
         if (identifier.includes('-')) {
           issue = await issueEntity.getByIdentifier(identifier);
           issueId = issue?.id || null;

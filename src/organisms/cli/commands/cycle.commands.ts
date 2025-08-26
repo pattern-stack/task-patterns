@@ -23,8 +23,8 @@ export function cycleCommands(program: Command) {
         const cycleService = new CycleService();
         const teamService = new TeamService();
 
-        let filter: any = {};
-        
+        const filter: any = {};
+
         if (options.team) {
           const teamId = await teamService.resolveTeamId(options.team);
           if (!teamId) {
@@ -51,36 +51,36 @@ export function cycleCommands(program: Command) {
           console.log('\nCycles:');
           for (const cycle of nodes) {
             const team = await cycle.team;
-            const status = cycle.completedAt 
+            const status = cycle.completedAt
               ? chalk.gray('Completed')
               : cycle.startsAt && new Date(cycle.startsAt) > new Date()
-              ? chalk.blue('Upcoming')
-              : chalk.green('Active');
-            
+                ? chalk.blue('Upcoming')
+                : chalk.green('Active');
+
             console.log(`  ${chalk.cyan(cycle.name || cycle.id)} [${status}]`);
             console.log(`    Team: ${team?.name || 'Unknown'}`);
             console.log(`    Number: ${cycle.number}`);
-            
+
             if (cycle.startsAt) {
               console.log(`    Start: ${new Date(cycle.startsAt).toLocaleDateString()}`);
             }
             if (cycle.endsAt) {
               console.log(`    End: ${new Date(cycle.endsAt).toLocaleDateString()}`);
             }
-            
+
             // Show progress for active cycles
             if (!cycle.completedAt && cycle.startsAt && new Date(cycle.startsAt) <= new Date()) {
               const progress = await cycle.progress;
               if (progress) {
                 console.log(`    Progress: ${Math.round(progress * 100)}%`);
               }
-              
+
               // Get issue count
               const issues = await cycle.issues();
               const issueNodes = await issues.nodes;
               console.log(`    Issues: ${issueNodes.length}`);
             }
-            
+
             console.log(`    ID: ${cycle.id}`);
           }
         }
@@ -120,31 +120,35 @@ export function cycleCommands(program: Command) {
         if (nodes.length > 0) {
           const cycle = nodes[0];
           const team = await cycle.team;
-          
+
           spinner.succeed(`Current cycle: ${chalk.green(cycle.name || cycle.id)}`);
           console.log('\nCycle Details:');
           console.log(`  Team: ${team?.name || 'Unknown'}`);
           console.log(`  Number: ${cycle.number}`);
-          
+
           if (cycle.startsAt) {
             console.log(`  Started: ${new Date(cycle.startsAt).toLocaleDateString()}`);
           }
           if (cycle.endsAt) {
-            const daysLeft = Math.ceil((new Date(cycle.endsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-            console.log(`  Ends: ${new Date(cycle.endsAt).toLocaleDateString()} (${daysLeft} days left)`);
+            const daysLeft = Math.ceil(
+              (new Date(cycle.endsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+            );
+            console.log(
+              `  Ends: ${new Date(cycle.endsAt).toLocaleDateString()} (${daysLeft} days left)`,
+            );
           }
-          
+
           // Show progress
           const progress = await cycle.progress;
           if (progress) {
             console.log(`  Progress: ${Math.round(progress * 100)}%`);
           }
-          
+
           // Get issue stats
           const issues = await cycle.issues();
           const issueNodes = await issues.nodes;
-          const completedIssues = issueNodes.filter(i => i.completedAt);
-          
+          const completedIssues = issueNodes.filter((i) => i.completedAt);
+
           console.log(`  Issues: ${completedIssues.length}/${issueNodes.length} completed`);
           console.log(`  ID: ${cycle.id}`);
         } else {
@@ -251,7 +255,7 @@ export function cycleCommands(program: Command) {
             const state = await issue.state;
             const assignee = await issue.assignee;
             const statusIcon = issue.completedAt ? chalk.green('✓') : chalk.yellow('○');
-            
+
             console.log(`  ${statusIcon} ${chalk.cyan(issue.identifier)} - ${issue.title}`);
             console.log(`    Status: ${state?.name || 'Unknown'}`);
             console.log(`    Assignee: ${assignee?.name || 'Unassigned'}`);

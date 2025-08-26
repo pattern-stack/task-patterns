@@ -2,12 +2,15 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { IssueManagerTool } from '@organisms/tools/issue-manager.tool';
+import { IssueEntity, QuickCreateOptions } from '@molecules/entities/issue.entity';
+import { BulkOperationsWorkflow } from '@molecules/workflows/bulk-operations.workflow';
+import { SmartSearchWorkflow } from '@molecules/workflows/smart-search.workflow';
 import { logger } from '@atoms/shared/logger';
-import { QuickCreateOptions } from '@molecules/entities/types/issue-manager.types';
 
 export function issueManagerCommands(program: Command) {
-  const tool = new IssueManagerTool();
+  const issueEntity = new IssueEntity();
+  const bulkWorkflow = new BulkOperationsWorkflow();
+  const searchWorkflow = new SmartSearchWorkflow();
 
   // Create bulk operations command group
   const bulk = program.command('bulk').description('Bulk operations on issues');
@@ -52,7 +55,7 @@ export function issueManagerCommands(program: Command) {
           createOptions.dueDate = new Date(options.due);
         }
 
-        const result = await tool.quickCreate(title, options.team, createOptions);
+        const result = await issueEntity.quickCreate(title, options.team, createOptions);
 
         spinner.succeed(`Issue created: ${chalk.green(result.identifier)} - ${result.issue.title}`);
         console.log(chalk.gray(`URL: ${result.url}`));
@@ -78,7 +81,7 @@ export function issueManagerCommands(program: Command) {
     .action(async (identifiers, options) => {
       const spinner = ora(`Moving ${identifiers.length} issue(s) to ${options.to}...`).start();
       try {
-        const result = await tool.moveToStatus(identifiers, options.to, options.comment);
+        const result = await bulkWorkflow.moveToStatus(identifiers, options.to, options.comment);
 
         if (result.successCount === result.totalCount) {
           spinner.succeed(`All ${result.totalCount} issues moved to ${options.to}`);
@@ -118,10 +121,9 @@ export function issueManagerCommands(program: Command) {
       const query = queryParts.join(' ');
       const spinner = ora(`Searching: "${query}"...`).start();
       try {
-        const result = await tool.smartSearch(query, {
+        const result = await searchWorkflow.search(query, {
           team: options.team,
           limit: parseInt(options.limit),
-          includeArchived: options.archived,
         });
 
         spinner.succeed(
@@ -170,7 +172,7 @@ export function issueManagerCommands(program: Command) {
     .action(async (identifiers, options) => {
       const spinner = ora(`Assigning ${identifiers.length} issue(s) to ${options.to}...`).start();
       try {
-        const result = await tool.bulkAssign(identifiers, options.to);
+        const result = await bulkWorkflow.bulkAssign(identifiers, options.to);
 
         if (result.successCount === result.totalCount) {
           spinner.succeed(result.summary);
@@ -204,13 +206,15 @@ export function issueManagerCommands(program: Command) {
     .command('comment <identifier> <comment...>')
     .description('Add a quick comment to an issue')
     .option('--private', 'Make comment private')
-    .action(async (identifier, commentParts, options) => {
+    .action(async (identifier, commentParts) => {
       const comment = commentParts.join(' ');
       const spinner = ora(`Adding comment to ${identifier}...`).start();
       try {
-        const createdComment = await tool.addQuickComment(identifier, comment, {
-          private: options.private,
-        });
+        const issue = await issueEntity.resolveIdentifier(identifier);
+        if (!issue) {
+          throw new Error(`Issue ${identifier} not found`);
+        }
+        const createdComment = await issueEntity.addCommentToIssue(issue.id, comment);
 
         spinner.succeed(`Comment added to ${identifier}`);
         const author = await createdComment.user;
@@ -229,7 +233,7 @@ export function issueManagerCommands(program: Command) {
     .action(async (identifier) => {
       const spinner = ora(`Resolving ${identifier}...`).start();
       try {
-        const issue = await tool.resolveIdentifier(identifier);
+        const issue = await issueEntity.resolveIdentifier(identifier);
 
         if (issue) {
           spinner.succeed(`Found: ${chalk.green(issue.identifier)}`);
@@ -262,10 +266,12 @@ export function issueManagerCommands(program: Command) {
     .action(async (identifiers, options) => {
       const spinner = ora(`Moving ${identifiers.length} issues to ${options.to}...`).start();
       try {
-        const result = await tool.moveToStatus(identifiers, options.to, options.comment);
-        
+        const result = await bulkWorkflow.moveToStatus(identifiers, options.to, options.comment);
+
         if (result.successCount > 0) {
-          spinner.succeed(`Moved ${result.successCount}/${result.totalCount} issues to ${options.to}`);
+          spinner.succeed(
+            `Moved ${result.successCount}/${result.totalCount} issues to ${options.to}`,
+          );
         } else {
           spinner.fail(`Failed to move issues`);
         }
@@ -289,10 +295,12 @@ export function issueManagerCommands(program: Command) {
     .action(async (identifiers, options) => {
       const spinner = ora(`Assigning ${identifiers.length} issues to ${options.to}...`).start();
       try {
-        const result = await tool.bulkAssign(identifiers, options.to);
-        
+        const result = await bulkWorkflow.bulkAssign(identifiers, options.to);
+
         if (result.successCount > 0) {
-          spinner.succeed(`Assigned ${result.successCount}/${result.totalCount} issues to ${options.to}`);
+          spinner.succeed(
+            `Assigned ${result.successCount}/${result.totalCount} issues to ${options.to}`,
+          );
         } else {
           spinner.fail(`Failed to assign issues`);
         }
@@ -317,8 +325,8 @@ export function issueManagerCommands(program: Command) {
       const spinner = ora(`Closing ${identifiers.length} issues...`).start();
       try {
         // Use moveToStatus with "Done" or "Closed" status
-        const result = await tool.moveToStatus(identifiers, 'Done', options.comment);
-        
+        const result = await bulkWorkflow.moveToStatus(identifiers, 'Done', options.comment);
+
         if (result.successCount > 0) {
           spinner.succeed(`Closed ${result.successCount}/${result.totalCount} issues`);
         } else {
@@ -342,7 +350,9 @@ export function issueManagerCommands(program: Command) {
     .description('Change priority of multiple issues')
     .requiredOption('--level <level>', 'Priority level (urgent, high, medium, low, none)')
     .action(async (identifiers, options) => {
-      const spinner = ora(`Changing priority of ${identifiers.length} issues to ${options.level}...`).start();
+      const spinner = ora(
+        `Changing priority of ${identifiers.length} issues to ${options.level}...`,
+      ).start();
       try {
         const priorityMap: Record<string, number> = {
           urgent: 1,
@@ -357,10 +367,21 @@ export function issueManagerCommands(program: Command) {
           throw new Error('Invalid priority level. Use: urgent, high, medium, low, or none');
         }
 
-        // This would need a new method in IssueManagerTool
-        // For now, we'll log that it's not implemented
-        spinner.warn('Bulk priority change not yet implemented in IssueManagerTool');
-        console.log(chalk.yellow('This feature requires adding a bulkUpdatePriority method to IssueManagerTool'));
+        const result = await bulkWorkflow.bulkUpdatePriority(identifiers, priority);
+
+        if (result.successCount === result.totalCount) {
+          spinner.succeed(result.summary);
+        } else {
+          spinner.warn(result.summary);
+        }
+
+        // Show failed issues
+        if (result.failureCount > 0) {
+          console.log(chalk.red('\nFailed to update:'));
+          result.failed.forEach((failure) => {
+            console.log(chalk.red(`  ✗ ${failure.identifier}: ${failure.error}`));
+          });
+        }
       } catch (error: unknown) {
         spinner.fail('Bulk priority change failed');
         logger.error('Error', error);

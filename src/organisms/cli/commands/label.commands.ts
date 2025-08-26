@@ -32,7 +32,7 @@ export function labelCommands(program: Command) {
 
         const labels = await labelService.list(
           teamId ? { includeArchived: false, teamId } : { includeArchived: false },
-          { first: options.limit }
+          { first: options.limit },
         );
         const nodes = await labels.nodes;
 
@@ -139,7 +139,7 @@ export function labelCommands(program: Command) {
 
         // Apply labels to the issue
         const updatedIssue = await issueEntity.addLabels(issue.id, labelIds);
-        
+
         spinner.succeed(`Applied ${labelIds.length} label(s) to ${updatedIssue.identifier}`);
       } catch (error: unknown) {
         spinner.fail('Failed to apply labels');
@@ -194,7 +194,7 @@ export function labelCommands(program: Command) {
 
         // Remove labels from the issue
         const updatedIssue = await issueEntity.removeLabels(issue.id, labelIds);
-        
+
         spinner.succeed(`Removed ${labelIds.length} label(s) from ${updatedIssue.identifier}`);
       } catch (error: unknown) {
         spinner.fail('Failed to remove labels');
@@ -221,7 +221,7 @@ export function labelCommands(program: Command) {
         // Find the label
         const labels = await labelService.list({ includeArchived: false, teamId }, { first: 100 });
         const nodes = await labels.nodes;
-        const label = nodes.find(l => l.name === name);
+        const label = nodes.find((l) => l.name === name);
 
         if (!label) {
           throw new Error(`Label not found: ${name}`);
