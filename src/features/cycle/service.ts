@@ -123,6 +123,12 @@ export class CycleService implements DataService<Cycle, CycleCreate, CycleUpdate
     }
   }
 
+  async delete(id: string): Promise<boolean> {
+    // Cycles cannot be deleted in Linear, only archived
+    logger.warn(`Delete called on cycle ${id}, will archive instead (cycles cannot be deleted)`);
+    return this.archive(id);
+  }
+
   async list(filter?: CycleFilter, pagination?: Pagination): Promise<CycleConnection> {
     try {
       logger.debug('Listing cycles', { filter, pagination });
