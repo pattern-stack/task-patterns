@@ -5,6 +5,7 @@ import ora from 'ora';
 import { LabelService } from '@features/label/service';
 import { TeamService } from '@features/team/service';
 import { IssueEntity } from '@molecules/entities/issue.entity';
+import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 
 export function labelCommands(program: Command) {
@@ -18,8 +19,8 @@ export function labelCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Fetching labels...').start();
       try {
-        const labelService = new LabelService();
-        const teamService = new TeamService();
+        const labelService = new LabelService(linearClient.getClient());
+        const teamService = new TeamService(linearClient.getClient());
 
         let teamId: string | undefined;
         if (options.team) {
@@ -68,8 +69,8 @@ export function labelCommands(program: Command) {
     .action(async (name, options) => {
       const spinner = ora('Creating label...').start();
       try {
-        const labelService = new LabelService();
-        const teamService = new TeamService();
+        const labelService = new LabelService(linearClient.getClient());
+        const teamService = new TeamService(linearClient.getClient());
 
         // Resolve team ID
         const teamId = await teamService.resolveTeamId(options.team);
@@ -98,7 +99,7 @@ export function labelCommands(program: Command) {
     .action(async (issueIdentifier, labelNames) => {
       const spinner = ora('Applying labels to issue...').start();
       try {
-        const labelService = new LabelService();
+        const labelService = new LabelService(linearClient.getClient());
         const issueEntity = new IssueEntity();
 
         // Get the issue
@@ -153,7 +154,7 @@ export function labelCommands(program: Command) {
     .action(async (issueIdentifier, labelNames) => {
       const spinner = ora('Removing labels from issue...').start();
       try {
-        const labelService = new LabelService();
+        const labelService = new LabelService(linearClient.getClient());
         const issueEntity = new IssueEntity();
 
         // Get the issue
@@ -209,8 +210,8 @@ export function labelCommands(program: Command) {
     .action(async (name, options) => {
       const spinner = ora('Deleting label...').start();
       try {
-        const labelService = new LabelService();
-        const teamService = new TeamService();
+        const labelService = new LabelService(linearClient.getClient());
+        const teamService = new TeamService(linearClient.getClient());
 
         // Resolve team ID
         const teamId = await teamService.resolveTeamId(options.team);

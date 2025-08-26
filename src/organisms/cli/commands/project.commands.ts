@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { ProjectService } from '@features/project/service';
 import { ProjectCreate } from '@features/project/schemas';
+import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 
 export function projectCommands(program: Command) {
@@ -22,7 +23,7 @@ export function projectCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Creating project...').start();
       try {
-        const projectService = new ProjectService();
+        const projectService = new ProjectService(linearClient.getClient());
 
         const data: ProjectCreate = {
           name: options.name,
@@ -51,7 +52,7 @@ export function projectCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Fetching projects...').start();
       try {
-        const projectService = new ProjectService();
+        const projectService = new ProjectService(linearClient.getClient());
         const projects = await projectService.list({ first: options.limit });
         const nodes = await projects.nodes;
 
@@ -84,7 +85,7 @@ export function projectCommands(program: Command) {
     .action(async (id) => {
       const spinner = ora('Fetching project...').start();
       try {
-        const projectService = new ProjectService();
+        const projectService = new ProjectService(linearClient.getClient());
         const project = await projectService.get(id);
 
         if (project) {
@@ -131,7 +132,7 @@ export function projectCommands(program: Command) {
     .action(async (id, options) => {
       const spinner = ora('Updating project...').start();
       try {
-        const projectService = new ProjectService();
+        const projectService = new ProjectService(linearClient.getClient());
 
         const data: Record<string, unknown> = {};
         if (options.name) {
@@ -177,7 +178,7 @@ export function projectCommands(program: Command) {
 
       const spinner = ora('Deleting project...').start();
       try {
-        const projectService = new ProjectService();
+        const projectService = new ProjectService(linearClient.getClient());
         await projectService.delete(id);
         spinner.succeed('Project deleted successfully');
       } catch (error: unknown) {
@@ -193,7 +194,7 @@ export function projectCommands(program: Command) {
     .action(async (projectId, options) => {
       const spinner = ora('Fetching project issues...').start();
       try {
-        const projectService = new ProjectService();
+        const projectService = new ProjectService(linearClient.getClient());
         const issues = await projectService.getIssues(projectId, { first: options.limit });
         const nodes = await issues.nodes;
 
@@ -225,7 +226,7 @@ export function projectCommands(program: Command) {
     .action(async (projectId, options) => {
       const spinner = ora('Fetching project milestones...').start();
       try {
-        const projectService = new ProjectService();
+        const projectService = new ProjectService(linearClient.getClient());
         const milestones = await projectService.getMilestones(projectId, { first: options.limit });
         const nodes = await milestones.nodes;
 
@@ -256,7 +257,7 @@ export function projectCommands(program: Command) {
     .action(async (projectId) => {
       const spinner = ora('Fetching project teams...').start();
       try {
-        const projectService = new ProjectService();
+        const projectService = new ProjectService(linearClient.getClient());
         const teams = await projectService.getTeams(projectId);
         const nodes = await teams.nodes;
 

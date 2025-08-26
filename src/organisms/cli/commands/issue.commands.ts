@@ -6,6 +6,7 @@ import { IssueEntity } from '@molecules/entities/issue.entity';
 import { IssueCreate, IssueUpdate, IssueFilter } from '@features/issue/schemas';
 import { TeamService } from '@features/team/service';
 import { logger } from '@atoms/shared/logger';
+import { linearClient } from '@atoms/client/linear-client';
 
 export function issueCommands(program: Command) {
   const issue = program.command('issue').description('Manage Linear issues');
@@ -25,8 +26,9 @@ export function issueCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Creating issue...').start();
       try {
-        const issueEntity = new IssueEntity();
-        const teamService = new TeamService();
+        const client = linearClient.getClient();
+        const issueEntity = new IssueEntity(client);
+        const teamService = new TeamService(client);
 
         // Resolve team ID from key or UUID
         const teamId = await teamService.resolveTeamId(options.team);
@@ -62,7 +64,8 @@ export function issueCommands(program: Command) {
     .action(async (identifier, options) => {
       const spinner = ora('Fetching issue...').start();
       try {
-        const issueEntity = new IssueEntity();
+        const client = linearClient.getClient();
+        const issueEntity = new IssueEntity(client);
 
         // First resolve the issue to get its ID
         let issue;
@@ -126,7 +129,8 @@ export function issueCommands(program: Command) {
     .action(async (id, options) => {
       const spinner = ora('Updating issue...').start();
       try {
-        const issueEntity = new IssueEntity();
+        const client = linearClient.getClient();
+        const issueEntity = new IssueEntity(client);
 
         const data: IssueUpdate = {};
         if (options.title) {
@@ -176,8 +180,9 @@ export function issueCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Fetching issues...').start();
       try {
-        const issueEntity = new IssueEntity();
-        const teamService = new TeamService();
+        const client = linearClient.getClient();
+        const issueEntity = new IssueEntity(client);
+        const teamService = new TeamService(client);
 
         const filter: IssueFilter = {
           includeArchived: false,
@@ -245,7 +250,8 @@ export function issueCommands(program: Command) {
 
       const spinner = ora('Deleting issue...').start();
       try {
-        const issueEntity = new IssueEntity();
+        const client = linearClient.getClient();
+        const issueEntity = new IssueEntity(client);
         await issueEntity.delete(id);
         spinner.succeed('Issue deleted successfully');
       } catch (error: unknown) {
@@ -260,7 +266,8 @@ export function issueCommands(program: Command) {
     .action(async (id, message) => {
       const spinner = ora('Adding comment...').start();
       try {
-        const issueEntity = new IssueEntity();
+        const client = linearClient.getClient();
+        const issueEntity = new IssueEntity(client);
         await issueEntity.addComment(id, message);
         spinner.succeed('Comment added successfully');
       } catch (error: unknown) {
@@ -275,7 +282,8 @@ export function issueCommands(program: Command) {
     .action(async (id, userId) => {
       const spinner = ora('Assigning issue...').start();
       try {
-        const issueEntity = new IssueEntity();
+        const client = linearClient.getClient();
+        const issueEntity = new IssueEntity(client);
         const issue = await issueEntity.assignToUser(id, userId);
         spinner.succeed(`Issue assigned: ${chalk.green(issue.identifier)}`);
       } catch (error: unknown) {
@@ -290,7 +298,8 @@ export function issueCommands(program: Command) {
     .action(async (id) => {
       const spinner = ora('Unassigning issue...').start();
       try {
-        const issueEntity = new IssueEntity();
+        const client = linearClient.getClient();
+        const issueEntity = new IssueEntity(client);
         const issue = await issueEntity.unassign(id);
         spinner.succeed(`Issue unassigned: ${chalk.green(issue.identifier)}`);
       } catch (error: unknown) {

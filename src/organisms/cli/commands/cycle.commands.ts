@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { CycleService } from '@features/cycle/service';
 import { TeamService } from '@features/team/service';
+import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 
 export function cycleCommands(program: Command) {
@@ -20,8 +21,8 @@ export function cycleCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Fetching cycles...').start();
       try {
-        const cycleService = new CycleService();
-        const teamService = new TeamService();
+        const cycleService = new CycleService(linearClient.getClient());
+        const teamService = new TeamService(linearClient.getClient());
 
         const filter: any = {};
 
@@ -97,8 +98,8 @@ export function cycleCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Fetching current cycle...').start();
       try {
-        const cycleService = new CycleService();
-        const teamService = new TeamService();
+        const cycleService = new CycleService(linearClient.getClient());
+        const teamService = new TeamService(linearClient.getClient());
 
         let teamId: string | undefined;
         if (options.team) {
@@ -171,8 +172,8 @@ export function cycleCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Creating cycle...').start();
       try {
-        const cycleService = new CycleService();
-        const teamService = new TeamService();
+        const cycleService = new CycleService(linearClient.getClient());
+        const teamService = new TeamService(linearClient.getClient());
 
         // Resolve team ID
         const teamId = await teamService.resolveTeamId(options.team);
@@ -217,7 +218,7 @@ export function cycleCommands(program: Command) {
     .action(async (id) => {
       const spinner = ora('Completing cycle...').start();
       try {
-        const cycleService = new CycleService();
+        const cycleService = new CycleService(linearClient.getClient());
 
         // Mark cycle as completed - this is likely not available in the Linear API
         // Cycles are typically auto-completed based on dates
@@ -237,7 +238,7 @@ export function cycleCommands(program: Command) {
     .action(async (id) => {
       const spinner = ora('Fetching cycle issues...').start();
       try {
-        const cycleService = new CycleService();
+        const cycleService = new CycleService(linearClient.getClient());
 
         const cycle = await cycleService.get(id);
         if (!cycle) {

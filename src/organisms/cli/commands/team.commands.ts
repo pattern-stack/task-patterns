@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { TeamService } from '@features/team/service';
+import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 import type { WorkflowState, IssueLabel } from '@linear/sdk';
 
@@ -16,7 +17,7 @@ export function teamCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Fetching teams...').start();
       try {
-        const teamService = new TeamService();
+        const teamService = new TeamService(linearClient.getClient());
         const teams = await teamService.list({ first: options.limit });
         const nodes = await teams.nodes;
 
@@ -43,7 +44,7 @@ export function teamCommands(program: Command) {
     .action(async (idOrKey) => {
       const spinner = ora('Fetching team...').start();
       try {
-        const teamService = new TeamService();
+        const teamService = new TeamService(linearClient.getClient());
 
         let team;
         if (idOrKey.length < 10) {
@@ -75,7 +76,7 @@ export function teamCommands(program: Command) {
     .action(async (teamId, options) => {
       const spinner = ora('Fetching team members...').start();
       try {
-        const teamService = new TeamService();
+        const teamService = new TeamService(linearClient.getClient());
         const members = await teamService.getMembers(teamId, { first: options.limit });
         const nodes = await members.nodes;
 
@@ -103,7 +104,7 @@ export function teamCommands(program: Command) {
     .action(async (teamId, options) => {
       const spinner = ora('Fetching team projects...').start();
       try {
-        const teamService = new TeamService();
+        const teamService = new TeamService(linearClient.getClient());
         const projects = await teamService.getProjects(teamId, { first: options.limit });
         const nodes = await projects.nodes;
 
@@ -133,7 +134,7 @@ export function teamCommands(program: Command) {
     .action(async (teamId, options) => {
       const spinner = ora('Fetching team cycles...').start();
       try {
-        const teamService = new TeamService();
+        const teamService = new TeamService(linearClient.getClient());
         const cycles = await teamService.getCycles(teamId, { first: options.limit });
         const nodes = await cycles.nodes;
 
@@ -167,7 +168,7 @@ export function teamCommands(program: Command) {
     .action(async (teamId, options) => {
       const spinner = ora('Fetching team labels...').start();
       try {
-        const teamService = new TeamService();
+        const teamService = new TeamService(linearClient.getClient());
         const labels = await teamService.getLabels(teamId, { first: options.limit });
         const nodes = await labels.nodes;
 
@@ -207,7 +208,7 @@ export function teamCommands(program: Command) {
     .action(async (teamId) => {
       const spinner = ora('Fetching workflow states...').start();
       try {
-        const teamService = new TeamService();
+        const teamService = new TeamService(linearClient.getClient());
         const states = await teamService.getWorkflowStates(teamId);
         const nodes = await states.nodes;
 

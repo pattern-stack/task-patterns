@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { UserService } from '@features/user/service';
+import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 
 export function userCommands(program: Command) {
@@ -15,7 +16,7 @@ export function userCommands(program: Command) {
     .action(async (options) => {
       const spinner = ora('Fetching users...').start();
       try {
-        const userService = new UserService();
+        const userService = new UserService(linearClient.getClient());
         const users = await userService.list(undefined, { first: options.limit });
         const nodes = await users.nodes;
 
@@ -42,7 +43,7 @@ export function userCommands(program: Command) {
     .action(async (email) => {
       const spinner = ora('Fetching user...').start();
       try {
-        const userService = new UserService();
+        const userService = new UserService(linearClient.getClient());
 
         // Search for user by email
         const users = await userService.list(undefined, { first: 100 });
@@ -82,7 +83,7 @@ export function userCommands(program: Command) {
     .action(async () => {
       const spinner = ora('Fetching current user...').start();
       try {
-        const userService = new UserService();
+        const userService = new UserService(linearClient.getClient());
         const user = await userService.getMe();
 
         if (user) {
@@ -114,7 +115,7 @@ export function userCommands(program: Command) {
     .action(async (email) => {
       const spinner = ora('Fetching user teams...').start();
       try {
-        const userService = new UserService();
+        const userService = new UserService(linearClient.getClient());
 
         // Search for user by email
         const users = await userService.list(undefined, { first: 100 });
