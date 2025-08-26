@@ -29,8 +29,8 @@ describe('SprintPlanningWorkflow', () => {
 
     // Create mocked dependencies
     mockIssueEntity = new IssueEntity() as jest.Mocked<IssueEntity>;
-    mockTeamService = new TeamService() as jest.Mocked<TeamService>;
-    mockProjectService = new ProjectService() as jest.Mocked<ProjectService>;
+    mockTeamService = new TeamService({} as any) as jest.Mocked<TeamService>;
+    mockProjectService = new ProjectService({} as any) as jest.Mocked<ProjectService>;
 
     // Create workflow
     workflow = new SprintPlanningWorkflow();

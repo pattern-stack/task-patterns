@@ -1,5 +1,4 @@
 import { IssueService } from '@features/issue/service';
-import { linearClient } from '@atoms/client/linear-client';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
 import { TestFactory } from '../fixtures/factories';
 import {
@@ -9,8 +8,6 @@ import {
   createMockLinearClient,
 } from '../utils/mocks';
 
-jest.mock('@atoms/client/linear-client');
-
 describe('IssueService', () => {
   let service: IssueService;
   let mockClient: ReturnType<typeof createMockLinearClient>;
@@ -18,8 +15,7 @@ describe('IssueService', () => {
   beforeEach(() => {
     TestFactory.reset();
     mockClient = createMockLinearClient();
-    (linearClient.getClient as jest.Mock).mockReturnValue(mockClient);
-    service = new IssueService();
+    service = new IssueService(mockClient as any);
   });
 
   describe('create', () => {
@@ -98,6 +94,7 @@ describe('IssueService', () => {
   describe('getByIdentifier', () => {
     it('should return an issue by identifier', async () => {
       const mockIssue = createMockIssue({ identifier: 'ENG-123' });
+      mockClient.issue.mockRejectedValue(new Error('Not found')); // Direct lookup fails
       mockClient.issues.mockResolvedValue(createMockIssueConnection([mockIssue]));
 
       const result = await service.getByIdentifier('ENG-123');
@@ -106,7 +103,7 @@ describe('IssueService', () => {
         filter: {
           searchableContent: { contains: 'ENG-123' },
         },
-        first: 1,
+        first: 5,
       });
       expect(result).toEqual(mockIssue);
     });

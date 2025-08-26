@@ -25,7 +25,7 @@ describe('UserService', () => {
     TestFactory.reset();
     mockClient = createMockLinearClient();
     (linearClient.getClient as jest.Mock).mockReturnValue(mockClient);
-    service = new UserService();
+    service = new UserService(mockClient as any);
   });
 
   afterEach(() => {

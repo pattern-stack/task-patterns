@@ -24,7 +24,7 @@ describe('TeamService', () => {
   beforeEach(() => {
     mockClient = createMockLinearClient();
     (linearClient.getClient as jest.Mock).mockReturnValue(mockClient);
-    service = new TeamService();
+    service = new TeamService(mockClient as any);
   });
 
   afterEach(() => {

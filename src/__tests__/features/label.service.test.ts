@@ -22,7 +22,7 @@ describe('LabelService', () => {
     TestFactory.reset();
     mockClient = createMockLinearClient();
     (linearClient.getClient as jest.Mock).mockReturnValue(mockClient);
-    service = new LabelService();
+    service = new LabelService(mockClient as any);
   });
 
   afterEach(() => {

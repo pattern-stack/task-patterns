@@ -21,7 +21,7 @@ describe('WorkflowStateService', () => {
     TestFactory.reset();
     mockClient = createMockLinearClient();
     (linearClient.getClient as jest.Mock).mockReturnValue(mockClient);
-    service = new WorkflowStateService();
+    service = new WorkflowStateService(mockClient as any);
   });
 
   afterEach(() => {

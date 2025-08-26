@@ -1,5 +1,4 @@
 import { CommentService } from '@features/comment/service';
-import { linearClient } from '@atoms/client/linear-client';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
 import { TestFactory } from '../fixtures/factories';
 import {
@@ -10,8 +9,6 @@ import {
   createMockUser,
 } from '../utils/mocks';
 
-jest.mock('@atoms/client/linear-client');
-
 describe('CommentService', () => {
   let service: CommentService;
   let mockClient: ReturnType<typeof createMockLinearClient>;
@@ -19,8 +16,7 @@ describe('CommentService', () => {
   beforeEach(() => {
     TestFactory.reset();
     mockClient = createMockLinearClient();
-    (linearClient.getClient as jest.Mock).mockReturnValue(mockClient);
-    service = new CommentService();
+    service = new CommentService(mockClient as any);
   });
 
   afterEach(() => {

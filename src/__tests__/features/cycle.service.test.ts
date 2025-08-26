@@ -1,5 +1,4 @@
 import { CycleService } from '@features/cycle/service';
-import { linearClient } from '@atoms/client/linear-client';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
 import { TestFactory } from '../fixtures/factories';
 import {
@@ -11,8 +10,6 @@ import {
   createMockIssue,
 } from '../utils/mocks';
 
-jest.mock('@atoms/client/linear-client');
-
 describe('CycleService', () => {
   let service: CycleService;
   let mockClient: ReturnType<typeof createMockLinearClient>;
@@ -20,8 +17,7 @@ describe('CycleService', () => {
   beforeEach(() => {
     TestFactory.reset();
     mockClient = createMockLinearClient();
-    (linearClient.getClient as jest.Mock).mockReturnValue(mockClient);
-    service = new CycleService();
+    service = new CycleService(mockClient as any);
   });
 
   afterEach(() => {

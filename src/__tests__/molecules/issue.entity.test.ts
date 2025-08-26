@@ -27,9 +27,9 @@ describe('IssueEntity', () => {
     TestFactory.reset();
 
     // Create mocked services
-    mockIssueService = new IssueService() as jest.Mocked<IssueService>;
-    mockTeamService = new TeamService() as jest.Mocked<TeamService>;
-    mockProjectService = new ProjectService() as jest.Mocked<ProjectService>;
+    mockIssueService = new IssueService({} as any) as jest.Mocked<IssueService>;
+    mockTeamService = new TeamService({} as any) as jest.Mocked<TeamService>;
+    mockProjectService = new ProjectService({} as any) as jest.Mocked<ProjectService>;
 
     // Create entity
     entity = new IssueEntity();
