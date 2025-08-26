@@ -1,5 +1,4 @@
-import { Team, TeamConnection, WebhookConnection, TemplateConnection, Template } from '@linear/sdk';
-import { linearClient } from '@atoms/client/linear-client';
+import { Team, TeamConnection, WebhookConnection, TemplateConnection, Template, LinearClient } from '@linear/sdk';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, Pagination, ValidationError } from '@atoms/types/common';
 import { ZodError } from 'zod';
@@ -13,6 +12,7 @@ import {
   validateTeamSettingsUpdate,
   validateTemplateCreate,
 } from './schemas';
+import type { DataService } from '@atoms/contracts/service.contracts';
 
 // Narrow settings projection available off Team where applicable
 export type TeamSettings = {
@@ -23,8 +23,8 @@ export type TeamSettings = {
   triageEnabled?: boolean;
 };
 
-export class TeamService {
-  private client = linearClient.getClient();
+export class TeamService implements DataService<Team, TeamCreate, TeamUpdate> {
+  constructor(private readonly client: LinearClient) {}
 
   async get(id: string): Promise<Team | null> {
     try {

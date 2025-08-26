@@ -1,9 +1,8 @@
-import { Project, ProjectConnection, LinearDocument } from '@linear/sdk';
+import { Project, ProjectConnection, LinearDocument, LinearClient } from '@linear/sdk';
 
 type ProjectCreateInput = LinearDocument.ProjectCreateInput;
 type ProjectUpdateInput = LinearDocument.ProjectUpdateInput;
 
-import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
 import {
@@ -13,9 +12,10 @@ import {
   ProjectUpdateSchema,
   Pagination,
 } from './schemas';
+import type { DataService } from '@atoms/contracts/service.contracts';
 
-export class ProjectService {
-  private client = linearClient.getClient();
+export class ProjectService implements DataService<Project, ProjectCreate, ProjectUpdate> {
+  constructor(private readonly client: LinearClient) {}
 
   async create(data: ProjectCreate): Promise<Project> {
     try {

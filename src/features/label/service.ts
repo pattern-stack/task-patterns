@@ -4,13 +4,13 @@ import {
   Issue,
   IssueConnection,
   LinearDocument,
+  LinearClient,
 } from '@linear/sdk';
 
 type LabelCreateInput = LinearDocument.IssueLabelCreateInput;
 type LabelUpdateInput = LinearDocument.IssueLabelUpdateInput;
 type LinearLabelFilter = LinearDocument.IssueLabelFilter;
 
-import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 import {
   NotFoundError,
@@ -26,9 +26,10 @@ import {
   LabelUpdateSchema,
   BulkLabelOperationSchema,
 } from './schemas';
+import type { DataService } from '@atoms/contracts/service.contracts';
 
-export class LabelService {
-  private client = linearClient.getClient();
+export class LabelService implements DataService<IssueLabel, LabelCreate, LabelUpdate> {
+  constructor(private readonly client: LinearClient) {}
 
   async create(data: LabelCreate): Promise<IssueLabel> {
     try {

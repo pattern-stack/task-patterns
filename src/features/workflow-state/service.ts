@@ -3,13 +3,13 @@ import {
   WorkflowStateConnection,
   IssueConnection,
   LinearDocument,
+  LinearClient,
 } from '@linear/sdk';
 
 type WorkflowStateUpdateInput = LinearDocument.WorkflowStateUpdateInput;
 type LinearWorkflowStateFilter = LinearDocument.WorkflowStateFilter;
 type LinearIssueFilter = LinearDocument.IssueFilter;
 
-import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
 import {
@@ -25,9 +25,10 @@ import {
   BatchResult,
   IssueFilter,
 } from './schemas';
+import type { DataService } from '@atoms/contracts/service.contracts';
 
-export class WorkflowStateService {
-  private client = linearClient.getClient();
+export class WorkflowStateService implements DataService<WorkflowState, never, WorkflowStateUpdate> {
+  constructor(private readonly client: LinearClient) {}
 
   /**
    * Get a workflow state by ID
@@ -482,5 +483,20 @@ export class WorkflowStateService {
    */
   async getByTeamAndName(teamId: string, name: string): Promise<WorkflowState | null> {
     return this.getByName(name, teamId);
+  }
+
+  /**
+   * Workflow states cannot be created via API in most cases - throw error
+   * Note: Linear manages workflow states internally per team
+   */
+  async create(): Promise<never> {
+    throw new ValidationError('Workflow states cannot be created via the Linear API. They are managed by Linear per team.');
+  }
+
+  /**
+   * Workflow states cannot be deleted via API - throw error
+   */
+  async delete(id: string): Promise<never> {
+    throw new ValidationError(`Workflow state ${id} cannot be deleted via the Linear API`);
   }
 }

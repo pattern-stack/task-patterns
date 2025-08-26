@@ -1,4 +1,3 @@
-import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, ValidationError } from '@atoms/types/common';
 import {
@@ -10,9 +9,11 @@ import {
   MentionParseResult,
   Pagination,
 } from './schemas';
-import type { Comment, CommentConnection } from '@linear/sdk';
+import type { Comment, CommentConnection, LinearClient } from '@linear/sdk';
+import type { DataService } from '@atoms/contracts/service.contracts';
 
-export class CommentService {
+export class CommentService implements DataService<Comment, CommentCreate, CommentUpdate> {
+  constructor(private readonly client: LinearClient) {}
   /**
    * Create a new comment
    */
@@ -26,10 +27,9 @@ export class CommentService {
       throw new ValidationError('Invalid comment data');
     }
 
-    const client = linearClient.getClient();
 
     try {
-      const response = await client.createComment({
+      const response = await this.client.createComment({
         issueId: validatedData.issueId,
         body: validatedData.body,
         ...(validatedData.parentId && { parentId: validatedData.parentId }),
@@ -62,10 +62,9 @@ export class CommentService {
    * Get a comment by ID
    */
   async get(id: string): Promise<Comment | null> {
-    const client = linearClient.getClient();
 
     try {
-      const comment = await client.comment({ id });
+      const comment = await this.client.comment({ id });
       return comment;
     } catch (error) {
       logger.debug('Comment not found', { id });
@@ -86,7 +85,6 @@ export class CommentService {
       throw new ValidationError('Invalid update data');
     }
 
-    const client = linearClient.getClient();
 
     // Check if comment exists
     const existingComment = await this.get(id);
@@ -95,7 +93,7 @@ export class CommentService {
     }
 
     try {
-      const response = await client.updateComment(id, {
+      const response = await this.client.updateComment(id, {
         body: validatedData.body,
       });
 
@@ -120,7 +118,6 @@ export class CommentService {
    * Delete a comment
    */
   async delete(id: string): Promise<boolean> {
-    const client = linearClient.getClient();
 
     // Check if comment exists
     const existingComment = await this.get(id);
@@ -129,7 +126,7 @@ export class CommentService {
     }
 
     try {
-      const response = await client.deleteComment(id);
+      const response = await this.client.deleteComment(id);
 
       if (!response.success) {
         logger.error('Failed to delete comment', { id });
@@ -148,10 +145,9 @@ export class CommentService {
    * List comments for an issue
    */
   async listByIssue(issueId: string, pagination?: Partial<Pagination>): Promise<CommentConnection> {
-    const client = linearClient.getClient();
 
     try {
-      const response = await client.comments({
+      const response = await this.client.comments({
         filter: {
           issue: { id: { eq: issueId } },
         },
@@ -170,10 +166,9 @@ export class CommentService {
    * List comments by a user
    */
   async listByUser(userId: string, pagination?: Partial<Pagination>): Promise<CommentConnection> {
-    const client = linearClient.getClient();
 
     try {
-      const response = await client.comments({
+      const response = await this.client.comments({
         filter: {
           user: { id: { eq: userId } },
         },
@@ -205,10 +200,9 @@ export class CommentService {
       throw new ValidationError('Invalid emoji reaction');
     }
 
-    const client = linearClient.getClient();
 
     try {
-      const response = await client.createReaction({
+      const response = await this.client.createReaction({
         commentId: validatedData.commentId,
         emoji: validatedData.emoji,
       });
@@ -233,10 +227,9 @@ export class CommentService {
    * Delete a reaction
    */
   async deleteReaction(reactionId: string): Promise<boolean> {
-    const client = linearClient.getClient();
 
     try {
-      const response = await client.deleteReaction(reactionId);
+      const response = await this.client.deleteReaction(reactionId);
 
       if (!response.success) {
         logger.error('Failed to delete reaction', { reactionId });
@@ -258,10 +251,9 @@ export class CommentService {
     commentId: string,
     pagination?: Partial<Pagination>,
   ): Promise<CommentConnection> {
-    const client = linearClient.getClient();
 
     try {
-      const response = await client.comments({
+      const response = await this.client.comments({
         filter: {
           parent: { id: { eq: commentId } },
         },

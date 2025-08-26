@@ -1,9 +1,8 @@
-import { Issue, IssueConnection, LinearDocument } from '@linear/sdk';
+import { Issue, IssueConnection, LinearDocument, LinearClient } from '@linear/sdk';
 
 type IssueCreateInput = LinearDocument.IssueCreateInput;
 type IssueUpdateInput = LinearDocument.IssueUpdateInput;
 type LinearIssueFilter = LinearDocument.IssueFilter;
-import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 import {
   NotFoundError,
@@ -12,9 +11,10 @@ import {
   Pagination,
 } from '@atoms/types/common';
 import { IssueCreate, IssueUpdate, IssueFilter, IssueBulkUpdate } from './schemas';
+import type { DataService } from '@atoms/contracts/service.contracts';
 
-export class IssueService {
-  private client = linearClient.getClient();
+export class IssueService implements DataService<Issue, IssueCreate, IssueUpdate> {
+  constructor(private readonly client: LinearClient) {}
 
   async create(data: IssueCreate): Promise<Issue> {
     try {

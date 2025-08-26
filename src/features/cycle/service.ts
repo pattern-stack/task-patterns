@@ -1,18 +1,18 @@
-import { Cycle, CycleConnection, Issue, IssueConnection, LinearDocument } from '@linear/sdk';
+import { Cycle, CycleConnection, Issue, IssueConnection, LinearDocument, LinearClient } from '@linear/sdk';
 
 type CycleCreateInput = LinearDocument.CycleCreateInput;
 type CycleUpdateInput = LinearDocument.CycleUpdateInput;
 type LinearCycleFilter = LinearDocument.CycleFilter;
 type LinearIssueFilter = LinearDocument.IssueFilter;
 
-import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, ValidationError, Pagination } from '@atoms/types/common';
 import { CycleCreate, CycleUpdate, CycleFilter, CycleProgress } from './schemas';
 import { IssueFilter } from '@features/issue/schemas';
+import type { DataService } from '@atoms/contracts/service.contracts';
 
-export class CycleService {
-  private client = linearClient.getClient();
+export class CycleService implements DataService<Cycle, CycleCreate, CycleUpdate> {
+  constructor(private readonly client: LinearClient) {}
 
   async create(data: CycleCreate): Promise<Cycle> {
     try {

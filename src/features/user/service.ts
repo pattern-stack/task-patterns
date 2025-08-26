@@ -5,24 +5,25 @@ import {
   TeamConnection,
   CommentConnection,
   LinearDocument,
+  LinearClient,
 } from '@linear/sdk';
 
 type LinearIssueFilter = LinearDocument.IssueFilter;
 type UserUpdateInput = LinearDocument.UserUpdateInput;
 
-import { linearClient } from '@atoms/client/linear-client';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, ValidationError, Pagination } from '@atoms/types/common';
 import { UserUpdate, UserFilter, UserSettingsUpdate } from './schemas';
 import { IssueFilter } from '@features/issue/schemas';
+import type { DataService } from '@atoms/contracts/service.contracts';
 
 /**
  * Service for managing Linear users, including retrieval, updates, and user-related operations.
  * Handles both regular user operations and viewer (current user) operations.
  * Note: Most user fields are read-only via the Linear API, with limited update capabilities.
  */
-export class UserService {
-  private client = linearClient.getClient();
+export class UserService implements DataService<User, never, UserUpdate> {
+  constructor(private readonly client: LinearClient) {}
 
   /**
    * Retrieves a user by ID
@@ -400,5 +401,19 @@ export class UserService {
       logger.error(`Failed to update settings for user ${userId}`, error);
       throw error;
     }
+  }
+
+  /**
+   * Users cannot be created via API - throw error
+   */
+  async create(): Promise<never> {
+    throw new ValidationError('Users cannot be created via the Linear API');
+  }
+
+  /**
+   * Users cannot be deleted via API - throw error
+   */
+  async delete(id: string): Promise<never> {
+    throw new ValidationError(`User ${id} cannot be deleted via the Linear API`);
   }
 }
