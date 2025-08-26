@@ -6,6 +6,7 @@ import {
   Team,
   Project,
   IssueLabel,
+  LinearClient,
 } from '@linear/sdk';
 import { IssueService } from '@features/issue/service';
 import { TeamService } from '@features/team/service';
@@ -19,6 +20,7 @@ import { CommentCreate } from '@features/comment/schemas';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, Pagination } from '@atoms/types/common';
 import { IssueIdentifierParser } from '@atoms/parsers/issue-identifier.parser';
+import { linearClient } from '@atoms/client/linear-client';
 
 export interface IssueWithRelations {
   issue: LinearIssue;
@@ -56,14 +58,15 @@ export class IssueEntity {
   private labelService: LabelService;
   private workflowStateService: WorkflowStateService;
 
-  constructor() {
-    this.issueService = new IssueService();
-    this.teamService = new TeamService();
-    this.projectService = new ProjectService();
-    this.commentService = new CommentService();
-    this.userService = new UserService();
-    this.labelService = new LabelService();
-    this.workflowStateService = new WorkflowStateService();
+  constructor(client?: LinearClient) {
+    const actualClient = client || linearClient.getClient();
+    this.issueService = new IssueService(actualClient);
+    this.teamService = new TeamService(actualClient);
+    this.projectService = new ProjectService(actualClient);
+    this.commentService = new CommentService(actualClient);
+    this.userService = new UserService(actualClient);
+    this.labelService = new LabelService(actualClient);
+    this.workflowStateService = new WorkflowStateService(actualClient);
   }
 
   async create(data: IssueCreate): Promise<LinearIssue> {
