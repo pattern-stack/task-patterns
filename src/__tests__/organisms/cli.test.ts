@@ -46,10 +46,26 @@ describe('CLI Commands', () => {
 
   describe('Issue Commands', () => {
     let mockIssueEntity: jest.Mocked<IssueEntity>;
+    let mockTeamService: jest.Mocked<TeamService>;
 
     beforeEach(() => {
-      mockIssueEntity = new IssueEntity() as jest.Mocked<IssueEntity>;
+      mockIssueEntity = {
+        create: jest.fn(),
+        get: jest.fn(),
+        getByIdentifier: jest.fn(),
+        getWithRelations: jest.fn(),
+        update: jest.fn(),
+        list: jest.fn(),
+        assignToUser: jest.fn(),
+        addComment: jest.fn(),
+      } as any;
+      
+      mockTeamService = {
+        resolveTeamId: jest.fn(),
+      } as any;
+      
       (IssueEntity as jest.Mock).mockImplementation(() => mockIssueEntity);
+      (TeamService as jest.Mock).mockImplementation(() => mockTeamService);
       issueCommands(program);
     });
 
@@ -61,6 +77,8 @@ describe('CLI Commands', () => {
           url: 'https://linear.app/team/issue/ENG-123',
         });
 
+        // Mock the team resolution
+        mockTeamService.resolveTeamId.mockResolvedValue('resolved-team-id');
         mockIssueEntity.create.mockResolvedValue(mockIssue);
 
         await program.parseAsync([
@@ -74,16 +92,18 @@ describe('CLI Commands', () => {
           'team-123',
         ]);
 
+        expect(mockTeamService.resolveTeamId).toHaveBeenCalledWith('team-123');
         expect(mockIssueEntity.create).toHaveBeenCalledWith(
           expect.objectContaining({
             title: 'New Feature',
-            teamId: 'team-123',
+            teamId: 'resolved-team-id',
           }),
         );
       });
 
       it('should create an issue with all optional fields', async () => {
         const mockIssue = createMockIssue();
+        mockTeamService.resolveTeamId.mockResolvedValue('resolved-team-id');
         mockIssueEntity.create.mockResolvedValue(mockIssue);
 
         await program.parseAsync([
@@ -111,10 +131,11 @@ describe('CLI Commands', () => {
           'label-1,label-2',
         ]);
 
+        expect(mockTeamService.resolveTeamId).toHaveBeenCalledWith('team-123');
         expect(mockIssueEntity.create).toHaveBeenCalledWith(
           expect.objectContaining({
             title: 'Bug Fix',
-            teamId: 'team-123',
+            teamId: 'resolved-team-id',
             description: 'Description text',
             assigneeId: 'user-123',
             priority: 3,
@@ -209,6 +230,7 @@ describe('CLI Commands', () => {
           createMockIssue({ identifier: 'ENG-2' }),
         ];
 
+        mockTeamService.resolveTeamId.mockResolvedValue('resolved-team-id');
         mockIssueEntity.list.mockResolvedValue({
           issues: mockIssues,
           pageInfo: {} as any,
@@ -228,10 +250,12 @@ describe('CLI Commands', () => {
           '10',
         ]);
 
+        expect(mockTeamService.resolveTeamId).toHaveBeenCalledWith('team-123');
         expect(mockIssueEntity.list).toHaveBeenCalledWith(
           expect.objectContaining({
-            teamId: 'team-123',
+            teamId: 'resolved-team-id',
             state: 'started',
+            includeArchived: false,
           }),
           expect.objectContaining({
             first: 10,
@@ -276,7 +300,11 @@ describe('CLI Commands', () => {
     let mockTeamService: jest.Mocked<TeamService>;
 
     beforeEach(() => {
-      mockTeamService = new TeamService() as jest.Mocked<TeamService>;
+      mockTeamService = {
+        list: jest.fn(),
+        get: jest.fn(),
+        getByKey: jest.fn(),
+      } as any;
       (TeamService as jest.Mock).mockImplementation(() => mockTeamService);
       teamCommands(program);
     });
@@ -325,7 +353,7 @@ describe('CLI Commands', () => {
     let mockProjectService: jest.Mocked<ProjectService>;
 
     beforeEach(() => {
-      mockProjectService = new ProjectService() as jest.Mocked<ProjectService>;
+      mockProjectService = new ProjectService({} as any) as jest.Mocked<ProjectService>;
       (ProjectService as jest.Mock).mockImplementation(() => mockProjectService);
       projectCommands(program);
     });
