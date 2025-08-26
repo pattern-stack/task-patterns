@@ -7,7 +7,7 @@ import { TeamService } from '@features/team/service';
 import { ProjectService } from '@features/project/service';
 import { linearClient } from '@atoms/client/linear-client';
 import { TestFactory } from '../fixtures/factories';
-import { createMockIssue, createMockTeam, createMockProject } from '../utils/mocks';
+import { createMockIssue, createMockTeam, createMockProject, createMockComment } from '../utils/mocks';
 
 jest.mock('@molecules/entities/issue.entity');
 jest.mock('@features/team/service');
@@ -277,7 +277,8 @@ describe('CLI Commands', () => {
 
     describe('issue comment', () => {
       it('should add comment to issue', async () => {
-        mockIssueEntity.addComment.mockResolvedValue(true);
+        const mockComment = createMockComment();
+        mockIssueEntity.addComment.mockResolvedValue(mockComment);
 
         await program.parseAsync([
           'node',

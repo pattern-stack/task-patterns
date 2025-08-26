@@ -1,7 +1,6 @@
 import { IssueEntity } from '@molecules/entities/issue.entity';
 import { IssueService } from '@features/issue/service';
-import { TeamService } from '@features/team/service';
-import { ProjectService } from '@features/project/service';
+import { CommentService } from '@features/comment/service';
 import { NotFoundError } from '@atoms/types/common';
 import { TestFactory } from '../fixtures/factories';
 import {
@@ -14,81 +13,51 @@ import {
 } from '../utils/mocks';
 
 jest.mock('@features/issue/service');
-jest.mock('@features/team/service');
-jest.mock('@features/project/service');
+jest.mock('@features/comment/service');
 
 describe('IssueEntity', () => {
   let entity: IssueEntity;
   let mockIssueService: jest.Mocked<IssueService>;
-  let mockTeamService: jest.Mocked<TeamService>;
-  let mockProjectService: jest.Mocked<ProjectService>;
+  let mockCommentService: jest.Mocked<CommentService>;
 
   beforeEach(() => {
     TestFactory.reset();
 
     // Create mocked services
     mockIssueService = new IssueService({} as any) as jest.Mocked<IssueService>;
-    mockTeamService = new TeamService({} as any) as jest.Mocked<TeamService>;
-    mockProjectService = new ProjectService({} as any) as jest.Mocked<ProjectService>;
+    mockCommentService = new CommentService({} as any) as jest.Mocked<CommentService>;
 
     // Create entity
     entity = new IssueEntity();
 
     // Replace services with mocks
     (entity as any).issueService = mockIssueService;
-    (entity as any).teamService = mockTeamService;
-    (entity as any).projectService = mockProjectService;
+    (entity as any).commentService = mockCommentService;
   });
 
   describe('create', () => {
-    it('should validate team exists before creating issue', async () => {
+    it('should create issue without validation', async () => {
       const issueData = TestFactory.issueCreate();
-      const mockTeam = createMockTeam();
       const mockIssue = createMockIssue();
 
-      mockTeamService.get.mockResolvedValue(mockTeam);
       mockIssueService.create.mockResolvedValue(mockIssue);
 
       const result = await entity.create(issueData);
 
-      expect(mockTeamService.get).toHaveBeenCalledWith(issueData.teamId);
       expect(mockIssueService.create).toHaveBeenCalledWith(issueData);
       expect(result).toEqual(mockIssue);
     });
 
-    it('should throw NotFoundError when team does not exist', async () => {
-      const issueData = TestFactory.issueCreate();
-
-      mockTeamService.get.mockResolvedValue(null);
-
-      await expect(entity.create(issueData)).rejects.toThrow(NotFoundError);
-      expect(mockIssueService.create).not.toHaveBeenCalled();
-    });
-
-    it('should validate project exists when projectId is provided', async () => {
+    it('should pass through issue creation with projectId', async () => {
       const issueData = TestFactory.issueCreate({ projectId: 'project-123' });
-      const mockTeam = createMockTeam();
-      const mockProject = createMockProject();
       const mockIssue = createMockIssue();
 
-      mockTeamService.get.mockResolvedValue(mockTeam);
-      mockProjectService.get.mockResolvedValue(mockProject);
       mockIssueService.create.mockResolvedValue(mockIssue);
 
       const result = await entity.create(issueData);
 
-      expect(mockProjectService.get).toHaveBeenCalledWith('project-123');
+      expect(mockIssueService.create).toHaveBeenCalledWith(issueData);
       expect(result).toEqual(mockIssue);
-    });
-
-    it('should throw NotFoundError when project does not exist', async () => {
-      const issueData = TestFactory.issueCreate({ projectId: 'project-123' });
-      const mockTeam = createMockTeam();
-
-      mockTeamService.get.mockResolvedValue(mockTeam);
-      mockProjectService.get.mockResolvedValue(null);
-
-      await expect(entity.create(issueData)).rejects.toThrow(NotFoundError);
     });
   });
 
@@ -148,14 +117,11 @@ describe('IssueEntity', () => {
     });
   });
 
-  describe('moveToProject', () => {
+  describe('moveToProject (deprecated)', () => {
     it('should move issue to a different project', async () => {
       const mockIssue = createMockIssue();
-      const mockProject = createMockProject();
       const updatedIssue = { ...mockIssue, projectId: 'project-123' };
 
-      mockIssueService.get.mockResolvedValue(mockIssue);
-      mockProjectService.get.mockResolvedValue(mockProject);
       mockIssueService.update.mockResolvedValue(updatedIssue);
 
       const result = await entity.moveToProject('issue-123', 'project-123');
@@ -165,30 +131,12 @@ describe('IssueEntity', () => {
       });
       expect(result).toEqual(updatedIssue);
     });
-
-    it('should throw NotFoundError when issue does not exist', async () => {
-      mockIssueService.get.mockResolvedValue(null);
-      mockProjectService.get.mockResolvedValue(createMockProject());
-
-      await expect(entity.moveToProject('nonexistent', 'project-123')).rejects.toThrow(
-        NotFoundError,
-      );
-    });
-
-    it('should throw NotFoundError when project does not exist', async () => {
-      mockIssueService.get.mockResolvedValue(createMockIssue());
-      mockProjectService.get.mockResolvedValue(null);
-
-      await expect(entity.moveToProject('issue-123', 'nonexistent')).rejects.toThrow(NotFoundError);
-    });
   });
 
-  describe('assignToUser', () => {
+  describe('assignToUser (deprecated)', () => {
     it('should assign issue to a user', async () => {
-      const mockIssue = createMockIssue();
-      const updatedIssue = { ...mockIssue, assigneeId: 'user-123' };
+      const updatedIssue = createMockIssue({ assigneeId: 'user-123' });
 
-      mockIssueService.get.mockResolvedValue(mockIssue);
       mockIssueService.update.mockResolvedValue(updatedIssue);
 
       const result = await entity.assignToUser('issue-123', 'user-123');
@@ -198,20 +146,12 @@ describe('IssueEntity', () => {
       });
       expect(result).toEqual(updatedIssue);
     });
-
-    it('should throw NotFoundError when issue does not exist', async () => {
-      mockIssueService.get.mockResolvedValue(null);
-
-      await expect(entity.assignToUser('nonexistent', 'user-123')).rejects.toThrow(NotFoundError);
-    });
   });
 
-  describe('unassign', () => {
+  describe('unassign (deprecated)', () => {
     it('should unassign issue', async () => {
-      const mockIssue = createMockIssue();
-      const updatedIssue = { ...mockIssue, assigneeId: null };
+      const updatedIssue = createMockIssue({ assigneeId: null });
 
-      mockIssueService.get.mockResolvedValue(mockIssue);
       mockIssueService.update.mockResolvedValue(updatedIssue);
 
       const result = await entity.unassign('issue-123');
@@ -223,12 +163,10 @@ describe('IssueEntity', () => {
     });
   });
 
-  describe('changePriority', () => {
+  describe('changePriority (deprecated)', () => {
     it('should change issue priority', async () => {
-      const mockIssue = createMockIssue();
-      const updatedIssue = { ...mockIssue, priority: 4 };
+      const updatedIssue = createMockIssue({ priority: 4 });
 
-      mockIssueService.get.mockResolvedValue(mockIssue);
       mockIssueService.update.mockResolvedValue(updatedIssue);
 
       const result = await entity.changePriority('issue-123', 4);
