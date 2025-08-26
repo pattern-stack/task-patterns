@@ -1,9 +1,10 @@
-import { Issue } from '@linear/sdk';
+import { Issue, LinearClient } from '@linear/sdk';
 import { IssueEntity } from '@molecules/entities/issue.entity';
 import { UserService } from '@features/user/service';
 import { WorkflowStateService } from '@features/workflow-state/service';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError } from '@atoms/types/common';
+import { linearClient } from '@atoms/client/linear-client';
 
 export interface BulkUpdateResult {
   updated: Issue[];
@@ -26,10 +27,11 @@ export class BulkOperationsWorkflow {
   private userService: UserService;
   private workflowStateService: WorkflowStateService;
 
-  constructor() {
-    this.issueEntity = new IssueEntity();
-    this.userService = new UserService();
-    this.workflowStateService = new WorkflowStateService();
+  constructor(client?: LinearClient) {
+    const actualClient = client || linearClient.getClient();
+    this.issueEntity = new IssueEntity(actualClient);
+    this.userService = new UserService(actualClient);
+    this.workflowStateService = new WorkflowStateService(actualClient);
   }
 
   /**

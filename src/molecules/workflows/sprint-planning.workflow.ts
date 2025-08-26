@@ -1,8 +1,10 @@
+import { LinearClient } from '@linear/sdk';
 import { IssueEntity } from '../entities/issue.entity';
 import { TeamService } from '@features/team/service';
 import { ProjectService } from '@features/project/service';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError } from '@atoms/types/common';
+import { linearClient } from '@atoms/client/linear-client';
 
 export interface SprintPlanningOptions {
   teamId: string;
@@ -28,10 +30,11 @@ export class SprintPlanningWorkflow {
   private teamService: TeamService;
   private projectService: ProjectService;
 
-  constructor() {
-    this.issueEntity = new IssueEntity();
-    this.teamService = new TeamService();
-    this.projectService = new ProjectService();
+  constructor(client?: LinearClient) {
+    const actualClient = client || linearClient.getClient();
+    this.issueEntity = new IssueEntity(actualClient);
+    this.teamService = new TeamService(actualClient);
+    this.projectService = new ProjectService(actualClient);
   }
 
   async planSprint(options: SprintPlanningOptions): Promise<SprintPlanningResult> {

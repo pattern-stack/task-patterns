@@ -1,9 +1,10 @@
-import { Issue } from '@linear/sdk';
+import { Issue, LinearClient } from '@linear/sdk';
 import { IssueService } from '@features/issue/service';
 import { TeamService } from '@features/team/service';
 import { UserService } from '@features/user/service';
 import { NaturalQueryParser, ParsedQuery } from '@atoms/parsers/natural-query.parser';
 import { logger } from '@atoms/shared/logger';
+import { linearClient } from '@atoms/client/linear-client';
 
 export interface SmartSearchOptions {
   team?: string;
@@ -30,10 +31,11 @@ export class SmartSearchWorkflow {
   private teamService: TeamService;
   private userService: UserService;
 
-  constructor() {
-    this.issueService = new IssueService();
-    this.teamService = new TeamService();
-    this.userService = new UserService();
+  constructor(client?: LinearClient) {
+    const actualClient = client || linearClient.getClient();
+    this.issueService = new IssueService(actualClient);
+    this.teamService = new TeamService(actualClient);
+    this.userService = new UserService(actualClient);
   }
 
   /**
