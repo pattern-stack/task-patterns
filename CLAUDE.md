@@ -64,7 +64,7 @@ npm test -- src/__tests__/features/issue.service.test.ts
 
 ## Architecture
 
-The codebase follows **Atomic Architecture** with strict layer dependencies:
+The codebase follows **Pragmatic Atomic Architecture** that works WITH the Linear SDK:
 
 ```
 src/
@@ -76,9 +76,23 @@ src/
 
 ### Layer Rules
 1. **Atoms**: Foundation utilities (client, config, logger, types). Cannot import from other layers.
-2. **Features**: Single-model services (IssueService, TeamService, etc.). Only imports from atoms.
-3. **Molecules**: Entities & workflows that compose multiple services. Imports from atoms and features.
+2. **Features**: Services that wrap SDK operations. Can handle SDK-natural relationships (field updates, native methods).
+3. **Molecules**: Entities & workflows for complex business logic. Entities provide convenience methods, workflows handle orchestration.
 4. **Organisms**: CLI commands and API endpoints. Can import from all layers.
+
+### Service vs Workflow Decision Guide
+
+**Keep in Services:**
+- Simple CRUD operations
+- Field updates (`updateIssue({ labelIds })`)
+- Native SDK methods (`createComment()`)
+- Single entity operations
+
+**Move to Workflows:**
+- Multi-step operations
+- Cross-entity validation
+- Business rules and logic
+- Bulk operations with error handling
 
 ### Key Components
 

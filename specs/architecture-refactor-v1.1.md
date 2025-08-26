@@ -23,13 +23,16 @@
 
 This document tracks the refactoring of the Linear MCP codebase to align with Atomic Architecture v1.1, introducing TypeScript best practices, functional programming patterns, and clear separation of concerns.
 
-## Refactor Goals
+## Refactor Goals (Pragmatic Approach)
 
-1. **Clear Service Ownership**: Each service belongs to exactly ONE entity
-2. **Cross-Entity Operations via Workflows**: ALL relationships handled by workflows
-3. **API Facades for UX**: Permission layer with convenient methods
+1. **Services Handle SDK-Natural Operations**: Services can handle operations the SDK naturally supports (field updates, native relations)
+2. **Workflows for Complex Business Logic**: Multi-step operations, validations, and orchestration in workflows
+3. **API Facades for UX**: Permission layer with convenient methods (future)
 4. **Functional Utilities**: Pure functions for validators, transformers, calculations
 5. **Type Safety**: Interfaces, generics, discriminated unions
+
+### Key Principle: Work WITH the SDK, Not Against It
+Since Linear SDK already provides relationship management, we embrace it rather than abstracting it away.
 
 ## Implementation Status
 
@@ -410,6 +413,79 @@ const issueAPI = new IssueAPI(client);
 - [ ] Test coverage > 80%
 - [x] Breaking changes documented
 
+## Architectural Principles (Pragmatic Approach)
+
+### Service Layer Guidelines
+
+Services can handle operations that the SDK naturally supports:
+
+```typescript
+// ✅ GOOD in Services - SDK Natural Operations
+class IssueService {
+  // Basic CRUD
+  create(), update(), delete(), get()
+  
+  // Field updates (SDK handles these naturally)
+  async addLabels(issueId, labelIds) {
+    // Just updates labelIds[] field
+    return this.client.updateIssue(issueId, { labelIds })
+  }
+  
+  // Native SDK operations
+  async addComment(issueId, body) {
+    return this.client.createComment({ issueId, body })
+  }
+}
+
+class CycleService {
+  // Managing relationships the SDK supports
+  async addIssue(cycleId, issueId) {
+    // Just updates issue.cycleId field
+    return this.client.updateIssue(issueId, { cycleId })
+  }
+}
+```
+
+### Workflow Layer Guidelines
+
+Workflows handle complex business logic and orchestration:
+
+```typescript
+// ✅ GOOD in Workflows - Complex Operations
+class SprintPlanningWorkflow {
+  // Multi-step operations
+  async planSprint(teamId, cycleId, options) {
+    // 1. Validate team capacity
+    // 2. Get backlog items
+    // 3. Auto-assign based on workload
+    // 4. Update multiple issues
+    // 5. Send notifications
+  }
+}
+
+class IssueRelationsWorkflow {
+  // Operations requiring validation/orchestration
+  async quickCreate(title, teamKey, options) {
+    // 1. Resolve team by key
+    // 2. Validate user exists
+    // 3. Find or create labels
+    // 4. Create with all relations
+  }
+}
+```
+
+### Decision Matrix
+
+| Operation Type | Service | Workflow | Example |
+|---|---|---|---|
+| Simple field update | ✅ | ❌ | `updateIssue({ labelIds })` |
+| Native SDK method | ✅ | ❌ | `createComment()` |
+| Single validation | ✅ | ❌ | Check if issue exists |
+| Multi-entity validation | ❌ | ✅ | Validate team, user, and project |
+| Multi-step operation | ❌ | ✅ | Sprint planning |
+| Bulk operations | ❌ | ✅ | Archive 50 issues |
+| Business rules | ❌ | ✅ | Auto-assign by workload |
+
 ## Notes
 
 - Transformers are pure functions (functional style)
@@ -418,3 +494,4 @@ const issueAPI = new IssueAPI(client);
 - Services/Entities/Workflows are classes (OOP style)
 - API Facades intentionally break DRY for better UX
 - Tests should mock at layer boundaries, not internal implementation
+- **Services embrace SDK capabilities rather than abstracting them**

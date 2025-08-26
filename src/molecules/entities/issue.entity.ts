@@ -27,19 +27,24 @@ export interface IssueWithRelations {
 }
 
 /**
- * IssueEntity handles pure issue operations and issue-owned relationships.
+ * IssueEntity provides convenient methods for issue operations.
+ * 
+ * Following pragmatic architecture principles:
+ * - Handles SDK-natural operations (field updates, native methods)
+ * - Provides convenience wrappers for common operations
+ * - Complex validation and multi-step operations should use IssueRelationsWorkflow
  * 
  * This entity focuses on:
  * - CRUD operations for issues
- * - Managing comments (issues own comments - can't exist without an issue)
- * - Managing sub-issues (parent-child relationships)
- * - Fetching issue relations for display
+ * - Managing comments (SDK native: createComment)
+ * - Managing labels (SDK native: updating labelIds[])
+ * - Assignment operations (SDK native: updating assigneeId)
+ * - Sub-issue management
  * 
- * Cross-entity operations that belong in IssueRelationsWorkflow:
- * - Label management (labels are independent entities)
- * - Team/Project/User assignment and validation
- * - State transitions with validation
- * - Any operation requiring validation of external entities
+ * For complex operations use IssueRelationsWorkflow:
+ * - Multi-entity validation
+ * - Smart creation with team/user resolution
+ * - Bulk operations with error handling
  */
 export class IssueEntity {
   private issueService: IssueService;
@@ -51,9 +56,12 @@ export class IssueEntity {
     this.commentService = new CommentService(actualClient);
   }
 
+  // ============================================
+  // Core CRUD Operations
+  // ============================================
+
   /**
-   * Create an issue without validation
-   * For validated creation, use IssueRelationsWorkflow.createWithValidation
+   * Create an issue
    */
   async create(data: IssueCreate): Promise<LinearIssue> {
     logger.info(`Creating issue: ${data.title}`);
@@ -108,8 +116,7 @@ export class IssueEntity {
   }
 
   /**
-   * Update an issue without validation
-   * For validated updates, use IssueRelationsWorkflow
+   * Update an issue
    */
   async update(id: string, data: IssueUpdate): Promise<LinearIssue> {
     logger.info(`Updating issue: ${id}`);
@@ -156,11 +163,81 @@ export class IssueEntity {
   }
 
   // ============================================
-  // Comment Management (Issues own comments)
+  // Assignment Operations (SDK-natural: field updates)
+  // ============================================
+
+  /**
+   * Assign an issue to a user
+   * Simple field update - SDK handles naturally
+   */
+  async assignToUser(issueId: string, userId: string): Promise<LinearIssue> {
+    logger.info(`Assigning issue ${issueId} to user ${userId}`);
+    return await this.issueService.update(issueId, { assigneeId: userId });
+  }
+
+  /**
+   * Unassign an issue
+   * Simple field update - SDK handles naturally
+   */
+  async unassign(issueId: string): Promise<LinearIssue> {
+    logger.info(`Unassigning issue ${issueId}`);
+    return await this.issueService.update(issueId, { assigneeId: null });
+  }
+
+  // ============================================
+  // Project & Priority Operations (SDK-natural: field updates)
+  // ============================================
+
+  /**
+   * Move issue to a project
+   * Simple field update - SDK handles naturally
+   */
+  async moveToProject(issueId: string, projectId: string): Promise<LinearIssue> {
+    logger.info(`Moving issue ${issueId} to project ${projectId}`);
+    return await this.issueService.update(issueId, { projectId });
+  }
+
+  /**
+   * Change issue priority
+   * Simple field update with basic validation
+   */
+  async changePriority(issueId: string, priority: number): Promise<LinearIssue> {
+    if (priority < 0 || priority > 4) {
+      throw new Error('Priority must be between 0 and 4');
+    }
+    logger.info(`Changing priority of issue ${issueId} to ${priority}`);
+    return await this.issueService.update(issueId, { priority });
+  }
+
+  // ============================================
+  // Label Management (SDK-natural: updating labelIds[])
+  // ============================================
+
+  /**
+   * Add labels to an issue
+   * Simple field update - SDK handles naturally
+   */
+  async addLabels(issueId: string, labelIds: string[]): Promise<LinearIssue> {
+    logger.info(`Adding ${labelIds.length} labels to issue ${issueId}`);
+    return await this.issueService.addLabels(issueId, labelIds);
+  }
+
+  /**
+   * Remove labels from an issue
+   * Simple field update - SDK handles naturally
+   */
+  async removeLabels(issueId: string, labelIds: string[]): Promise<LinearIssue> {
+    logger.info(`Removing ${labelIds.length} labels from issue ${issueId}`);
+    return await this.issueService.removeLabels(issueId, labelIds);
+  }
+
+  // ============================================
+  // Comment Management (SDK-natural: createComment)
   // ============================================
 
   /**
    * Add a comment to an issue
+   * SDK native operation
    */
   async addComment(issueId: string, body: string): Promise<Comment> {
     logger.info(`Adding comment to issue: ${issueId}`);
@@ -200,27 +277,6 @@ export class IssueEntity {
   }
 
   // ============================================
-  // Deprecated Label Methods (for backward compatibility)
-  // Use IssueRelationsWorkflow for label operations
-  // ============================================
-
-  /**
-   * @deprecated Use IssueRelationsWorkflow.addLabels instead
-   */
-  async addLabels(issueId: string, labelIds: string[]): Promise<LinearIssue> {
-    logger.warn('IssueEntity.addLabels is deprecated. Use IssueRelationsWorkflow.addLabels');
-    return await this.issueService.addLabels(issueId, labelIds);
-  }
-
-  /**
-   * @deprecated Use IssueRelationsWorkflow.removeLabels instead  
-   */
-  async removeLabels(issueId: string, labelIds: string[]): Promise<LinearIssue> {
-    logger.warn('IssueEntity.removeLabels is deprecated. Use IssueRelationsWorkflow.removeLabels');
-    return await this.issueService.removeLabels(issueId, labelIds);
-  }
-
-  // ============================================
   // Sub-issue Management
   // ============================================
 
@@ -239,7 +295,6 @@ export class IssueEntity {
 
   /**
    * Create a sub-issue
-   * Note: For validated creation with team resolution, use IssueRelationsWorkflow.createSubIssue
    */
   async createSubIssue(parentId: string, data: IssueCreate): Promise<LinearIssue> {
     const parent = await this.issueService.get(parentId);
@@ -261,45 +316,5 @@ export class IssueEntity {
     };
 
     return await this.issueService.create(subIssueData);
-  }
-
-  // ============================================
-  // Deprecated Methods (for backward compatibility)
-  // Use IssueRelationsWorkflow instead
-  // ============================================
-
-  /**
-   * @deprecated Use IssueRelationsWorkflow.moveToProject instead
-   */
-  async moveToProject(issueId: string, projectId: string): Promise<LinearIssue> {
-    logger.warn('IssueEntity.moveToProject is deprecated. Use IssueRelationsWorkflow.moveToProject');
-    return await this.issueService.update(issueId, { projectId });
-  }
-
-  /**
-   * @deprecated Use IssueRelationsWorkflow.assignToUser instead
-   */
-  async assignToUser(issueId: string, userId: string): Promise<LinearIssue> {
-    logger.warn('IssueEntity.assignToUser is deprecated. Use IssueRelationsWorkflow.assignToUser');
-    return await this.issueService.update(issueId, { assigneeId: userId });
-  }
-
-  /**
-   * @deprecated Use IssueRelationsWorkflow.unassign instead
-   */
-  async unassign(issueId: string): Promise<LinearIssue> {
-    logger.warn('IssueEntity.unassign is deprecated. Use IssueRelationsWorkflow.unassign');
-    return await this.issueService.update(issueId, { assigneeId: null });
-  }
-
-  /**
-   * @deprecated Use IssueRelationsWorkflow.changePriority instead
-   */
-  async changePriority(issueId: string, priority: number): Promise<LinearIssue> {
-    logger.warn('IssueEntity.changePriority is deprecated. Use IssueRelationsWorkflow.changePriority');
-    if (priority < 0 || priority > 4) {
-      throw new Error('Priority must be between 0 and 4');
-    }
-    return await this.issueService.update(issueId, { priority });
   }
 }
