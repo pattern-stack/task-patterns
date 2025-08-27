@@ -32,21 +32,21 @@ npm run build
 
 ## CLI Usage
 
-### Test Connection
+The Linear CLI is designed for AI-assisted development workflows. See [CLI_GUIDE.md](./CLI_GUIDE.md) for comprehensive documentation.
+
+### Quick Start
 ```bash
-npm run dev src/organisms/cli/index.ts test-connection
-```
+# Check what we're working on
+npm run cli context
 
-### Issue Management
-```bash
-# Create issue
-npm run dev src/organisms/cli/index.ts issue create -t "Bug fix" --team TEAM_ID
+# Add a new task
+npm run cli add "Implement new feature"
 
-# Get issue
-npm run dev src/organisms/cli/index.ts issue get ISSUE_ID --with-relations
+# Start working on an issue
+npm run cli working DUG-79
 
-# List issues
-npm run dev src/organisms/cli/index.ts issue list --team TEAM_ID --limit 10
+# Mark as complete
+npm run cli done DUG-79
 
 # Update issue
 npm run dev src/organisms/cli/index.ts issue update ISSUE_ID -p 2 --state STATE_ID
