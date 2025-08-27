@@ -3,7 +3,8 @@
 ## 🎯 Next Steps
 
 ### 1. Team Setup
-- [ ] Create **task-patterns** team in Linear (team key: TP)
+- [x] Create **task-patterns** team in Linear (team key: TASK) ✅
+- [x] Set up GitHub sync for bi-directional issue tracking ✅
 - [ ] Set as default team for this project
 - [ ] Configure team-specific workflows and states
 
@@ -136,20 +137,59 @@ Eventually expose all of this via MCP for other tools:
 
 ---
 
-## 🚀 Immediate Next Session Tasks
+## ✅ Recent Progress (2025-08-27)
 
-1. Explore existing label patterns:
-   ```bash
-   tp context  # Make sure we're connected
-   # Need to build: tp labels list --team INT
-   # Need to build: tp labels list --team SPOT
-   ```
+- Created **task-patterns** team in Linear with identifier `TASK`
+- Configured GitHub sync for bi-directional issue tracking
+- Analyzed existing label patterns - found well-designed hierarchy ready
+- Verified CLI connection to new team
 
-2. Create task-patterns team manually in Linear
+## 🚀 Immediate Next Tasks
 
-3. Start building TeamAPI facade in molecules layer
+### Phase 1: Foundation (This Week)
+1. **Apply Label Hierarchy** - Create labels in task-patterns team
+2. **Set Default Team** - Configure task-patterns as default in .env
+3. **Build TeamAPI** - First molecules layer API for team operations
+4. **Build LabelAPI** - Label management with hierarchy support
 
-4. Design label template system
+### Phase 2: Core Tools (Next Week)
+5. **IssueManager Tool** - High-level abstraction combining services
+6. **Enhanced CLI Commands** - Team, label, and project commands
+7. **Test Suite Expansion** - Cover new molecules and tools
+
+### Proposed Issues for Linear:
+
+```
+TASK-2: Apply label hierarchy to task-patterns team
+  - Create type: labels (feature, bug, refactor, docs, test)
+  - Create area: labels (tasks, teams, labels, projects, etc.)
+  - Create stage: labels (design, implement, review, ready)
+  - Create layer: labels (atoms, molecules, organisms, features)
+
+TASK-3: Build TeamAPI molecule
+  - Create TeamAPI class in molecules/apis/
+  - Implement team CRUD operations
+  - Add member management methods
+  - Write comprehensive tests
+
+TASK-4: Build LabelAPI molecule
+  - Create LabelAPI class in molecules/apis/
+  - Implement hierarchical label creation
+  - Add bulk operations support
+  - Add label template system
+
+TASK-5: Create IssueManager tool abstraction
+  - Implement quickCreate method
+  - Add bulk status updates
+  - Implement smart search
+  - Add batch operations
+
+TASK-6: Enhance CLI with team commands
+  - tp team create/list/set-default
+  - tp labels apply-template
+  - tp labels list --hierarchy
+  - tp config set team.default
+```
 
 ---
 
