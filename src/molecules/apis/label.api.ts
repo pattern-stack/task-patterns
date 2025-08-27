@@ -158,7 +158,8 @@ export class LabelAPI {
    * List labels with optional filters
    */
   async list(filter?: LabelFilter, options?: { first?: number }): Promise<IssueLabel[]> {
-    const result = await this.labelService.list(filter, options);
+    const pagination = options ? { first: options.first || 50 } : undefined;
+    const result = await this.labelService.list(filter, pagination);
     return result.nodes;
   }
 
@@ -283,11 +284,12 @@ export class LabelAPI {
     });
 
     return {
-      successful,
+      success: successful.length > 0,
+      succeeded: successful,
       failed,
       totalCount: labels.length,
       successCount: successful.length,
-      failedCount: failed.length
+      failureCount: failed.length
     };
   }
 
@@ -316,11 +318,12 @@ export class LabelAPI {
     });
 
     return {
-      successful,
+      success: successful.length > 0,
+      succeeded: successful,
       failed,
       totalCount: labelIds.length,
       successCount: successful.length,
-      failedCount: failed.length
+      failureCount: failed.length
     };
   }
 
@@ -362,11 +365,12 @@ export class LabelAPI {
     });
 
     return {
-      successful,
+      success: successful.length > 0,
+      succeeded: successful,
       failed,
       totalCount: labels.length,
       successCount: successful.length,
-      failedCount: failed.length
+      failureCount: failed.length
     };
   }
 
@@ -482,10 +486,10 @@ export class LabelAPI {
   async findByPattern(pattern: string, teamKey?: string): Promise<IssueLabel[]> {
     const labels = teamKey 
       ? await this.listByTeam(teamKey)
-      : (await this.list()).nodes;
+      : await this.list();
 
     const regex = new RegExp(pattern, 'i');
-    return labels.filter(label => regex.test(label.name));
+    return labels.filter((label: IssueLabel) => regex.test(label.name));
   }
 
   /**

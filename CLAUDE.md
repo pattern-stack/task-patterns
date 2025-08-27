@@ -4,9 +4,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Linear Agent - A TypeScript-based Linear GraphQL API agent implementing atomic architecture for clean separation of concerns and scalable code organization.
+Task Patterns (tp) - An AI-human collaborative task management system built on Linear's API. A TypeScript-based Linear GraphQL API agent implementing atomic architecture for clean separation of concerns and scalable code organization.
 
 ## Development Commands
+
+### Task Pattern (tp) Commands
+```bash
+# See current work context
+tp context              # Shows in progress, todo, and completed tasks
+
+# Quick task management
+tp add "task title"     # Create new task
+tp working TASK-3       # Mark as in progress  
+tp done TASK-3          # Mark as complete
+tp show TASK-3          # View full details
+tp update TASK-3 --status "In Review"  # Update fields
+
+# AI assistance
+tp ai-context           # Show comprehensive context for AI
+
+# Configuration
+tp config show          # View settings
+tp config list-teams    # Available teams
+tp config teams TASK    # Filter to specific teams
+```
 
 ### Essential Commands
 ```bash
@@ -16,8 +37,10 @@ npm install
 # Development with hot reload
 npm run dev
 
-# Run CLI commands
+# Run CLI commands directly
 npm run cli [command]
+# OR use the tp command after npm link:
+tp [command]
 
 # Build TypeScript
 npm run build
@@ -144,12 +167,25 @@ Test utilities available:
 5. **Error Handling**: Custom errors (NotFoundError) with consistent messaging
 6. **Async-First**: All data operations are async with proper error handling
 
+## Working with Tasks
+
+**IMPORTANT**: Use the `tp` command throughout development to track progress:
+
+1. **Start of session**: Run `tp context` to see current work
+2. **During development**: 
+   - `tp add "implement X"` when starting new work
+   - `tp working TASK-ID` when beginning a task
+   - `tp done TASK-ID` when completing
+3. **View details**: `tp show TASK-ID` for full task information
+4. **Update status**: `tp update TASK-ID --status "In Review"`
+
 ## Development Tickets
 
-Active development is tracked in `.claude/tickets/` with the following structure:
+Active development is tracked in Linear (team: TASK). Use `tp context` to see current work.
+
+Historical tickets in `.claude/tickets/`:
 - **mvp1-core/**: Core Linear operations (8 tickets) - CRUD for all primary objects
 - **mvp2-collaboration/**: Team features (4 tickets) - Webhooks, search, notifications, reporting  
 - **technical-debt/**: Infrastructure (3 tickets) - Error handling, caching, integration tests
 
-Each ticket follows Linear's format with status, priority, estimates, and acceptance criteria. 
-Reference tickets by ID (e.g., LIN-001) when implementing features.
+Reference tickets by ID (e.g., TASK-3) when implementing features.
