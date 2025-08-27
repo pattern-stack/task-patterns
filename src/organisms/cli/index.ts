@@ -6,6 +6,9 @@ import ora from 'ora';
 import { linearClient } from '@atoms/client/linear-client';
 import { IssueAPI } from '@molecules/issue.api';
 import { settings } from './settings';
+import { createTeamCommand } from './commands/team';
+import { createLabelCommand } from './commands/label';
+import { createConfigCommand } from './commands/config';
 
 const program = new Command();
 
@@ -16,7 +19,7 @@ const DEFAULT_TEAM = process.env.LINEAR_DEFAULT_TEAM || 'dug';
 program
   .name('tp')
   .description('Task Pattern - AI-assisted development workflow (pattern-stack)')
-  .version('1.0.0')
+  .version('1.1.0')
   .option('--team <key>', `Override default team (currently: ${DEFAULT_TEAM})`);
 
 // Check our context - what are we working on?
@@ -66,7 +69,7 @@ program
         first: 50
       };
       
-      const result = await client.client.request(query, variables);
+      const result = await client.client.request(query, variables) as any;
       
       spinner.stop();
       
@@ -446,77 +449,10 @@ program
     }
   });
 
-// Settings command group
-const configCmd = program
-  .command('config')
-  .description('Manage task-pattern settings');
-
-configCmd
-  .command('show')
-  .description('Show current settings')
-  .action(() => {
-    settings.show();
-  });
-
-configCmd
-  .command('teams [teams...]')
-  .description('Set active teams to filter (leave empty to show all)')
-  .action((teams) => {
-    if (teams && teams.length > 0) {
-      settings.set('activeTeams', teams);
-      console.log(chalk.green(`✓ Now showing issues from: ${teams.join(', ')}`));
-      console.log(chalk.dim('  Run "tp context" to see filtered view'));
-    } else {
-      settings.clearTeamFilters();
-      console.log(chalk.dim('  Run "tp context" to see all teams'));
-    }
-  });
-
-configCmd
-  .command('add-team <teams...>')
-  .description('Add teams to active filter')
-  .action((teams) => {
-    settings.addActiveTeams(...teams);
-  });
-
-configCmd
-  .command('remove-team <teams...>')
-  .description('Remove teams from active filter')
-  .action((teams) => {
-    settings.removeActiveTeams(...teams);
-  });
-
-configCmd
-  .command('clear')
-  .description('Clear all team filters')
-  .action(() => {
-    settings.clearTeamFilters();
-  });
-
-configCmd
-  .command('list-teams')
-  .description('List all available teams')
-  .action(async () => {
-    const spinner = ora('Fetching teams...').start();
-    try {
-      const client = linearClient.getClient();
-      const teams = await client.teams();
-      
-      spinner.stop();
-      console.log(chalk.cyan('\n==> Available Teams:\n'));
-      
-      teams.nodes.forEach(team => {
-        console.log(chalk.gray('  Key:  '), chalk.yellow(team.key));
-        console.log(chalk.gray('  Name: '), team.name);
-        console.log(chalk.gray('  ID:   '), chalk.dim(team.id));
-        console.log();
-      });
-      
-      console.log(chalk.dim(`  Use: tp config teams ${teams.nodes.map(t => t.key).join(' ')}`));
-    } catch (error) {
-      spinner.fail('Could not fetch teams');
-    }
-  });
+// Register command modules
+program.addCommand(createTeamCommand());
+program.addCommand(createLabelCommand());
+program.addCommand(createConfigCommand());
 
 // AI context command - provides everything an AI needs to know
 program
@@ -540,9 +476,21 @@ program
     console.log(chalk.white('  tp show ID'), chalk.dim('............'), 'View full details');
     console.log();
     
+    console.log(chalk.yellow('👥 Team Management:'));
+    console.log(chalk.white('  tp team list'), chalk.dim('..........'), 'List all teams');
+    console.log(chalk.white('  tp team create'), chalk.dim('........'), 'Create new team');
+    console.log(chalk.white('  tp team stats KEY'), chalk.dim('.....'), 'Team analytics');
+    console.log();
+    
+    console.log(chalk.yellow('🏷️  Label Management:'));
+    console.log(chalk.white('  tp labels list'), chalk.dim('........'), 'List all labels');
+    console.log(chalk.white('  tp labels create'), chalk.dim('......'), 'Create new label');
+    console.log(chalk.white('  tp labels apply-template'), 'Apply label template');
+    console.log();
+    
     console.log(chalk.yellow('⚙️  Configuration:'));
     console.log(chalk.white('  tp config show'), chalk.dim('........'), 'View current settings');
-    console.log(chalk.white('  tp config list-teams'), chalk.dim('..'), 'See available teams');
+    console.log(chalk.white('  tp config set'), chalk.dim('.........'), 'Set configuration value');
     console.log(chalk.white('  tp config teams X Y'), chalk.dim('...'), 'Filter to specific teams');
     console.log();
     
