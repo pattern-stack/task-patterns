@@ -50,6 +50,8 @@ program
       
       // Filter by state and team
       const inProgress: any[] = [];
+      const inRefinement: any[] = [];
+      const ready: any[] = [];
       const todo: any[] = [];
       const recentlyDone: any[] = [];
       
@@ -63,9 +65,13 @@ program
         }
         
         const state = await issue.state;
-        if (state?.name === 'In Progress') {
+        if (state?.name === 'In Progress' || state?.name === 'In Review' || state?.name === 'Validation') {
           inProgress.push({ issue, state: state.name });
-        } else if (state?.name === 'Todo' || state?.name === 'Backlog') {
+        } else if (state?.name === 'Refinement' || state?.name === '🔍 Refinement' || state?.name === 'Definition' || state?.name === 'Ideation') {
+          inRefinement.push({ issue, state: state.name });
+        } else if (state?.name === 'Ready') {
+          ready.push({ issue, state: state.name });
+        } else if (state?.name === 'Todo' || state?.name === 'ToDo' || state?.name === 'Backlog') {
           todo.push({ issue, state: state.name });
         } else if (state?.name === 'Done' && issue.completedAt) {
           // Check if completed in last 7 days
@@ -82,6 +88,20 @@ program
         console.log(chalk.yellow('  Currently in progress:'));
         inProgress.forEach(({ issue }) => {
           console.log(chalk.white(`    * [${issue.identifier}] ${issue.title}`));
+        });
+      }
+      
+      if (inRefinement.length > 0) {
+        console.log(chalk.magenta('\n  Needs refinement:'));
+        inRefinement.forEach(({ issue }) => {
+          console.log(chalk.white(`    🔍 [${issue.identifier}] ${issue.title}`));
+        });
+      }
+      
+      if (ready.length > 0) {
+        console.log(chalk.cyan('\n  Ready to start:'));
+        ready.forEach(({ issue }) => {
+          console.log(chalk.white(`    ⚡ [${issue.identifier}] ${issue.title}`));
         });
       }
       
