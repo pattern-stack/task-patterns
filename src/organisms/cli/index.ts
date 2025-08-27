@@ -29,15 +29,44 @@ program
     
     try {
       const client = linearClient.getClient();
-      const api = new IssueAPI(client);
       
       // Get active team filter from settings
       const activeTeams = settings.get('activeTeams');
       
-      // Get recent issues - filter by teams if configured
-      const result = await api.list({
-        includeArchived: false
-      }, { first: 50 });  // Get more initially since we'll filter
+      // Use custom GraphQL query to fetch everything at once
+      const query = `
+        query IssuesWithRelations($filter: IssueFilter, $first: Int) {
+          issues(filter: $filter, first: $first) {
+            nodes {
+              id
+              identifier
+              title
+              completedAt
+              team {
+                id
+                key
+                name
+              }
+              state {
+                id
+                name
+                type
+              }
+            }
+          }
+        }
+      `;
+      
+      const variables = {
+        filter: {
+          team: activeTeams && activeTeams.length > 0 
+            ? { key: { in: activeTeams } }
+            : undefined
+        },
+        first: 50
+      };
+      
+      const result = await client.client.request(query, variables);
       
       spinner.stop();
       
@@ -48,23 +77,17 @@ program
         console.log(chalk.cyan('\n==> Here is what we are working on:\n'));
       }
       
-      // Filter by state and team
+      // Filter and categorize issues based on state
       const inProgress: any[] = [];
       const inRefinement: any[] = [];
       const ready: any[] = [];
       const todo: any[] = [];
       const recentlyDone: any[] = [];
       
-      for (const issue of result.issues) {
-        // Filter by team if configured
-        if (activeTeams && activeTeams.length > 0) {
-          const team = await issue.team;
-          if (!team || !activeTeams.includes(team.key)) {
-            continue;  // Skip issues not in active teams
-          }
-        }
+      // Process all issues - data is already fetched, no async operations needed
+      for (const issue of result.issues.nodes) {
+        const state = issue.state;
         
-        const state = await issue.state;
         if (state?.name === 'In Progress' || state?.name === 'In Review' || state?.name === 'Validation') {
           inProgress.push({ issue, state: state.name });
         } else if (state?.name === 'Refinement' || state?.name === '🔍 Refinement' || state?.name === 'Definition' || state?.name === 'Ideation') {
