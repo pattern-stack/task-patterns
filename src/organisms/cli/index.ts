@@ -382,6 +382,66 @@ configCmd
     }
   });
 
+// AI context command - provides everything an AI needs to know
+program
+  .command('ai-context')
+  .description('Show comprehensive context for AI assistants')
+  .action(() => {
+    console.log(chalk.cyan('\n==> AI Context for task-patterns\n'));
+    
+    console.log(chalk.yellow('📋 Quick Reference:'));
+    console.log(chalk.gray('  Command:       '), 'tp (or pattern, task-pattern)');
+    console.log(chalk.gray('  Purpose:       '), 'AI-human collaborative task management');
+    console.log(chalk.gray('  Current Team:  '), process.env.LINEAR_DEFAULT_TEAM || 'DUG');
+    console.log(chalk.gray('  Backend:       '), 'Linear (more coming)');
+    console.log();
+    
+    console.log(chalk.yellow('🎯 Core Commands:'));
+    console.log(chalk.white('  tp context'), chalk.dim('............'), 'See current work (in progress, todo, done)');
+    console.log(chalk.white('  tp add "task"'), chalk.dim('.........'), 'Create new task during conversation');
+    console.log(chalk.white('  tp working ID'), chalk.dim('.........'), 'Mark as in progress');
+    console.log(chalk.white('  tp done ID'), chalk.dim('............'), 'Mark complete (celebrates!)');
+    console.log(chalk.white('  tp show ID'), chalk.dim('............'), 'View full details');
+    console.log();
+    
+    console.log(chalk.yellow('⚙️  Configuration:'));
+    console.log(chalk.white('  tp config show'), chalk.dim('........'), 'View current settings');
+    console.log(chalk.white('  tp config list-teams'), chalk.dim('..'), 'See available teams');
+    console.log(chalk.white('  tp config teams X Y'), chalk.dim('...'), 'Filter to specific teams');
+    console.log();
+    
+    console.log(chalk.yellow('📁 Architecture:'));
+    console.log(chalk.gray('  atoms/     '), '→ Foundation (client, types, validators)');
+    console.log(chalk.gray('  features/  '), '→ Services (Linear SDK operations)');
+    console.log(chalk.gray('  molecules/ '), '→ Domain (entities, workflows, API facades)');
+    console.log(chalk.gray('  organisms/ '), '→ Interface (CLI, future MCP)');
+    console.log();
+    
+    console.log(chalk.yellow('🏷️  Label System:'));
+    console.log(chalk.gray('  Format:    '), 'group:label (e.g., type:feature, area:tasks)');
+    console.log(chalk.gray('  Groups:    '), 'type, area, stage, layer, backend');
+    console.log(chalk.gray('  Docs:      '), 'See LABEL_HIERARCHY.md');
+    console.log();
+    
+    console.log(chalk.yellow('🚀 Session Startup:'));
+    console.log(chalk.dim('  1. Run "tp context" to see current state'));
+    console.log(chalk.dim('  2. Check TASK_PATTERNS_ROADMAP.md for next steps'));
+    console.log(chalk.dim('  3. Use "tp add" to track tasks during conversation'));
+    console.log(chalk.dim('  4. Commit with Co-Authored-By: Claude'));
+    console.log();
+    
+    console.log(chalk.yellow('💡 Key Points:'));
+    console.log(chalk.dim('  • Use IssueAPI facade from molecules layer'));
+    console.log(chalk.dim('  • Positive reinforcement in all messages'));
+    console.log(chalk.dim('  • We\'re dogfooding - use tp throughout'));
+    console.log(chalk.dim('  • Linear is just first backend - stay abstract'));
+    console.log(chalk.dim('  • Human doesn\'t know TypeScript - explain simply'));
+    console.log();
+    
+    console.log(chalk.cyan('📖 Full docs: AI_CONTEXT.md'));
+    console.log(chalk.cyan('🔗 Repo: github.com/pattern-stack/task-patterns'));
+  });
+
 // Helper to show version and a friendly message
 program
   .command('hello')
