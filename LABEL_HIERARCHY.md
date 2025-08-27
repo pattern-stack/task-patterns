@@ -1,100 +1,151 @@
-# Task Patterns Label Hierarchy
+# Label Hierarchy for task-patterns
 
-## Overview
+This document describes the label hierarchy used in the task-patterns project for categorizing and organizing issues in Linear.
 
-This document defines the standard label hierarchy for task-patterns. Labels use a two-level system (`group:label`) for consistent categorization across different backend tools (Linear, GitHub, Jira, etc.).
+## Label Categories
 
-## Label Groups
+### Domain Labels (domain:*)
+Identifies the functional area or feature domain that an issue relates to.
 
-### type: (Work Classification)
-What kind of work is this?
+- **domain:tasks** - Task/issue management features
+  - Issue CRUD operations
+  - Status transitions
+  - Priority management
+  - Assignment workflows
+  
+- **domain:teams** - Team operations and configuration
+  - Team creation and management
+  - Member operations
+  - Team settings and preferences
+  - Workflow state configuration
+  
+- **domain:labels** - Label management and hierarchy
+  - Label CRUD operations
+  - Template application
+  - Hierarchical organization
+  - Bulk operations
+  
+- **domain:projects** - Project/milestone features
+  - Project management
+  - Milestone tracking
+  - Project relationships
+  - Timeline operations
+  
+- **domain:sync** - Integration/sync functionality
+  - Linear API synchronization
+  - Webhook processing
+  - External system integration
+  - Data consistency
+  
+- **domain:reporting** - Analytics/insights features
+  - Team analytics
+  - Velocity tracking
+  - Progress reporting
+  - Data visualization
 
-- `type:feature` - New functionality or capability
-- `type:bug` - Defect or error to fix
-- `type:refactor` - Code improvement without changing functionality
-- `type:docs` - Documentation updates
-- `type:test` - Test creation or updates
+### Layer Labels (layer:*)
+Identifies which architectural layer the work relates to.
 
-### area: (Functional Area)
-What functional area does this affect?
+- **layer:atoms** - Foundation layer (shared utilities, base components)
+  - Client management
+  - Type definitions
+  - Validators
+  - Calculations
+  
+- **layer:features** - Data service layer
+  - Linear SDK wrappers
+  - Service implementations
+  - Data transformers
+  - Schema definitions
+  
+- **layer:molecules** - Domain logic layer
+  - Entities
+  - API facades
+  - Workflows
+  - Business logic
+  
+- **layer:organisms** - User interface layer
+  - CLI commands
+  - HTTP API endpoints
+  - MCP server
+  - User-facing features
 
-- `area:tasks` - Issue/task management
-- `area:teams` - Team management
-- `area:labels` - Label management
-- `area:projects` - Project/milestone management
-- `area:auth` - Authentication/authorization
-- `area:sync` - Cross-tool synchronization
-- `area:reporting` - Analytics and reporting
+### Component Labels (component:*)
+Identifies specific component types within layers.
 
-### stage: (Development Phase)
-Where is this in the development lifecycle?
+- **component:entity** - Entity components in molecules layer
+- **component:api-facade** - API facade components in molecules layer
+- **component:workflow** - Workflow components in molecules layer
+- **component:middleware** - Middleware components
 
-- `stage:design` - Planning and design phase
-- `stage:implement` - Active development
-- `stage:review` - Code review / PR review
-- `stage:ready` - Ready for deployment
+### Priority Labels (priority:*)
+Indicates issue urgency and importance.
 
-### layer: (Architecture Layer)
-Which architectural layer does this touch?
+- **priority:high** - High priority, urgent issues
 
-- `layer:atoms` - Foundation utilities and core
-- `layer:molecules` - Domain logic and API facades
-- `layer:organisms` - User interfaces (CLI, etc.)
-- `layer:features` - Service layer
+## Usage Guidelines
 
-### backend: (Tool Specificity)
-Is this specific to a backend or universal?
+### When to Use Domain Labels
+- **Always** apply at least one domain label to categorize the functional area
+- Choose the most specific domain that applies
+- Multiple domain labels can be used if an issue spans areas
 
-- `backend:linear` - Linear-specific functionality
-- `backend:github` - GitHub-specific functionality
-- `backend:jira` - Jira-specific functionality
-- `backend:agnostic` - Works across all backends
+### When to Use Layer Labels
+- Apply when the work is specific to one architectural layer
+- Use for refactoring or technical improvements within a layer
+- Helpful for filtering work by technical scope
 
-## Usage Examples
+### When to Use Component Labels
+- Apply when working on specific component types
+- Useful for tracking patterns across similar components
+- Helps identify component-specific technical debt
 
-### Example 1: Adding Team Management to CLI
-- `type:feature`
-- `area:teams`
-- `backend:agnostic`
-- `layer:organisms`
+### Label Combinations
+Common and recommended label combinations:
 
-### Example 2: Fixing Linear API Connection Bug
-- `type:bug`
-- `area:sync`
-- `backend:linear`
-- `layer:features`
+1. **Feature Implementation**
+   - `domain:[area] + layer:[relevant-layers]`
+   - Example: `domain:tasks + layer:molecules + layer:organisms`
 
-### Example 3: Refactoring Label Management Workflow
-- `type:refactor`
-- `area:labels`
-- `backend:agnostic`
-- `layer:molecules`
+2. **Bug Fixes**
+   - `bug + domain:[area] + layer:[specific-layer]`
+   - Example: `bug + domain:teams + layer:features`
 
-## Implementation Notes
+3. **Technical Improvements**
+   - `refactor + layer:[layer] + component:[type]`
+   - Example: `refactor + layer:molecules + component:workflow`
 
-1. **Consistency**: Always use lowercase for labels
-2. **Simplicity**: Don't over-label - 3-4 labels per issue is usually enough
-3. **Clarity**: Choose the most specific applicable label
-4. **Evolution**: This hierarchy will grow as needed, but keep it simple
+4. **Documentation**
+   - `docs + domain:[area]`
+   - Example: `docs + domain:labels`
 
-## Native Field Mapping
+## Label Color Scheme
+- **Domain labels**: Teal (#14b8a6) - Consistent color for all domain labels
+- **Layer labels**: Green (#00b894) - Architectural layer identification
+- **Component labels**: Various - Based on component type
+- **Priority labels**: Red spectrum - Visual urgency indicator
 
-These fields are typically native to task management tools and don't need labels:
+## Maintenance
+- Labels are managed through the `tp labels` CLI commands
+- Domain labels should remain stable once established
+- New domains should be discussed before creation
+- Follow the `category:value` naming convention consistently
 
-- **Priority**: P0 (Critical), P1 (High), P2 (Medium), P3 (Low)
-- **Status**: Backlog, Todo, In Progress, In Review, Done
-- **Assignee**: User assignment
-- **Project**: Grouping mechanism
-- **Sprint/Cycle**: Time-based grouping
+## Integration with task-patterns CLI
+Use the CLI to manage labels:
 
-## Cross-Tool Compatibility
+```bash
+# List all labels with hierarchy
+tp labels list --hierarchy --team TASK
 
-When implementing in different backends:
+# Create new domain label
+tp labels create "domain:newarea" --team TASK --description "Description" --color "#14b8a6"
 
-- **Linear**: Use two-level labels as-is (`type:feature`)
-- **GitHub**: Use flat labels, may need to concatenate (`type-feature`)
-- **Jira**: Map to components, labels, or custom fields as appropriate
+# Apply label template
+tp labels apply-template task-patterns --team TASK
+```
 
----
-
-*This is the canonical label hierarchy for task-patterns. When in doubt, keep it simple and clear.*
+## Historical Context
+- Domain labels added: 2025-08-27 (TASK-2)
+- Layer labels established with atomic architecture
+- Component labels evolved from implementation patterns
