@@ -9,10 +9,10 @@
 
 // API Facades - The primary interface for external consumers (CLI, MCP, etc.)
 export { IssueAPI } from './issue.api';
+export { LabelAPI, LABEL_TEMPLATES } from './apis/label.api';
 // Future: export { TeamAPI } from './team.api';
 // Future: export { ProjectAPI } from './project.api';
 // Future: export { UserAPI } from './user.api';
-// Future: export { LabelAPI } from './label.api';
 // Future: export { CycleAPI } from './cycle.api';
 
 // Entities - Domain aggregates (used internally by APIs)
