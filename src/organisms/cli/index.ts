@@ -310,6 +310,99 @@ program
     }
   });
 
+// Update an issue's fields
+program
+  .command('update <identifier>')
+  .alias('u')
+  .description('Update an issue\'s fields')
+  .option('-t, --title <title>', 'Update issue title')
+  .option('-d, --description <description>', 'Update issue description')
+  .option('-s, --status <status>', 'Update issue status (e.g., "In Progress", "Done")')
+  .option('-p, --priority <priority>', 'Update issue priority (0-4, or urgent/high/medium/low/none)')
+  .option('-a, --assign <email>', 'Assign issue to user by email')
+  .option('--add-comment <comment>', 'Add a comment to the issue')
+  .action(async (identifier, options) => {
+    const spinner = ora(`Updating ${identifier}...`).start();
+    
+    try {
+      const client = linearClient.getClient();
+      const api = new IssueAPI(client);
+      
+      // Check if issue exists first
+      const issue = await api.getByIdentifier(identifier);
+      if (!issue) {
+        spinner.fail(`Could not find issue ${identifier}`);
+        return;
+      }
+      
+      const updates: string[] = [];
+      
+      // Update title
+      if (options.title) {
+        await api.updateIssue(issue.id, { title: options.title });
+        updates.push(`title → "${options.title}"`);
+      }
+      
+      // Update description
+      if (options.description) {
+        await api.updateDescription(issue.id, options.description);
+        updates.push('description');
+      }
+      
+      // Update status
+      if (options.status) {
+        await api.updateStatus(issue.id, options.status);
+        updates.push(`status → ${options.status}`);
+      }
+      
+      // Update priority
+      if (options.priority !== undefined) {
+        // Convert string priority to number if needed
+        let priorityNum: number;
+        const priorityMap: Record<string, number> = {
+          'none': 0, 'low': 1, 'medium': 2, 'high': 3, 'urgent': 4
+        };
+        
+        if (typeof options.priority === 'string' && options.priority in priorityMap) {
+          priorityNum = priorityMap[options.priority];
+        } else {
+          priorityNum = parseInt(options.priority);
+        }
+        
+        if (priorityNum >= 0 && priorityNum <= 4) {
+          await api.updatePriority(issue.id, priorityNum as 0 | 1 | 2 | 3 | 4);
+          updates.push(`priority → ${options.priority}`);
+        } else {
+          console.log(chalk.yellow(`  ⚠ Invalid priority: ${options.priority}`));
+        }
+      }
+      
+      // Assign to user
+      if (options.assign) {
+        await api.assignToUser(issue.id, options.assign);
+        updates.push(`assigned → ${options.assign}`);
+      }
+      
+      // Add comment
+      if (options.addComment) {
+        await api.addComment(issue.id, options.addComment);
+        updates.push('comment added');
+      }
+      
+      if (updates.length > 0) {
+        spinner.succeed(chalk.green(`✓ Updated ${identifier}: ${updates.join(', ')}`));
+        console.log(chalk.cyan(`  View at: https://linear.app/${issue.url.split('/').slice(-3).join('/')}`));
+      } else {
+        spinner.info('No updates specified');
+        console.log(chalk.dim('  Use --help to see available options'));
+      }
+      
+    } catch (error: any) {
+      spinner.fail(`Could not update ${identifier}`);
+      console.log(chalk.dim('  Error:', error.message || error));
+    }
+  });
+
 // Settings command group
 const configCmd = program
   .command('config')
