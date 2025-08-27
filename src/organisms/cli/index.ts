@@ -1,10 +1,11 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { linearClient } from '@atoms/client/linear-client';
 import { IssueAPI } from '@molecules/issue.api';
+import { settings } from './settings';
 
 const program = new Command();
 
@@ -13,9 +14,9 @@ const DEFAULT_TEAM = process.env.LINEAR_DEFAULT_TEAM || 'dug';
 
 // Friendly welcome message
 program
-  .name('linear')
-  .description('Your AI development companion - keeping us in sync!')
-  .version('2.0.0')
+  .name('tp')
+  .description('Task Pattern - AI-assisted development workflow (pattern-stack)')
+  .version('1.0.0')
   .option('--team <key>', `Override default team (currently: ${DEFAULT_TEAM})`);
 
 // Check our context - what are we working on?
@@ -30,21 +31,37 @@ program
       const client = linearClient.getClient();
       const api = new IssueAPI(client);
       
-      // Get recent issues - we'll filter them by state
+      // Get active team filter from settings
+      const activeTeams = settings.get('activeTeams');
+      
+      // Get recent issues - filter by teams if configured
       const result = await api.list({
         includeArchived: false
-      }, { first: 30 });
+      }, { first: 50 });  // Get more initially since we'll filter
       
       spinner.stop();
       
-      console.log(chalk.cyan('\n==> Here is what we are working on:\n'));
+      // Show active team filter if configured
+      if (activeTeams && activeTeams.length > 0) {
+        console.log(chalk.cyan('\n==> Here is what we are working on ') + chalk.gray(`(teams: ${activeTeams.join(', ')}):\n`));
+      } else {
+        console.log(chalk.cyan('\n==> Here is what we are working on:\n'));
+      }
       
-      // Filter by state
+      // Filter by state and team
       const inProgress: any[] = [];
       const todo: any[] = [];
       const recentlyDone: any[] = [];
       
       for (const issue of result.issues) {
+        // Filter by team if configured
+        if (activeTeams && activeTeams.length > 0) {
+          const team = await issue.team;
+          if (!team || !activeTeams.includes(team.key)) {
+            continue;  // Skip issues not in active teams
+          }
+        }
+        
         const state = await issue.state;
         if (state?.name === 'In Progress') {
           inProgress.push({ issue, state: state.name });
@@ -84,14 +101,14 @@ program
       
       if (inProgress.length === 0 && todo.length === 0) {
         console.log(chalk.green('  All clear! Ready to start something new?'));
-        console.log(chalk.dim('  Try: linear add "Your next task"'));
+        console.log(chalk.dim('  Try: tp add "Your next task"'));
       } else if (inProgress.length > 0) {
-        console.log(chalk.dim(`\n  Tip: Use 'linear show ${inProgress[0].issue.identifier}' to see details`));
+        console.log(chalk.dim(`\n  Tip: Use 'tp show ${inProgress[0].issue.identifier}' to see details`));
       }
       
     } catch (error) {
-      spinner.fail('Could not connect to Linear');
-      console.log(chalk.dim('  Make sure your LINEAR_API_KEY is set in .env'));
+      spinner.fail('Could not connect to task backend');
+      console.log(chalk.dim('  Make sure your LINEAR_API_KEY is set in .env (Linear backend)'));
       console.log(chalk.dim('  Error:', error));
     }
   });
@@ -282,14 +299,86 @@ program
       if (state?.name !== 'Done') {
         console.log(chalk.dim('\n  Actions:'));
         if (state?.name !== 'In Progress') {
-          console.log(chalk.dim(`    • linear working ${identifier} - Start working on this`));
+          console.log(chalk.dim(`    • tp working ${identifier} - Start working on this`));
         }
-        console.log(chalk.dim(`    • linear done ${identifier} - Mark as complete`));
+        console.log(chalk.dim(`    • tp done ${identifier} - Mark as complete`));
       }
       
     } catch (error) {
       spinner.fail(`Could not load ${identifier}`);
       console.log(chalk.dim('  Error:', error));
+    }
+  });
+
+// Settings command group
+const configCmd = program
+  .command('config')
+  .description('Manage task-pattern settings');
+
+configCmd
+  .command('show')
+  .description('Show current settings')
+  .action(() => {
+    settings.show();
+  });
+
+configCmd
+  .command('teams [teams...]')
+  .description('Set active teams to filter (leave empty to show all)')
+  .action((teams) => {
+    if (teams && teams.length > 0) {
+      settings.set('activeTeams', teams);
+      console.log(chalk.green(`✓ Now showing issues from: ${teams.join(', ')}`));
+      console.log(chalk.dim('  Run "tp context" to see filtered view'));
+    } else {
+      settings.clearTeamFilters();
+      console.log(chalk.dim('  Run "tp context" to see all teams'));
+    }
+  });
+
+configCmd
+  .command('add-team <teams...>')
+  .description('Add teams to active filter')
+  .action((teams) => {
+    settings.addActiveTeams(...teams);
+  });
+
+configCmd
+  .command('remove-team <teams...>')
+  .description('Remove teams from active filter')
+  .action((teams) => {
+    settings.removeActiveTeams(...teams);
+  });
+
+configCmd
+  .command('clear')
+  .description('Clear all team filters')
+  .action(() => {
+    settings.clearTeamFilters();
+  });
+
+configCmd
+  .command('list-teams')
+  .description('List all available teams')
+  .action(async () => {
+    const spinner = ora('Fetching teams...').start();
+    try {
+      const client = linearClient.getClient();
+      const teams = await client.teams();
+      
+      spinner.stop();
+      console.log(chalk.cyan('\n==> Available Teams:\n'));
+      
+      teams.nodes.forEach(team => {
+        console.log(chalk.gray('  Key:  '), chalk.yellow(team.key));
+        console.log(chalk.gray('  Name: '), team.name);
+        console.log(chalk.gray('  ID:   '), chalk.dim(team.id));
+        console.log();
+      });
+      
+      console.log(chalk.dim(`  Use: tp config teams ${teams.nodes.map(t => t.key).join(' ')}`));
+    } catch (error) {
+      spinner.fail('Could not fetch teams');
     }
   });
 
@@ -299,7 +388,7 @@ program
   .description('Say hello!')
   .action(() => {
     console.log(chalk.cyan('\nHello! I am here to help you manage our development work.'));
-    console.log(chalk.dim('  Try "linear context" to see what we are working on.\n'));
+    console.log(chalk.dim('  Try "tp context" to see what we are working on.\n'));
   });
 
 program.parse(process.argv);

@@ -1,8 +1,13 @@
 {
-  "name": "linear-agent",
+  "name": "task-pattern",
   "version": "1.0.0",
-  "description": "Linear GraphQL API agent with atomic architecture",
+  "description": "Task management patterns for AI-assisted development (pattern-stack)",
   "main": "dist/index.js",
+  "bin": {
+    "task-pattern": "./src/organisms/cli/index.ts",
+    "tp": "./src/organisms/cli/index.ts",
+    "pattern": "./src/organisms/cli/index.ts"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
