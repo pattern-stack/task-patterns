@@ -124,40 +124,40 @@ describe('IssueValidators', () => {
   });
 
   describe('canEditIssue', () => {
-    it('should allow creator to edit', () => {
+    it('should allow creator to edit', async () => {
       const issue = createMockIssue({
         creatorId: 'user-123',
         assigneeId: 'user-456',
       });
       
-      expect(IssueValidators.canEditIssue(issue, 'user-123')).toBe(true);
+      expect(await IssueValidators.canEditIssue(issue, 'user-123')).toBe(true);
     });
 
-    it('should allow assignee to edit', () => {
+    it('should allow assignee to edit', async () => {
       const issue = createMockIssue({
         creatorId: 'user-456',
         assigneeId: 'user-123',
       });
       
-      expect(IssueValidators.canEditIssue(issue, 'user-123')).toBe(true);
+      expect(await IssueValidators.canEditIssue(issue, 'user-123')).toBe(true);
     });
 
-    it('should deny edit for other users', () => {
+    it('should deny edit for other users', async () => {
       const issue = createMockIssue({
         creatorId: 'user-456',
         assigneeId: 'user-789',
       });
       
-      expect(IssueValidators.canEditIssue(issue, 'user-123')).toBe(false);
+      expect(await IssueValidators.canEditIssue(issue, 'user-123')).toBe(false);
     });
 
-    it('should handle undefined assignee', () => {
+    it('should handle undefined assignee', async () => {
       const issue = createMockIssue({
         creatorId: 'user-456',
         assigneeId: undefined,
       });
       
-      expect(IssueValidators.canEditIssue(issue, 'user-123')).toBe(false);
+      expect(await IssueValidators.canEditIssue(issue, 'user-123')).toBe(false);
     });
   });
 
@@ -250,40 +250,40 @@ describe('IssueValidators', () => {
   });
 
   describe('canBeChild', () => {
-    it('should allow valid parent-child relationships', () => {
+    it('should allow valid parent-child relationships', async () => {
       const issue = createMockIssue({
         id: 'issue-123',
         parentId: null,
       });
       
-      expect(IssueValidators.canBeChild(issue, 'issue-456')).toBe(true);
+      expect(await IssueValidators.canBeChild(issue, 'issue-456')).toBe(true);
     });
 
-    it('should prevent self-referential relationships', () => {
+    it('should prevent self-referential relationships', async () => {
       const issue = createMockIssue({
         id: 'issue-123',
         parentId: null,
       });
       
-      expect(IssueValidators.canBeChild(issue, 'issue-123')).toBe(false);
+      expect(await IssueValidators.canBeChild(issue, 'issue-123')).toBe(false);
     });
 
-    it('should prevent redundant parent assignment', () => {
+    it('should prevent redundant parent assignment', async () => {
       const issue = createMockIssue({
         id: 'issue-123',
         parentId: 'issue-456',
       });
       
-      expect(IssueValidators.canBeChild(issue, 'issue-456')).toBe(false);
+      expect(await IssueValidators.canBeChild(issue, 'issue-456')).toBe(false);
     });
 
-    it('should allow changing parent', () => {
+    it('should allow changing parent', async () => {
       const issue = createMockIssue({
         id: 'issue-123',
         parentId: 'issue-456',
       });
       
-      expect(IssueValidators.canBeChild(issue, 'issue-789')).toBe(true);
+      expect(await IssueValidators.canBeChild(issue, 'issue-789')).toBe(true);
     });
   });
 

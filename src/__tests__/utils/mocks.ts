@@ -38,31 +38,52 @@ export const createMockConnection = <T>(nodes: T[], overrides = {}): any => ({
 });
 
 // Mock Linear SDK types with proper __typename
-export const createMockIssue = (overrides = {}): any => ({
-  __typename: 'Issue',
-  id: 'issue-123',
-  identifier: 'ENG-123',
-  title: 'Test Issue',
-  description: 'Test description',
-  priority: 2,
-  estimate: 3,
-  url: 'https://linear.app/team/issue/ENG-123',
-  createdAt: new Date('2024-01-01'),
-  updatedAt: new Date('2024-01-02'),
-  teamId: 'team-123',
-  team: jest.fn().mockResolvedValue(createMockTeam()),
-  assignee: jest.fn().mockResolvedValue(createMockUser()),
-  state: jest.fn().mockResolvedValue(createMockWorkflowState()),
-  labels: jest.fn().mockResolvedValue(createMockConnection([])),
-  comments: jest.fn().mockResolvedValue(createMockConnection([])),
-  attachments: jest.fn().mockResolvedValue(createMockConnection([])),
-  children: jest.fn().mockResolvedValue(createMockConnection([])),
-  project: jest.fn().mockResolvedValue(null),
-  projectId: null,
-  cycle: jest.fn().mockResolvedValue(null),
-  cycleId: null,
-  ...overrides,
-});
+export const createMockIssue = (overrides: any = {}): any => {
+  const defaults = {
+    __typename: 'Issue',
+    id: 'issue-123',
+    identifier: 'ENG-123',
+    title: 'Test Issue',
+    description: 'Test description',
+    priority: 2,
+    estimate: 3,
+    url: 'https://linear.app/team/issue/ENG-123',
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-02'),
+    teamId: 'team-123',
+    team: jest.fn().mockResolvedValue(createMockTeam()),
+    assignee: jest.fn().mockResolvedValue(createMockUser()),
+    creator: jest.fn().mockResolvedValue(createMockUser()),
+    state: jest.fn().mockResolvedValue(createMockWorkflowState()),
+    labels: jest.fn().mockResolvedValue(createMockConnection([])),
+    comments: jest.fn().mockResolvedValue(createMockConnection([])),
+    attachments: jest.fn().mockResolvedValue(createMockConnection([])),
+    children: jest.fn().mockResolvedValue(createMockConnection([])),
+    parent: jest.fn().mockResolvedValue(null),
+    project: jest.fn().mockResolvedValue(null),
+    projectId: null,
+    cycle: jest.fn().mockResolvedValue(null),
+    cycleId: null,
+  };
+
+  const merged = { ...defaults, ...overrides };
+
+  // Handle specific override patterns for creator/assignee IDs
+  if ('creatorId' in overrides) {
+    merged.creator = jest.fn().mockResolvedValue(createMockUser({ id: overrides.creatorId }));
+    delete merged.creatorId;
+  }
+  if ('assigneeId' in overrides) {
+    merged.assignee = jest.fn().mockResolvedValue(createMockUser({ id: overrides.assigneeId }));
+    delete merged.assigneeId;
+  }
+  if ('parentId' in overrides) {
+    merged.parent = jest.fn().mockResolvedValue(overrides.parentId ? createMockIssue({ id: overrides.parentId }) : null);
+    delete merged.parentId;
+  }
+
+  return merged;
+};
 
 export const createMockTeam = (overrides = {}): any => ({
   __typename: 'Team',

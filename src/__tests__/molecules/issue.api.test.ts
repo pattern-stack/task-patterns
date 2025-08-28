@@ -102,7 +102,7 @@ describe('IssueAPI', () => {
         const result = await api.updateStatus(issueId, statusName);
 
         expect(mockIssueEntity.get).toHaveBeenCalledWith(issueId);
-        expect(mockIssueEntity.update).toHaveBeenCalledWith('issue-1', { stateId: 'state-456' });
+        expect(mockIssueEntity.update).toHaveBeenCalledWith(issueId, { stateId: 'state-456' });
         expect(result).toEqual(mockIssue);
       });
 
@@ -126,7 +126,7 @@ describe('IssueAPI', () => {
 
         expect(mockIssueEntity.get).toHaveBeenCalledWith(identifier);
         expect(mockIssueEntity.getByIdentifier).toHaveBeenCalledWith(identifier);
-        expect(mockIssueEntity.update).toHaveBeenCalledWith('issue-1', { stateId: 'state-789' });
+        expect(mockIssueEntity.update).toHaveBeenCalledWith(identifier, { stateId: 'state-789' });
         expect(result).toEqual(mockIssue);
       });
 
@@ -173,7 +173,7 @@ describe('IssueAPI', () => {
         const result = await api.updateDescription(issueId, description);
 
         expect(mockIssueEntity.get).toHaveBeenCalledWith(issueId);
-        expect(mockIssueEntity.update).toHaveBeenCalledWith('issue-1', { description });
+        expect(mockIssueEntity.update).toHaveBeenCalledWith(issueId, { description });
         expect(result).toEqual(mockIssue);
       });
 
@@ -206,7 +206,7 @@ describe('IssueAPI', () => {
         const result = await api.updateIssue(issueId, updateData);
 
         expect(mockIssueEntity.get).toHaveBeenCalledWith(issueId);
-        expect(mockIssueEntity.update).toHaveBeenCalledWith('issue-1', updateData);
+        expect(mockIssueEntity.update).toHaveBeenCalledWith(issueId, updateData);
         expect(result).toEqual(mockIssue);
       });
     });
@@ -290,15 +290,12 @@ describe('IssueAPI', () => {
       const options = { priority: 2 as const };
       const mockIssue = createMockIssue();
 
-      // IssueAPI.quickCreate delegates to IssueEntity.quickCreate
-      // But IssueEntity doesn't have quickCreate, it's on IssueRelationsWorkflow
-      // Actually checking IssueAPI, it delegates to issueEntity.quickCreate
-      // So we need to mock that method on the entity
-      (mockIssueEntity as any).quickCreate = jest.fn().mockResolvedValue(mockIssue);
+      // Mock the relationsWorkflow.quickCreate method instead
+      mockRelationsWorkflow.quickCreate.mockResolvedValue(mockIssue);
 
       const result = await api.quickCreate(title, teamKey, options);
 
-      expect((mockIssueEntity as any).quickCreate).toHaveBeenCalledWith(title, teamKey, options);
+      expect(mockRelationsWorkflow.quickCreate).toHaveBeenCalledWith(title, teamKey, options);
       expect(result).toEqual(mockIssue);
     });
 
