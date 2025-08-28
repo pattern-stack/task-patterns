@@ -1,4 +1,4 @@
-import { Issue, LinearClient } from '@linear/sdk';
+import { Issue as LinearIssue, LinearClient } from '@linear/sdk';
 import { IssueEntity } from '@molecules/entities/issue.entity';
 import { UserService } from '@features/user/service';
 import { WorkflowStateService } from '@features/workflow-state/service';
@@ -7,11 +7,11 @@ import { NotFoundError } from '@atoms/types/common';
 import { linearClient } from '@atoms/client/linear-client';
 
 export interface BulkUpdateResult {
-  updated: Issue[];
+  updated: LinearIssue[];
   failed: Array<{
     identifier: string;
     error: string;
-    issue?: Issue;
+    issue?: LinearIssue;
   }>;
   summary: string;
   totalCount: number;
@@ -57,7 +57,12 @@ export class BulkOperationsWorkflow {
       };
 
       // Resolve all issue identifiers
-      const resolvedIssues = await this.issueEntity.resolveIdentifiers(issueIdentifiers);
+      // Resolve all issue identifiers
+      const resolvedIssues = new Map<string, LinearIssue | null>();
+      for (const identifier of issueIdentifiers) {
+        const issue = await this.issueEntity.getByIdentifier(identifier);
+        resolvedIssues.set(identifier, issue);
+      }
 
       // Process each issue
       for (const [identifier, issue] of resolvedIssues.entries()) {
@@ -118,7 +123,12 @@ export class BulkOperationsWorkflow {
       };
 
       // Resolve all issue identifiers
-      const resolvedIssues = await this.issueEntity.resolveIdentifiers(issueIdentifiers);
+      // Resolve all issue identifiers
+      const resolvedIssues = new Map<string, LinearIssue | null>();
+      for (const identifier of issueIdentifiers) {
+        const issue = await this.issueEntity.getByIdentifier(identifier);
+        resolvedIssues.set(identifier, issue);
+      }
 
       // Process each issue
       for (const [identifier, issue] of resolvedIssues.entries()) {
@@ -132,14 +142,20 @@ export class BulkOperationsWorkflow {
         }
 
         try {
-          const updated = await this.issueEntity.moveToStatus(issue.id, statusName);
+          // Find the workflow state with the matching name
+          const workflowStates = await this.workflowStateService.list({ name: { eq: statusName } });
+          if (!workflowStates.nodes.length) {
+            throw new Error(`Status '${statusName}' not found`);
+          }
+          const stateId = workflowStates.nodes[0].id;
+          const updated = await this.issueEntity.update(issue.id, { stateId });
           result.updated.push(updated);
           result.successCount++;
 
           // Add comment if provided
           if (comment) {
             try {
-              await this.issueEntity.addCommentToIssue(issue.id, comment);
+              await this.issueEntity.addComment(issue.id, comment);
             } catch (error) {
               logger.warn(`Failed to add comment to issue ${identifier}`, error);
             }
@@ -190,7 +206,12 @@ export class BulkOperationsWorkflow {
       };
 
       // Resolve all issue identifiers
-      const resolvedIssues = await this.issueEntity.resolveIdentifiers(issueIdentifiers);
+      // Resolve all issue identifiers
+      const resolvedIssues = new Map<string, LinearIssue | null>();
+      for (const identifier of issueIdentifiers) {
+        const issue = await this.issueEntity.getByIdentifier(identifier);
+        resolvedIssues.set(identifier, issue);
+      }
 
       // Process each issue
       for (const [identifier, issue] of resolvedIssues.entries()) {
@@ -247,7 +268,12 @@ export class BulkOperationsWorkflow {
       };
 
       // Resolve all issue identifiers
-      const resolvedIssues = await this.issueEntity.resolveIdentifiers(issueIdentifiers);
+      // Resolve all issue identifiers
+      const resolvedIssues = new Map<string, LinearIssue | null>();
+      for (const identifier of issueIdentifiers) {
+        const issue = await this.issueEntity.getByIdentifier(identifier);
+        resolvedIssues.set(identifier, issue);
+      }
 
       // Process each issue
       for (const [identifier, issue] of resolvedIssues.entries()) {
