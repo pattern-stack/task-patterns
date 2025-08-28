@@ -47,6 +47,27 @@ describe('Team CLI Commands', () => {
     
     (TeamAPI as jest.MockedClass<typeof TeamAPI>).mockImplementation(() => mockTeamAPI);
 
+    // Mock static methods
+    (TeamAPI.getAvailableTemplates as jest.Mock) = jest.fn().mockReturnValue([
+      {
+        name: 'engineering',
+        template: {
+          name: 'Engineering Team',
+          description: 'Standard engineering team setup',
+          config: {
+            key: 'ENG',
+            cyclesEnabled: true,
+            triageEnabled: true,
+          },
+        },
+      },
+    ]);
+    
+    (TeamAPI.validateTeamKey as jest.Mock) = jest.fn().mockReturnValue({
+      valid: true,
+      errors: [],
+    });
+
     // Create command instance
     teamCommand = createTeamCommand();
   });
@@ -61,7 +82,7 @@ describe('Team CLI Commands', () => {
       mockTeamAPI.list.mockResolvedValue(mockTeams as any);
 
       // Capture console output
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       // Parse and execute command
       await teamCommand.parseAsync(['node', 'test', 'list']);
@@ -75,7 +96,7 @@ describe('Team CLI Commands', () => {
     it('should handle errors when listing teams', async () => {
       mockTeamAPI.list.mockRejectedValue(new Error('API Error'));
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await teamCommand.parseAsync(['node', 'test', 'list']);
 
@@ -95,15 +116,16 @@ describe('Team CLI Commands', () => {
 
       mockTeamAPI.create.mockResolvedValue(newTeam as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await teamCommand.parseAsync(['node', 'test', 'create', 'NEW', 'New Team']);
 
       expect(mockTeamAPI.create).toHaveBeenCalledWith({
         key: 'NEW',
         name: 'New Team',
+        description: undefined,
         cyclesEnabled: false,
-        cycleDuration: NaN,
+        cycleDuration: 14,
         triageEnabled: false,
       });
 
@@ -119,7 +141,7 @@ describe('Team CLI Commands', () => {
 
       mockTeamAPI.applyTemplate.mockResolvedValue(newTeam as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await teamCommand.parseAsync([
         'node',
@@ -169,7 +191,7 @@ describe('Team CLI Commands', () => {
       mockTeamAPI.getCurrentCycle.mockResolvedValue(cycles[0] as any);
       mockTeamAPI.getWorkflowStates.mockResolvedValue(states as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await teamCommand.parseAsync(['node', 'test', 'show', 'ENG']);
 
@@ -207,7 +229,7 @@ describe('Team CLI Commands', () => {
       mockTeamAPI.getByKey.mockResolvedValue(team as any);
       mockTeamAPI.getVelocity.mockResolvedValue(velocities);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await teamCommand.parseAsync(['node', 'test', 'stats', 'ENG']);
 
@@ -220,7 +242,7 @@ describe('Team CLI Commands', () => {
 
   describe('team templates', () => {
     it('should list available templates', async () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await teamCommand.parseAsync(['node', 'test', 'templates']);
 

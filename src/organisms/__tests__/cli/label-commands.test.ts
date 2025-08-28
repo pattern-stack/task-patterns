@@ -72,7 +72,7 @@ describe('Label CLI Commands', () => {
 
       mockLabelAPI.list.mockResolvedValue(mockLabels as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync(['node', 'test', 'list']);
 
@@ -89,7 +89,7 @@ describe('Label CLI Commands', () => {
 
       mockLabelAPI.listByTeam.mockResolvedValue(mockLabels as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync(['node', 'test', 'list', '--team', 'ENG']);
 
@@ -108,7 +108,7 @@ describe('Label CLI Commands', () => {
 
       mockLabelAPI.list.mockResolvedValue(mockLabels as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync(['node', 'test', 'list', '--hierarchy']);
 
@@ -130,7 +130,7 @@ describe('Label CLI Commands', () => {
       mockLabelAPI.getByName.mockResolvedValue(null);
       mockLabelAPI.create.mockResolvedValue(newLabel as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync(['node', 'test', 'create', 'type:test']);
 
@@ -153,7 +153,7 @@ describe('Label CLI Commands', () => {
 
       mockLabelAPI.getByName.mockResolvedValue(existingLabel as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync(['node', 'test', 'create', 'type:test']);
 
@@ -177,7 +177,7 @@ describe('Label CLI Commands', () => {
 
       mockLabelAPI.applyTemplate.mockResolvedValue(result as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync(['node', 'test', 'apply-template', 'task-patterns']);
 
@@ -199,7 +199,7 @@ describe('Label CLI Commands', () => {
 
       mockLabelAPI.applyTemplate.mockResolvedValue(result as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync([
         'node',
@@ -222,7 +222,7 @@ describe('Label CLI Commands', () => {
 
   describe('labels templates', () => {
     it('should list available templates', async () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync(['node', 'test', 'templates']);
 
@@ -250,7 +250,7 @@ describe('Label CLI Commands', () => {
       mockLabelAPI.getByName.mockResolvedValue(existingLabel as any);
       mockLabelAPI.update.mockResolvedValue(updatedLabel as any);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync([
         'node',
@@ -283,7 +283,7 @@ describe('Label CLI Commands', () => {
       mockLabelAPI.getByName.mockResolvedValue(label as any);
       mockLabelAPI.delete.mockResolvedValue(true);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await labelCommand.parseAsync([
         'node',
