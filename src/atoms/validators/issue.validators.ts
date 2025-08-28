@@ -36,9 +36,11 @@ export const IssueValidators = {
   /**
    * Check if user can edit issue
    */
-  canEditIssue: (issue: Issue, userId: string): boolean => {
+  canEditIssue: async (issue: Issue, userId: string): Promise<boolean> => {
     // Check if user is creator or assignee
-    return issue.creatorId === userId || issue.assigneeId === userId;
+    const creator = await issue.creator;
+    const assignee = await issue.assignee;
+    return creator?.id === userId || assignee?.id === userId;
   },
 
   /**
@@ -46,7 +48,9 @@ export const IssueValidators = {
    */
   isActive: (issue: Issue): boolean => {
     const completedTypes = ['completed', 'canceled'];
-    return !completedTypes.includes(issue.state?.type || '');
+    // Access state properties correctly
+    const stateType = (issue.state as any)?.type || '';
+    return !completedTypes.includes(stateType);
   },
 
   /**
@@ -54,17 +58,19 @@ export const IssueValidators = {
    */
   isBlocked: (issue: Issue): boolean => {
     // Check for blocking issues or blocked label
-    return issue.labels?.nodes?.some(label => 
-      label.name.toLowerCase().includes('blocked')
+    const labels = (issue.labels as any)?.nodes || [];
+    return labels.some((label: any) => 
+      label.name?.toLowerCase().includes('blocked')
     ) || false;
   },
 
   /**
    * Validate parent-child relationship
    */
-  canBeChild: (issue: Issue, parentId: string): boolean => {
+  canBeChild: async (issue: Issue, parentId: string): Promise<boolean> => {
     // Prevent circular dependencies
-    return issue.id !== parentId && issue.parentId !== parentId;
+    const parent = await issue.parent;
+    return issue.id !== parentId && parent?.id !== parentId;
   },
 
   /**
@@ -73,7 +79,8 @@ export const IssueValidators = {
   canArchive: (issue: Issue): boolean => {
     // Only completed or canceled issues can be archived
     const archivableStates = ['completed', 'canceled'];
-    return archivableStates.includes(issue.state?.type || '');
+    const stateType = (issue.state as any)?.type || '';
+    return archivableStates.includes(stateType);
   },
 
   /**

@@ -175,7 +175,7 @@ export class ValidatorTestUtils {
 
       if (config.edgeCases) {
         it('should handle edge cases correctly', () => {
-          this.testEdgeCases(validator, config.edgeCases);
+          this.testEdgeCases(validator, config.edgeCases!);
         });
       }
     });
