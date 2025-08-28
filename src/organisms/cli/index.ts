@@ -5,15 +5,17 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { linearClient } from '@atoms/client/linear-client';
 import { IssueAPI } from '@molecules/issue.api';
-import { settings } from './settings';
+import { enhancedSettings } from './enhanced-settings';
+import { enhancedConfig } from '@atoms/config';
 import { createTeamCommand } from './commands/team';
 import { createLabelCommand } from './commands/label';
-import { createConfigCommand } from './commands/config';
+import { createEnhancedConfigCommand } from './commands/enhanced-config';
 
 const program = new Command();
 
-// Get default team from environment or use 'dug' as fallback
-const DEFAULT_TEAM = process.env.LINEAR_DEFAULT_TEAM || 'dug';
+// Get default team from hierarchical config or use 'dug' as fallback
+const mergedConfigForDefaults = enhancedConfig.getMergedConfig();
+const DEFAULT_TEAM = mergedConfigForDefaults.defaultTeam || process.env.LINEAR_DEFAULT_TEAM || 'dug';
 
 // Friendly welcome message
 program
@@ -33,8 +35,9 @@ program
     try {
       const client = linearClient.getClient();
       
-      // Get active team filter from settings
-      const activeTeams = settings.get('activeTeams');
+      // Get active team filter from enhanced settings (hierarchical config)
+      const mergedConfig = enhancedConfig.getMergedConfig();
+      const activeTeams = mergedConfig.teamFilter;
       
       // Use custom GraphQL query to fetch everything at once
       const query = `
@@ -82,6 +85,7 @@ program
       
       // Filter and categorize issues based on state
       const inProgress: any[] = [];
+      const inReview: any[] = [];
       const inRefinement: any[] = [];
       const ready: any[] = [];
       const todo: any[] = [];
@@ -91,8 +95,10 @@ program
       for (const issue of result.issues.nodes) {
         const state = issue.state;
         
-        if (state?.name === 'In Progress' || state?.name === 'In Review' || state?.name === 'Validation') {
+        if (state?.name === 'In Progress') {
           inProgress.push({ issue, state: state.name });
+        } else if (state?.name === 'In Review' || state?.name === 'Validation') {
+          inReview.push({ issue, state: state.name });
         } else if (state?.name === 'Refinement' || state?.name === '🔍 Refinement' || state?.name === 'Definition' || state?.name === 'Ideation') {
           inRefinement.push({ issue, state: state.name });
         } else if (state?.name === 'Ready') {
@@ -114,6 +120,13 @@ program
         console.log(chalk.yellow('  Currently in progress:'));
         inProgress.forEach(({ issue }) => {
           console.log(chalk.white(`    * [${issue.identifier}] ${issue.title}`));
+        });
+      }
+      
+      if (inReview.length > 0) {
+        console.log(chalk.cyan('\n  In review:'));
+        inReview.forEach(({ issue }) => {
+          console.log(chalk.white(`    👀 [${issue.identifier}] ${issue.title}`));
         });
       }
       
@@ -145,11 +158,13 @@ program
         });
       }
       
-      if (inProgress.length === 0 && todo.length === 0) {
+      if (inProgress.length === 0 && inReview.length === 0 && todo.length === 0) {
         console.log(chalk.green('  All clear! Ready to start something new?'));
         console.log(chalk.dim('  Try: tp add "Your next task"'));
       } else if (inProgress.length > 0) {
         console.log(chalk.dim(`\n  Tip: Use 'tp show ${inProgress[0].issue.identifier}' to see details`));
+      } else if (inReview.length > 0) {
+        console.log(chalk.dim(`\n  Tip: Use 'tp show ${inReview[0].issue.identifier}' to check review status`));
       }
       
     } catch (error) {
@@ -173,8 +188,11 @@ program
       const client = linearClient.getClient();
       const api = new IssueAPI(client);
       
-      // Determine which team to use (command flag > global flag > env > default)
-      const teamKey = options.team || program.opts().team || DEFAULT_TEAM;
+      // Determine which team to use (command flag > global flag > active team setting > env > default)
+      const mergedConfig = enhancedConfig.getMergedConfig();
+      const activeTeams = mergedConfig.teamFilter;
+      const preferredTeam = activeTeams && activeTeams.length > 0 ? activeTeams[0] : DEFAULT_TEAM;
+      const teamKey = options.team || program.opts().team || preferredTeam;
       
       // Try to resolve team key to ID
       const teams = await client.teams();
@@ -186,10 +204,19 @@ program
       let teamId: string;
       if (team) {
         teamId = team.id;
+        // Show helpful message if using team from active filter
+        if (!options.team && !program.opts().team && activeTeams && activeTeams.length > 0 && activeTeams[0] === teamKey) {
+          console.log(chalk.dim(`  Using team from filter: ${team.name} (${team.key})`));
+        }
       } else {
         // If not found, fall back to first team
         teamId = teams.nodes[0]?.id;
-        console.log(chalk.yellow(`  Team '${teamKey}' not found, using ${teams.nodes[0]?.name}`));
+        if (teamId) {
+          console.log(chalk.yellow(`  Team '${teamKey}' not found, using ${teams.nodes[0]?.name}`));
+          if (activeTeams && activeTeams.length > 0) {
+            console.log(chalk.dim(`  Tip: Run 'tp config teams ${teams.nodes[0]?.key}' to set this as your default`));
+          }
+        }
       }
       
       if (!teamId) {
@@ -452,7 +479,7 @@ program
 // Register command modules
 program.addCommand(createTeamCommand());
 program.addCommand(createLabelCommand());
-program.addCommand(createConfigCommand());
+program.addCommand(createEnhancedConfigCommand());
 
 // AI context command - provides everything an AI needs to know
 program
