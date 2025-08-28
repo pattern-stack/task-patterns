@@ -4,9 +4,9 @@
   "description": "Task management patterns for AI-assisted development (pattern-stack)",
   "main": "dist/index.js",
   "bin": {
-    "task-pattern": "./src/organisms/cli/index.ts",
-    "tp": "./src/organisms/cli/index.ts",
-    "pattern": "./src/organisms/cli/index.ts"
+    "task-pattern": "./bin/tp.js",
+    "tp": "./bin/tp.js",
+    "pattern": "./bin/tp.js"
   },
   "scripts": {
     "build": "tsc",
