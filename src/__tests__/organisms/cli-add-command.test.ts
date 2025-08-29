@@ -147,4 +147,28 @@ describe('tp add team selection behavior', () => {
     );
     errorSpy.mockRestore();
   });
+
+  it('supports global --team option when subcommand flag is absent', async () => {
+    mergedConfig.teamFilter = ['TASK'];
+    await runCliWithArgs(['--team', 'DEV', 'add', 'Global flag issue']);
+    expect(mockCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ teamId: 't2' })
+    );
+  });
+
+  it('falls back to hard default "dug" when no config or env present', async () => {
+    mergedConfig.teamFilter = undefined;
+    mergedConfig.defaultTeam = undefined;
+    delete process.env.LINEAR_DEFAULT_TEAM;
+    // Provide a team with key 'dug' to assert fallback resolution works
+    const { linearClient } = require('@atoms/client/linear-client');
+    (linearClient.getClient as jest.Mock).mockReturnValueOnce({
+      client: { request: jest.fn() },
+      teams: jest.fn(async () => ({ nodes: [ { id: 'td', key: 'dug', name: 'Dug' } ] })),
+    });
+    await runCliWithArgs(['add', 'Hard default fallback']);
+    expect(mockCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ teamId: 'td' })
+    );
+  });
 });
