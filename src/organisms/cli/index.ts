@@ -554,6 +554,161 @@ program
     }
   });
 
+// Refine command - bulk move issues through workflow states
+program
+  .command('refine [targetState] [identifiers...]')
+  .description('Move issues to a different workflow state (useful for sprint planning)')
+  .option('--from <state>', 'Source state to move issues from')
+  .option('--to <state>', 'Target state (alternative to positional argument)')
+  .option('--dry-run', 'Preview changes without applying them')
+  .option('--comment <message>', 'Add comment when moving issues')
+  .option('--team <team>', 'Team to use for state lookup')
+  .action(async (targetState, identifiers, options) => {
+    const spinner = ora('Loading workflow states...').start();
+    
+    try {
+      const client = linearClient.getClient();
+      const api = new IssueAPI(client);
+      const { TeamAPI } = await import('@molecules/apis/team.api');
+      const teamApi = new TeamAPI(client);
+      
+      // Determine team to use for workflow states
+      const mergedConfig = enhancedConfig.getMergedConfig();
+      const activeTeams = mergedConfig.teamFilter;
+      const teamKey = options.team || (activeTeams && activeTeams.length > 0 ? activeTeams[0] : 'TASK');
+      
+      // Get workflow states for the team
+      const states = await teamApi.getWorkflowStates(teamKey);
+      
+      // Find target state
+      const toStateName = options.to || targetState;
+      if (!toStateName) {
+        spinner.fail('Target state required. Use: tp refine <state> or tp refine --to <state>');
+        console.log(chalk.dim('\nAvailable states:'));
+        states.forEach(s => console.log(chalk.dim(`  - ${s.name} (${s.type})`)));
+        return;
+      }
+      
+      // Find matching state (case-insensitive)
+      const targetWorkflowState = states.find(s => 
+        s.name.toLowerCase() === toStateName.toLowerCase() ||
+        s.type.toLowerCase() === toStateName.toLowerCase()
+      );
+      
+      if (!targetWorkflowState) {
+        spinner.fail(`State not found: ${toStateName}`);
+        console.log(chalk.dim('\nAvailable states:'));
+        states.forEach(s => console.log(chalk.dim(`  - ${s.name} (${s.type})`)));
+        return;
+      }
+      
+      spinner.text = 'Finding issues to move...';
+      
+      // Collect issues to move
+      let issuesToMove: any[] = [];
+      
+      if (identifiers && identifiers.length > 0) {
+        // Move specific issues
+        for (const id of identifiers) {
+          const issue = await api.getByIdentifier(id);
+          if (issue) {
+            issuesToMove.push(issue);
+          } else {
+            console.log(chalk.yellow(`  Warning: Issue not found: ${id}`));
+          }
+        }
+      } else if (options.from) {
+        // Move all issues from a source state
+        const fromState = states.find(s => 
+          s.name.toLowerCase() === options.from.toLowerCase() ||
+          s.type.toLowerCase() === options.from.toLowerCase()
+        );
+        
+        if (!fromState) {
+          spinner.fail(`Source state not found: ${options.from}`);
+          return;
+        }
+        
+        // Query issues in the source state
+        const issues = await client.issues({
+          filter: {
+            team: { key: { eq: teamKey } },
+            state: { name: { eq: fromState.name } }
+          },
+          first: 100
+        });
+        
+        issuesToMove = issues.nodes;
+      } else {
+        spinner.fail('No issues specified. Use identifiers or --from flag');
+        return;
+      }
+      
+      if (issuesToMove.length === 0) {
+        spinner.info('No issues to move');
+        return;
+      }
+      
+      spinner.stop();
+      
+      // Show preview
+      console.log(chalk.cyan(`\n==> Moving ${issuesToMove.length} issue(s) to ${targetWorkflowState.name}\n`));
+      
+      for (const issue of issuesToMove) {
+        const currentState = await issue.state;
+        console.log(chalk.white(`  [${issue.identifier}] ${issue.title}`));
+        console.log(chalk.dim(`    ${currentState?.name} → ${targetWorkflowState.name}`));
+      }
+      
+      if (options.dryRun) {
+        console.log(chalk.yellow('\n  Dry run - no changes made'));
+        return;
+      }
+      
+      // Confirm if moving many issues
+      if (issuesToMove.length > 5) {
+        console.log(chalk.yellow(`\n  This will move ${issuesToMove.length} issues.`));
+        // In a real implementation, we'd use inquirer for confirmation
+        // For now, we'll proceed
+      }
+      
+      // Move the issues
+      const moveSpinner = ora('Moving issues...').start();
+      let successCount = 0;
+      let failCount = 0;
+      
+      for (const issue of issuesToMove) {
+        try {
+          await api.update(issue.id, { stateId: targetWorkflowState.id });
+          
+          if (options.comment) {
+            await api.addComment(issue.id, options.comment);
+          }
+          
+          successCount++;
+          moveSpinner.text = `Moving issues... (${successCount}/${issuesToMove.length})`;
+        } catch (error) {
+          failCount++;
+          console.log(chalk.red(`\n  Failed to move ${issue.identifier}: ${error}`));
+        }
+      }
+      
+      moveSpinner.stop();
+      
+      if (successCount > 0) {
+        console.log(chalk.green(`\n✓ Successfully moved ${successCount} issue(s) to ${targetWorkflowState.name}`));
+      }
+      
+      if (failCount > 0) {
+        console.log(chalk.red(`  Failed to move ${failCount} issue(s)`));
+      }
+      
+    } catch (error: any) {
+      spinner.fail('Could not complete refine operation');
+      console.log(chalk.dim('  Error:', error.message || error));
+    }
+  });
+
 // Register command modules
 program.addCommand(createTeamCommand());
 program.addCommand(createLabelCommand());
