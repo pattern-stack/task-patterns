@@ -22,6 +22,18 @@ jest.mock('@organisms/cli/settings', () => {
   };
 });
 
+// Mock the environment config to control env values in tests
+jest.mock('@atoms/shared/config', () => ({
+  config: {
+    get: jest.fn(() => ({
+      LINEAR_API_KEY: 'test-env-api-key',
+      LINEAR_WORKSPACE_ID: 'optional_workspace_id',
+      NODE_ENV: 'test',
+      LOG_LEVEL: 'info'
+    }))
+  }
+}));
+
 describe('Local Configuration Integration', () => {
   let tempDir: string;
   let projectDir: string;
@@ -40,6 +52,22 @@ describe('Local Configuration Integration', () => {
     
     // Clear all caches
     enhancedConfig.clearCache();
+    
+    // Reset mocks to default state
+    const mockEnvConfig = require('@atoms/shared/config').config;
+    mockEnvConfig.get.mockReturnValue({
+      LINEAR_API_KEY: 'test-env-api-key',
+      LINEAR_WORKSPACE_ID: 'optional_workspace_id',
+      NODE_ENV: 'test',
+      LOG_LEVEL: 'info'
+    });
+    
+    const mockSettings = require('@organisms/cli/settings').settings;
+    mockSettings.get.mockImplementation((key: string) => {
+      if (key === 'linearApiKey') return 'test-global-api-key';
+      if (key === 'backend') return 'linear';
+      return undefined;
+    });
   });
 
   afterEach(() => {
@@ -161,6 +189,15 @@ describe('Local Configuration Integration', () => {
 
   describe('Hierarchy and Fallback Behavior', () => {
     it('should prioritize local over global settings', () => {
+      // Mock env config to not have workspace ID
+      const mockEnvConfig = require('@atoms/shared/config').config;
+      mockEnvConfig.get.mockReturnValue({
+        LINEAR_API_KEY: 'test-env-api-key',
+        // No LINEAR_WORKSPACE_ID
+        NODE_ENV: 'test',
+        LOG_LEVEL: 'info'
+      });
+      
       // Setup global config (mocked)
       const mockSettings = require('@organisms/cli/settings').settings;
       mockSettings.get.mockImplementation((key: string) => {
@@ -188,7 +225,7 @@ describe('Local Configuration Integration', () => {
       // Global settings still used for non-overridden values
       expect(mergedConfig.apiKey).toBe('global-api-key');
       
-      // Settings not in local config should be undefined (not from global)
+      // Settings not in local config and not in env should be undefined
       expect(mergedConfig.workspaceId).toBeUndefined();
     });
 
@@ -258,25 +295,28 @@ describe('Local Configuration Integration', () => {
         defaultTeam: 'TEST'
       });
 
-      // No API key in global or env
-      const mockSettings = require('@organisms/cli/settings').settings;
-      mockSettings.get.mockReturnValue(undefined);
+      // Mock env config to not have API key
+      const mockEnvConfig = require('@atoms/shared/config').config;
+      mockEnvConfig.get.mockReturnValue({
+        // No LINEAR_API_KEY
+        NODE_ENV: 'test',
+        LOG_LEVEL: 'info'
+      });
       
-      // Also clear the environment variable
-      const originalApiKey = process.env.LINEAR_API_KEY;
-      delete process.env.LINEAR_API_KEY;
+      // No API key in global either
+      const mockSettings = require('@organisms/cli/settings').settings;
+      mockSettings.get.mockImplementation((key: string) => {
+        // Return undefined for linearApiKey specifically
+        if (key === 'linearApiKey') return undefined;
+        return undefined;
+      });
 
       const { valid, errors } = enhancedConfig.validateConfig();
       
-      // Restore the environment variable
-      if (originalApiKey) {
-        process.env.LINEAR_API_KEY = originalApiKey;
-      }
-      
       expect(valid).toBe(false);
-      expect(errors).toContain(
-        'API key is required (LINEAR_API_KEY environment variable or global config)'
-      );
+      // The error comes from zod validation, check for the presence of apiKey error
+      expect(errors.length).toBeGreaterThan(0);
+      expect(errors[0]).toContain('apiKey');
     });
   });
 

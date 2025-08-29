@@ -476,6 +476,84 @@ program
     }
   });
 
+// Add comment to an issue
+program
+  .command('comment <identifier> <message...>')
+  .description('Add a comment to an issue')
+  .action(async (identifier, messageParts) => {
+    const message = messageParts.join(' ');
+    const spinner = ora(`Adding comment to ${identifier}...`).start();
+    
+    try {
+      const client = linearClient.getClient();
+      const api = new IssueAPI(client);
+      
+      // Find the issue first
+      const issue = await api.getByIdentifier(identifier);
+      if (!issue) {
+        spinner.fail(`Issue not found: ${identifier}`);
+        return;
+      }
+      
+      // Add the comment
+      await api.addComment(issue.id, message);
+      
+      spinner.succeed(chalk.green(`✓ Comment added to ${identifier}`));
+      console.log(chalk.dim(`  View at: ${issue.url}`));
+      
+    } catch (error: any) {
+      spinner.fail(`Could not add comment to ${identifier}`);
+      console.log(chalk.dim('  Error:', error.message || error));
+    }
+  });
+
+// List comments on an issue
+program
+  .command('comments <identifier>')
+  .description('Show all comments on an issue')
+  .action(async (identifier) => {
+    const spinner = ora(`Loading comments for ${identifier}...`).start();
+    
+    try {
+      const client = linearClient.getClient();
+      const api = new IssueAPI(client);
+      
+      // Find the issue first
+      const issue = await api.getByIdentifier(identifier);
+      if (!issue) {
+        spinner.fail(`Issue not found: ${identifier}`);
+        return;
+      }
+      
+      // Get comments using the CommentService
+      const { CommentService } = await import('@features/comment/service');
+      const commentService = new CommentService(client);
+      const comments = await commentService.listByIssue(issue.id);
+      
+      spinner.stop();
+      
+      console.log(chalk.cyan(`\n==> Comments on ${identifier}: ${issue.title}\n`));
+      
+      if (comments.nodes.length === 0) {
+        console.log(chalk.yellow('  No comments yet'));
+      } else {
+        for (const comment of comments.nodes) {
+          const user = await comment.user;
+          const createdAt = new Date(comment.createdAt);
+          console.log(chalk.yellow(`  ${user?.name || 'Unknown'} • ${createdAt.toLocaleDateString()}`));
+          console.log(chalk.white(`    ${comment.body}`));
+          console.log();
+        }
+      }
+      
+      console.log(chalk.dim(`  View online: ${issue.url}`));
+      
+    } catch (error: any) {
+      spinner.fail(`Could not load comments for ${identifier}`);
+      console.log(chalk.dim('  Error:', error.message || error));
+    }
+  });
+
 // Register command modules
 program.addCommand(createTeamCommand());
 program.addCommand(createLabelCommand());
