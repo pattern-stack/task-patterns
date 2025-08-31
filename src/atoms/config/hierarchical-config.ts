@@ -86,10 +86,10 @@ export class HierarchicalConfigManager {
     return {
       local: localConfigManager.readLocalConfig(startDir) || undefined,
       global: {
-        defaultTeam: settings.get('defaultTeam'),
-        teamFilter: settings.get('activeTeams'), // Map activeTeams to teamFilter
-        backend: settings.get('backend'),
-        linearApiKey: settings.get('linearApiKey')
+        defaultTeam: settings.getGlobal('defaultTeam'),
+        teamFilter: settings.getGlobal('activeTeams'), // Map activeTeams to teamFilter
+        backend: settings.getGlobal('backend'),
+        linearApiKey: settings.getGlobal('linearApiKey')
       },
       env: envConfig.get()
     };

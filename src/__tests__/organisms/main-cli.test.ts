@@ -4,6 +4,7 @@ import { settings } from '@organisms/cli/settings';
 jest.mock('@organisms/cli/settings', () => ({
   settings: {
     get: jest.fn(),
+    getGlobal: jest.fn(),
   },
 }));
 
