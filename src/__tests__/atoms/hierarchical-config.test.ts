@@ -8,7 +8,8 @@ import { projectDiscovery } from '@atoms/config/project-discovery';
 // Mock the settings module to avoid file system dependencies in tests
 jest.mock('@organisms/cli/settings', () => ({
   settings: {
-    get: jest.fn()
+    get: jest.fn(),
+    getGlobal: jest.fn()
   }
 }));
 
@@ -42,6 +43,7 @@ describe('HierarchicalConfigManager', () => {
     // Setup mock settings
     mockSettings = require('@organisms/cli/settings').settings;
     mockSettings.get.mockReset();
+    mockSettings.getGlobal.mockReset();
   });
 
   afterEach(() => {
@@ -64,7 +66,7 @@ describe('HierarchicalConfigManager', () => {
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       // Setup global config mock
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalImpl = (key: string) => {
         switch (key) {
           case 'defaultTeam': return 'GLOBAL_TEAM';
           case 'activeTeams': return ['GLOBAL', 'TEAM'];
@@ -72,7 +74,9 @@ describe('HierarchicalConfigManager', () => {
           case 'linearApiKey': return 'global-api-key';
           default: return undefined;
         }
-      });
+      };
+      mockSettings.get.mockImplementation(globalImpl);
+      mockSettings.getGlobal.mockImplementation(globalImpl);
 
       const { config, sources } = hierarchicalConfig.getMergedConfig(nestedDir);
 
@@ -94,14 +98,16 @@ describe('HierarchicalConfigManager', () => {
     it('should fallback to global when no local config exists', () => {
       // No local config - only global and env
 
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalImpl = (key: string) => {
         switch (key) {
           case 'defaultTeam': return 'GLOBAL_ONLY';
           case 'activeTeams': return ['GLOBAL'];
           case 'linearApiKey': return 'global-api-key';
           default: return undefined;
         }
-      });
+      };
+      mockSettings.get.mockImplementation(globalImpl);
+      mockSettings.getGlobal.mockImplementation(globalImpl);
 
       const { config } = hierarchicalConfig.getMergedConfig(nestedDir);
 
@@ -132,9 +138,11 @@ describe('HierarchicalConfigManager', () => {
       };
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalImpl = (key: string) => {
         return key === 'linearApiKey' ? 'api-key' : undefined;
-      });
+      };
+      mockSettings.get.mockImplementation(globalImpl);
+      mockSettings.getGlobal.mockImplementation(globalImpl);
 
       // First call
       const result1 = hierarchicalConfig.getMergedConfig(nestedDir);
@@ -151,9 +159,11 @@ describe('HierarchicalConfigManager', () => {
     it('should validate merged configuration', () => {
       // This test verifies that schema validation works
       // We'll test this by providing valid config and expecting no errors
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalValidImpl = (key: string) => {
         return key === 'linearApiKey' ? 'valid-api-key' : undefined;
-      });
+      };
+      mockSettings.get.mockImplementation(globalValidImpl);
+      mockSettings.getGlobal.mockImplementation(globalValidImpl);
 
       expect(() => {
         const result = hierarchicalConfig.getMergedConfig(nestedDir);
@@ -177,6 +187,7 @@ describe('HierarchicalConfigManager', () => {
 
       // Cache should be cleared (new config should be picked up)
       mockSettings.get.mockImplementation(() => undefined);
+      mockSettings.getGlobal.mockImplementation(() => undefined);
       const { config } = hierarchicalConfig.getMergedConfig(tempDir);
       expect(config.defaultTeam).toBe('NEW');
     });
@@ -250,9 +261,11 @@ describe('HierarchicalConfigManager', () => {
       };
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalImpl = (key: string) => {
         return key === 'linearApiKey' ? 'global-key' : undefined;
-      });
+      };
+      mockSettings.get.mockImplementation(globalImpl);
+      mockSettings.getGlobal.mockImplementation(globalImpl);
 
       const { config, sources } = hierarchicalConfig.getConfigWithSources(tempDir);
 
@@ -265,13 +278,15 @@ describe('HierarchicalConfigManager', () => {
 
     it('should attribute settings to correct source based on availability', () => {
       // Only global and env config
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalImpl2 = (key: string) => {
         switch (key) {
           case 'defaultTeam': return 'GLOBAL';
           case 'linearApiKey': return 'global-key';
           default: return undefined;
         }
-      });
+      };
+      mockSettings.get.mockImplementation(globalImpl2);
+      mockSettings.getGlobal.mockImplementation(globalImpl2);
 
       const { sources } = hierarchicalConfig.getConfigWithSources(tempDir);
 
@@ -282,9 +297,11 @@ describe('HierarchicalConfigManager', () => {
 
   describe('validateConfig', () => {
     it('should return valid when all required config is present', () => {
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalImpl3 = (key: string) => {
         return key === 'linearApiKey' ? 'valid-api-key' : undefined;
-      });
+      };
+      mockSettings.get.mockImplementation(globalImpl3);
+      mockSettings.getGlobal.mockImplementation(globalImpl3);
 
       const { valid, errors } = hierarchicalConfig.validateConfig(tempDir);
 
@@ -302,6 +319,7 @@ describe('HierarchicalConfigManager', () => {
       });
 
       mockSettings.get.mockReturnValue(undefined);
+      mockSettings.getGlobal.mockReturnValue(undefined);
 
       const { valid, errors } = hierarchicalConfig.validateConfig(tempDir);
 
@@ -312,6 +330,9 @@ describe('HierarchicalConfigManager', () => {
 
     it('should handle validation errors gracefully', () => {
       mockSettings.get.mockImplementation(() => {
+        throw new Error('Settings error');
+      });
+      mockSettings.getGlobal.mockImplementation(() => {
         throw new Error('Settings error');
       });
 
@@ -331,9 +352,11 @@ describe('HierarchicalConfigManager', () => {
       };
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalImpl4 = (key: string) => {
         return key === 'linearApiKey' ? 'valid-api-key' : undefined;
-      });
+      };
+      mockSettings.get.mockImplementation(globalImpl4);
+      mockSettings.getGlobal.mockImplementation(globalImpl4);
 
       // Populate cache
       hierarchicalConfig.getMergedConfig(tempDir);

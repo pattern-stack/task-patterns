@@ -72,6 +72,18 @@ class SettingsManager {
     }
   }
 
+  /**
+   * Get a setting value from the persisted global settings only.
+   *
+   * This bypasses any environment variable fallbacks which allows
+   * higher level configuration managers to implement their own
+   * precedence rules. Environment variables should be handled as
+   * the lowest priority source and not mixed with user settings.
+   */
+  getGlobal<K extends keyof Settings>(key: K): Settings[K] | undefined {
+    return this.settings[key];
+  }
+
   // Set a setting
   set<K extends keyof Settings>(key: K, value: Settings[K]): void {
     this.settings[key] = value;

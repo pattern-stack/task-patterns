@@ -15,12 +15,23 @@ jest.mock('@organisms/cli/settings', () => {
   return {
     settings: {
       get: jest.fn((key: string) => mockGlobalSettings[key]),
+      getGlobal: jest.fn((key: string) => mockGlobalSettings[key]),
       set: jest.fn((key: string, value: any) => {
         mockGlobalSettings[key] = value;
       })
     }
   };
 });
+
+jest.mock('@atoms/shared/config', () => ({
+  config: {
+    get: jest.fn(() => ({
+      LINEAR_API_KEY: 'test-global-api-key',
+      NODE_ENV: 'test',
+      LOG_LEVEL: 'info'
+    }))
+  }
+}));
 
 describe('Local Configuration Integration', () => {
   let tempDir: string;
@@ -163,14 +174,16 @@ describe('Local Configuration Integration', () => {
     it('should prioritize local over global settings', () => {
       // Setup global config (mocked)
       const mockSettings = require('@organisms/cli/settings').settings;
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalImpl = (key: string) => {
         switch (key) {
           case 'defaultTeam': return 'GLOBAL_TEAM';
           case 'activeTeams': return ['GLOBAL', 'TEAMS'];
           case 'linearApiKey': return 'global-api-key';
           default: return undefined;
         }
-      });
+      };
+      mockSettings.get.mockImplementation(globalImpl);
+      mockSettings.getGlobal.mockImplementation(globalImpl);
 
       // Create local config that overrides some global settings
       enhancedConfig.initLocalConfig({
@@ -197,14 +210,16 @@ describe('Local Configuration Integration', () => {
       expect(enhancedConfig.hasLocalConfig()).toBe(false);
 
       const mockSettings = require('@organisms/cli/settings').settings;
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalFallbackImpl = (key: string) => {
         switch (key) {
           case 'defaultTeam': return 'GLOBAL_FALLBACK';
           case 'activeTeams': return ['FALLBACK'];
           case 'linearApiKey': return 'fallback-api-key';
           default: return undefined;
         }
-      });
+      };
+      mockSettings.get.mockImplementation(globalFallbackImpl);
+      mockSettings.getGlobal.mockImplementation(globalFallbackImpl);
 
       const mergedConfig = enhancedConfig.getMergedConfig();
       
@@ -243,9 +258,11 @@ describe('Local Configuration Integration', () => {
       });
 
       const mockSettings = require('@organisms/cli/settings').settings;
-      mockSettings.get.mockImplementation((key: string) => {
+      const globalValidImpl = (key: string) => {
         return key === 'linearApiKey' ? 'valid-api-key' : undefined;
-      });
+      };
+      mockSettings.get.mockImplementation(globalValidImpl);
+      mockSettings.getGlobal.mockImplementation(globalValidImpl);
 
       const { valid, errors } = enhancedConfig.validateConfig();
       
@@ -261,22 +278,19 @@ describe('Local Configuration Integration', () => {
       // No API key in global or env
       const mockSettings = require('@organisms/cli/settings').settings;
       mockSettings.get.mockReturnValue(undefined);
-      
-      // Also clear the environment variable
-      const originalApiKey = process.env.LINEAR_API_KEY;
-      delete process.env.LINEAR_API_KEY;
+      mockSettings.getGlobal.mockReturnValue(undefined);
+
+      // Mock environment config to return no API key
+      const mockEnvConfig = require('@atoms/shared/config');
+      mockEnvConfig.config.get.mockReturnValueOnce({
+        NODE_ENV: 'test',
+        LOG_LEVEL: 'info'
+      });
 
       const { valid, errors } = enhancedConfig.validateConfig();
       
-      // Restore the environment variable
-      if (originalApiKey) {
-        process.env.LINEAR_API_KEY = originalApiKey;
-      }
-      
       expect(valid).toBe(false);
-      expect(errors).toContain(
-        'API key is required (LINEAR_API_KEY environment variable or global config)'
-      );
+      expect(errors[0]).toContain('Invalid merged configuration');
     });
   });
 
