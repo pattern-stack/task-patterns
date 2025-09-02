@@ -5,18 +5,20 @@ import { z } from 'zod';
 
 /**
  * Local Configuration Handler
- * 
+ *
  * Handles reading and writing local project configurations from:
  * - package.json "tp" section (Node.js projects)
  * - .tp-config.json (non-Node.js projects)
  */
 
 // Schema for local configuration settings (project-specific only)
-const localConfigSchema = z.object({
-  defaultTeam: z.string().optional(),
-  teamFilter: z.array(z.string()).optional(), // renamed from activeTeams for clarity
-  workspaceId: z.string().optional(),
-}).strict();
+const localConfigSchema = z
+  .object({
+    defaultTeam: z.string().optional(),
+    teamFilter: z.array(z.string()).optional(), // renamed from activeTeams for clarity
+    workspaceId: z.string().optional(),
+  })
+  .strict();
 
 export type LocalConfig = z.infer<typeof localConfigSchema>;
 
@@ -77,9 +79,9 @@ export class LocalConfigManager {
    * @param preferredType Preferred config type ('package.json' or '.tp-config.json')
    */
   writeLocalConfig(
-    config: LocalConfig, 
+    config: LocalConfig,
     projectPath?: string,
-    preferredType?: 'package.json' | '.tp-config.json'
+    preferredType?: 'package.json' | '.tp-config.json',
   ): void {
     let targetPath: string;
     let configType: 'package.json' | '.tp-config.json';
@@ -87,7 +89,7 @@ export class LocalConfigManager {
     if (projectPath) {
       // Use specified project path
       targetPath = projectPath;
-      
+
       // Determine config type
       if (preferredType) {
         configType = preferredType;
@@ -104,8 +106,8 @@ export class LocalConfigManager {
         configType = projectRoot.configType;
       } else {
         targetPath = process.cwd();
-        configType = fs.existsSync(path.join(targetPath, 'package.json')) 
-          ? 'package.json' 
+        configType = fs.existsSync(path.join(targetPath, 'package.json'))
+          ? 'package.json'
           : '.tp-config.json';
       }
     }
@@ -146,10 +148,10 @@ export class LocalConfigManager {
    */
   initLocalConfig(
     config: LocalConfig = {},
-    configType: 'package.json' | '.tp-config.json' = 'package.json'
+    configType: 'package.json' | '.tp-config.json' = 'package.json',
   ): void {
     const currentDir = process.cwd();
-    
+
     // Check if config already exists
     if (projectDiscovery.hasProjectConfig(currentDir)) {
       throw new Error('Project already has a tp configuration');
@@ -167,7 +169,7 @@ export class LocalConfigManager {
   updateLocalSetting<K extends keyof LocalConfig>(
     key: K,
     value: LocalConfig[K],
-    startDir: string = process.cwd()
+    startDir: string = process.cwd(),
   ): void {
     const projectRoot = projectDiscovery.findProjectRoot(startDir);
     if (!projectRoot) {
@@ -176,9 +178,9 @@ export class LocalConfigManager {
 
     const currentConfig = this.readLocalConfig(startDir) || {};
     const updatedConfig = { ...currentConfig, [key]: value };
-    
+
     // Remove undefined values
-    Object.keys(updatedConfig).forEach(k => {
+    Object.keys(updatedConfig).forEach((k) => {
       if (updatedConfig[k as keyof LocalConfig] === undefined) {
         delete updatedConfig[k as keyof LocalConfig];
       }

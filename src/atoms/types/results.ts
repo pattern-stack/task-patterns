@@ -6,7 +6,7 @@
 /**
  * Generic operation result with discriminated union
  */
-export type OperationResult<T, E = Error> = 
+export type OperationResult<T, E = Error> =
   | { success: true; data: T }
   | { success: false; error: E; code: string };
 
@@ -22,9 +22,7 @@ export type AsyncResult<T, E = Error> =
 /**
  * Validation result
  */
-export type ValidationResult = 
-  | { valid: true }
-  | { valid: false; errors: string[] };
+export type ValidationResult = { valid: true } | { valid: false; errors: string[] };
 
 /**
  * Bulk operation result
@@ -81,7 +79,9 @@ export const ResultGuards = {
   /**
    * Check if operation failed
    */
-  isError: <T, E>(result: OperationResult<T, E>): result is { success: false; error: E; code: string } => {
+  isError: <T, E>(
+    result: OperationResult<T, E>,
+  ): result is { success: false; error: E; code: string } => {
     return result.success === false;
   },
 
@@ -124,10 +124,7 @@ export const ResultHelpers = {
   /**
    * Map success value
    */
-  map: <T, U>(
-    result: OperationResult<T>,
-    fn: (data: T) => U
-  ): OperationResult<U> => {
+  map: <T, U>(result: OperationResult<T>, fn: (data: T) => U): OperationResult<U> => {
     if (result.success) {
       return { success: true, data: fn(result.data) };
     }
@@ -139,7 +136,7 @@ export const ResultHelpers = {
    */
   chain: async <T, U>(
     result: OperationResult<T>,
-    fn: (data: T) => Promise<OperationResult<U>>
+    fn: (data: T) => Promise<OperationResult<U>>,
   ): Promise<OperationResult<U>> => {
     if (result.success) {
       return fn(result.data);
@@ -166,26 +163,26 @@ export enum ErrorCode {
   VALIDATION_FAILED = 'VALIDATION_FAILED',
   INVALID_INPUT = 'INVALID_INPUT',
   MISSING_REQUIRED_FIELD = 'MISSING_REQUIRED_FIELD',
-  
+
   // Not found errors
   NOT_FOUND = 'NOT_FOUND',
   ENTITY_NOT_FOUND = 'ENTITY_NOT_FOUND',
-  
+
   // Permission errors
   UNAUTHORIZED = 'UNAUTHORIZED',
   FORBIDDEN = 'FORBIDDEN',
   INSUFFICIENT_PERMISSIONS = 'INSUFFICIENT_PERMISSIONS',
-  
+
   // Operation errors
   OPERATION_FAILED = 'OPERATION_FAILED',
   CREATION_FAILED = 'CREATION_FAILED',
   UPDATE_FAILED = 'UPDATE_FAILED',
   DELETION_FAILED = 'DELETION_FAILED',
-  
+
   // Network errors
   NETWORK_ERROR = 'NETWORK_ERROR',
   TIMEOUT = 'TIMEOUT',
-  
+
   // System errors
   INTERNAL_ERROR = 'INTERNAL_ERROR',
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',

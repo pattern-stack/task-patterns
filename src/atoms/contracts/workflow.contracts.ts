@@ -86,11 +86,13 @@ export interface WorkflowConfig {
 /**
  * Type helper for workflow results
  */
-export type WorkflowResult<T> = {
-  success: true;
-  data: T;
-} | {
-  success: false;
-  error: Error;
-  code: string;
-};
+export type WorkflowResult<T> =
+  | {
+      success: true;
+      data: T;
+    }
+  | {
+      success: false;
+      error: Error;
+      code: string;
+    };

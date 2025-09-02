@@ -3,11 +3,11 @@ import * as path from 'path';
 
 /**
  * Project Discovery Utility
- * 
+ *
  * Discovers project root by walking up directory tree looking for:
  * 1. package.json with "tp" section (Node.js projects)
  * 2. .tp-config.json file (non-Node.js projects)
- * 
+ *
  * Implements caching to avoid repeated filesystem operations.
  */
 
@@ -68,7 +68,7 @@ class ProjectDiscovery {
             return {
               path: currentDir,
               configType: 'package.json',
-              configPath: packageJsonPath
+              configPath: packageJsonPath,
             };
           }
         } catch (error) {
@@ -85,7 +85,7 @@ class ProjectDiscovery {
           return {
             path: currentDir,
             configType: '.tp-config.json',
-            configPath: tpConfigPath
+            configPath: tpConfigPath,
           };
         } catch (error) {
           // Invalid JSON, continue searching

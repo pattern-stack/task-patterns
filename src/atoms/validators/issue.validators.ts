@@ -59,9 +59,7 @@ export const IssueValidators = {
   isBlocked: (issue: Issue): boolean => {
     // Check for blocking issues or blocked label
     const labels = (issue.labels as any)?.nodes || [];
-    return labels.some((label: any) => 
-      label.name?.toLowerCase().includes('blocked')
-    ) || false;
+    return labels.some((label: any) => label.name?.toLowerCase().includes('blocked')) || false;
   },
 
   /**
