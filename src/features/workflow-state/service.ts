@@ -27,7 +27,9 @@ import {
 } from './schemas';
 import type { DataService } from '@atoms/contracts/service.contracts';
 
-export class WorkflowStateService implements DataService<WorkflowState, never, WorkflowStateUpdate> {
+export class WorkflowStateService
+  implements DataService<WorkflowState, never, WorkflowStateUpdate>
+{
   constructor(private readonly client: LinearClient) {}
 
   /**
@@ -490,7 +492,9 @@ export class WorkflowStateService implements DataService<WorkflowState, never, W
    * Note: Linear manages workflow states internally per team
    */
   async create(): Promise<never> {
-    throw new ValidationError('Workflow states cannot be created via the Linear API. They are managed by Linear per team.');
+    throw new ValidationError(
+      'Workflow states cannot be created via the Linear API. They are managed by Linear per team.',
+    );
   }
 
   /**

@@ -1,4 +1,11 @@
-import { Cycle, CycleConnection, Issue, IssueConnection, LinearDocument, LinearClient } from '@linear/sdk';
+import {
+  Cycle,
+  CycleConnection,
+  Issue,
+  IssueConnection,
+  LinearDocument,
+  LinearClient,
+} from '@linear/sdk';
 
 type CycleCreateInput = LinearDocument.CycleCreateInput;
 type CycleUpdateInput = LinearDocument.CycleUpdateInput;

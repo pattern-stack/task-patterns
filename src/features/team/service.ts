@@ -1,4 +1,11 @@
-import { Team, TeamConnection, WebhookConnection, TemplateConnection, Template, LinearClient } from '@linear/sdk';
+import {
+  Team,
+  TeamConnection,
+  WebhookConnection,
+  TemplateConnection,
+  Template,
+  LinearClient,
+} from '@linear/sdk';
 import { logger } from '@atoms/shared/logger';
 import { NotFoundError, Pagination, ValidationError } from '@atoms/types/common';
 import { ZodError } from 'zod';

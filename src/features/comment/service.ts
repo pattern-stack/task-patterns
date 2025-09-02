@@ -27,7 +27,6 @@ export class CommentService implements DataService<Comment, CommentCreate, Comme
       throw new ValidationError('Invalid comment data');
     }
 
-
     try {
       const response = await this.client.createComment({
         issueId: validatedData.issueId,
@@ -62,7 +61,6 @@ export class CommentService implements DataService<Comment, CommentCreate, Comme
    * Get a comment by ID
    */
   async get(id: string): Promise<Comment | null> {
-
     try {
       const comment = await this.client.comment({ id });
       return comment;
@@ -84,7 +82,6 @@ export class CommentService implements DataService<Comment, CommentCreate, Comme
       logger.error('Invalid update data', { error, data });
       throw new ValidationError('Invalid update data');
     }
-
 
     // Check if comment exists
     const existingComment = await this.get(id);
@@ -118,7 +115,6 @@ export class CommentService implements DataService<Comment, CommentCreate, Comme
    * Delete a comment
    */
   async delete(id: string): Promise<boolean> {
-
     // Check if comment exists
     const existingComment = await this.get(id);
     if (!existingComment) {
@@ -145,7 +141,6 @@ export class CommentService implements DataService<Comment, CommentCreate, Comme
    * List comments for an issue
    */
   async listByIssue(issueId: string, pagination?: Partial<Pagination>): Promise<CommentConnection> {
-
     try {
       const response = await this.client.comments({
         filter: {
@@ -166,7 +161,6 @@ export class CommentService implements DataService<Comment, CommentCreate, Comme
    * List comments by a user
    */
   async listByUser(userId: string, pagination?: Partial<Pagination>): Promise<CommentConnection> {
-
     try {
       const response = await this.client.comments({
         filter: {
@@ -200,7 +194,6 @@ export class CommentService implements DataService<Comment, CommentCreate, Comme
       throw new ValidationError('Invalid emoji reaction');
     }
 
-
     try {
       const response = await this.client.createReaction({
         commentId: validatedData.commentId,
@@ -227,7 +220,6 @@ export class CommentService implements DataService<Comment, CommentCreate, Comme
    * Delete a reaction
    */
   async deleteReaction(reactionId: string): Promise<boolean> {
-
     try {
       const response = await this.client.deleteReaction(reactionId);
 
@@ -251,7 +243,6 @@ export class CommentService implements DataService<Comment, CommentCreate, Comme
     commentId: string,
     pagination?: Partial<Pagination>,
   ): Promise<CommentConnection> {
-
     try {
       const response = await this.client.comments({
         filter: {
