@@ -8,7 +8,7 @@ import { formatters } from '../formatters';
 
 /**
  * Enhanced Config Command Module
- * 
+ *
  * Provides hierarchical configuration management with support for:
  * - Local project settings (--local flag)
  * - Global user settings (--global flag)
@@ -16,8 +16,9 @@ import { formatters } from '../formatters';
  */
 
 export function createEnhancedConfigCommand(): Command {
-  const config = new Command('config')
-    .description('Manage task-pattern settings (supports local and global configs)');
+  const config = new Command('config').description(
+    'Manage task-pattern settings (supports local and global configs)',
+  );
 
   // Show current settings with source indication
   config
@@ -52,20 +53,24 @@ export function createEnhancedConfigCommand(): Command {
         const initialConfig = {
           defaultTeam: mergedConfig.defaultTeam,
           teamFilter: mergedConfig.teamFilter,
-          workspaceId: mergedConfig.workspaceId
+          workspaceId: mergedConfig.workspaceId,
         };
 
         // Remove undefined values
-        Object.keys(initialConfig).forEach(key => {
+        Object.keys(initialConfig).forEach((key) => {
           if (initialConfig[key as keyof typeof initialConfig] === undefined) {
             delete initialConfig[key as keyof typeof initialConfig];
           }
         });
 
         enhancedConfig.initLocalConfig(initialConfig, configType);
-        
+
         formatters.success(`Local configuration initialized`);
-        console.log(chalk.dim(`  Config file: ./${configType === 'package.json' ? 'package.json' : '.tp-config.json'}`));
+        console.log(
+          chalk.dim(
+            `  Config file: ./${configType === 'package.json' ? 'package.json' : '.tp-config.json'}`,
+          ),
+        );
         console.log(chalk.dim('  Use --local flag with config commands to modify local settings'));
       } catch (error) {
         formatters.error('Failed to initialize local configuration', error);
@@ -101,7 +106,7 @@ export function createEnhancedConfigCommand(): Command {
             formatters.error('Invalid backend. Options: linear, github, jira');
             return;
           }
-          enhancedSettings.set('backend', value as any);
+          enhancedSettings.set('backend', value);
           formatters.success(`Backend set to "${value}" (global config)`);
         } else if (key === 'workspaceId') {
           if (isLocal) {
@@ -180,19 +185,19 @@ export function createEnhancedConfigCommand(): Command {
     .description('List all configuration options')
     .action(() => {
       console.log(chalk.cyan('\n==> Configuration Options\n'));
-      
+
       console.log(chalk.yellow('  Local Settings (project-specific):'));
       console.log(chalk.gray('    defaultTeam    '), 'Default team for new issues');
       console.log(chalk.gray('    teamFilter     '), 'Teams to show in context view');
       console.log(chalk.gray('    workspaceId    '), 'Linear workspace ID');
-      
+
       console.log(chalk.yellow('\n  Global Settings (user preferences):'));
       console.log(chalk.gray('    backend        '), 'Task backend (linear, github, jira)');
       console.log(chalk.gray('    hideTeams      '), 'Teams to always hide (global only)');
-      
+
       console.log(chalk.yellow('\n  Security Settings (global/env only):'));
       console.log(chalk.gray('    apiKey         '), 'Linear API key (use LINEAR_API_KEY env var)');
-      
+
       console.log(chalk.dim('\n  Commands:'));
       console.log(chalk.dim('    tp config init                    # Initialize local config'));
       console.log(chalk.dim('    tp config set --local <key> <val> # Set local setting'));
@@ -276,18 +281,18 @@ export function createEnhancedConfigCommand(): Command {
       try {
         const client = linearClient.getClient();
         const teams = await client.teams();
-        
+
         spinner.stop();
         console.log(chalk.cyan('\n==> Available Teams:\n'));
-        
-        teams.nodes.forEach(team => {
+
+        teams.nodes.forEach((team) => {
           console.log(chalk.gray('  Key:  '), chalk.yellow(team.key));
           console.log(chalk.gray('  Name: '), team.name);
           console.log(chalk.gray('  ID:   '), chalk.dim(team.id));
           console.log();
         });
-        
-        console.log(chalk.dim(`  Use: tp config teams ${teams.nodes.map(t => t.key).join(' ')}`));
+
+        console.log(chalk.dim(`  Use: tp config teams ${teams.nodes.map((t) => t.key).join(' ')}`));
       } catch (error) {
         spinner.fail('Could not fetch teams');
         console.error(error);
@@ -299,29 +304,33 @@ export function createEnhancedConfigCommand(): Command {
     .command('reset')
     .description('Reset configuration to defaults')
     .option('--local', 'Reset only local configuration')
-    .option('--global', 'Reset only global configuration') 
+    .option('--global', 'Reset only global configuration')
     .option('--confirm', 'Skip confirmation prompt')
     .action(async (options) => {
       const resetLocal = options.local;
       const resetGlobal = options.global || !options.local; // Default to global if no specific flag
-      
+
       if (!options.confirm) {
         const readline = await import('readline');
         const rl = readline.createInterface({
           input: process.stdin,
-          output: process.stdout
+          output: process.stdout,
         });
-        
-        const scope = resetLocal && resetGlobal ? 'all settings' : 
-                      resetLocal ? 'local settings' : 'global settings';
-        
+
+        const scope =
+          resetLocal && resetGlobal
+            ? 'all settings'
+            : resetLocal
+              ? 'local settings'
+              : 'global settings';
+
         const confirmed = await new Promise<boolean>((resolve) => {
           rl.question(chalk.yellow(`Are you sure you want to reset ${scope}? (y/N) `), (answer) => {
             rl.close();
             resolve(answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
           });
         });
-        
+
         if (!confirmed) {
           console.log(chalk.gray('Reset cancelled'));
           return;

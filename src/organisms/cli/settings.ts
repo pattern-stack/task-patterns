@@ -5,10 +5,10 @@ import chalk from 'chalk';
 
 interface Settings {
   defaultTeam?: string;
-  activeTeams?: string[];  // Teams to show in context
-  hideTeams?: string[];    // Teams to always hide
-  backend?: 'linear' | 'github' | 'jira';  // Future: backend selection
-  linearApiKey?: string;   // Can store keys in settings too
+  activeTeams?: string[]; // Teams to show in context
+  hideTeams?: string[]; // Teams to always hide
+  backend?: 'linear' | 'github' | 'jira'; // Future: backend selection
+  linearApiKey?: string; // Can store keys in settings too
 }
 
 class SettingsManager {
@@ -41,12 +41,8 @@ class SettingsManager {
       if (!fs.existsSync(this.configDir)) {
         fs.mkdirSync(this.configDir, { recursive: true });
       }
-      
-      fs.writeFileSync(
-        this.configPath, 
-        JSON.stringify(this.settings, null, 2),
-        'utf-8'
-      );
+
+      fs.writeFileSync(this.configPath, JSON.stringify(this.settings, null, 2), 'utf-8');
     } catch (error) {
       console.log(chalk.yellow('Could not save settings:', error));
     }
@@ -58,7 +54,7 @@ class SettingsManager {
     if (this.settings[key] !== undefined) {
       return this.settings[key];
     }
-    
+
     // Fall back to environment variables
     switch (key) {
       case 'defaultTeam':
@@ -88,17 +84,19 @@ class SettingsManager {
 
   // Remove teams from filter
   removeActiveTeams(...teams: string[]): void {
-    if (!this.settings.activeTeams) return;
-    
-    this.settings.activeTeams = this.settings.activeTeams.filter(
-      t => !teams.includes(t)
-    );
+    if (!this.settings.activeTeams) {
+      return;
+    }
+
+    this.settings.activeTeams = this.settings.activeTeams.filter((t) => !teams.includes(t));
     this.save();
-    
+
     if (this.settings.activeTeams.length === 0) {
       console.log(chalk.yellow('No team filters - showing all teams'));
     } else {
-      console.log(chalk.green(`✓ Now showing issues from: ${this.settings.activeTeams.join(', ')}`));
+      console.log(
+        chalk.green(`✓ Now showing issues from: ${this.settings.activeTeams.join(', ')}`),
+      );
     }
   }
 
@@ -112,21 +110,21 @@ class SettingsManager {
   // Show current settings
   show(): void {
     console.log(chalk.cyan('\n==> Current Settings:\n'));
-    
+
     if (this.settings.defaultTeam) {
       console.log(chalk.gray('  Default Team:  '), this.settings.defaultTeam);
     }
-    
+
     if (this.settings.activeTeams && this.settings.activeTeams.length > 0) {
       console.log(chalk.gray('  Active Teams:  '), this.settings.activeTeams.join(', '));
     } else {
       console.log(chalk.gray('  Active Teams:  '), 'All teams (no filter)');
     }
-    
+
     if (this.settings.hideTeams && this.settings.hideTeams.length > 0) {
       console.log(chalk.gray('  Hidden Teams:  '), this.settings.hideTeams.join(', '));
     }
-    
+
     console.log(chalk.gray('  Backend:       '), this.settings.backend || 'linear');
     console.log(chalk.gray('  Config Path:   '), this.configPath);
   }
