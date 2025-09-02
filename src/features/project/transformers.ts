@@ -1,4 +1,7 @@
-import type { Project, ProjectCreateInput, ProjectUpdateInput } from '@linear/sdk';
+import type { Project, LinearDocument } from '@linear/sdk';
+
+type ProjectCreateInput = LinearDocument.ProjectCreateInput;
+type ProjectUpdateInput = LinearDocument.ProjectUpdateInput;
 
 /**
  * Project transformer functions
@@ -6,8 +9,68 @@ import type { Project, ProjectCreateInput, ProjectUpdateInput } from '@linear/sd
  */
 export const ProjectTransformers = {
   /**
-   * Transform Linear SDK Project to API response
+   * Transform create input to Linear SDK format
    */
+  fromCreateInput: (input: {
+    name: string;
+    description?: string;
+    teamIds: string[];
+    leadId?: string;
+    state?: string;
+    startDate?: Date;
+    targetDate?: Date;
+    icon?: string;
+    color?: string;
+  }): ProjectCreateInput => ({
+    name: input.name,
+    description: input.description,
+    teamIds: input.teamIds,
+    leadId: input.leadId,
+    state: input.state,
+    startDate: input.startDate,
+    targetDate: input.targetDate,
+    icon: input.icon,
+    color: input.color,
+  }),
+
+  /**
+   * Transform update input to Linear SDK format
+   */
+  fromUpdateInput: (input: {
+    name?: string;
+    description?: string;
+    state?: string;
+    leadId?: string;
+    startDate?: Date;
+    targetDate?: Date;
+    completedAt?: Date;
+    canceledAt?: Date;
+    icon?: string;
+    color?: string;
+  }): ProjectUpdateInput => ({
+    name: input.name,
+    description: input.description,
+    state: input.state,
+    leadId: input.leadId,
+    startDate: input.startDate,
+    targetDate: input.targetDate,
+    completedAt: input.completedAt,
+    canceledAt: input.canceledAt,
+    icon: input.icon,
+    color: input.color,
+  }),
+
+  /**
+   * Transform to project reference (minimal data for relationships)
+   */
+  toReference: (project: Project) => ({
+    id: project.id,
+    name: project.name,
+    url: project.url,
+  }),
+
+  // TODO: Fix these transformers to handle LinearFetch properties correctly
+  /*
   toResponse: (project: Project) => ({
     id: project.id,
     name: project.name,
@@ -37,80 +100,18 @@ export const ProjectTransformers = {
     issueCount: project.issues?.nodes?.length || 0,
   }),
 
-  /**
-   * Transform create input to Linear SDK format
-   */
-  fromCreateInput: (input: {
-    name: string;
-    description?: string;
-    teamIds: string[];
-    leadId?: string;
-    state?: 'planned' | 'started' | 'paused' | 'completed' | 'canceled';
-    startDate?: Date;
-    targetDate?: Date;
-    icon?: string;
-    color?: string;
-  }): ProjectCreateInput => ({
-    name: input.name,
-    description: input.description,
-    teamIds: input.teamIds,
-    leadId: input.leadId,
-    state: input.state,
-    startDate: input.startDate,
-    targetDate: input.targetDate,
-    icon: input.icon,
-    color: input.color,
-  }),
-
-  /**
-   * Transform update input to Linear SDK format
-   */
-  fromUpdateInput: (input: {
-    name?: string;
-    description?: string;
-    leadId?: string | null;
-    state?: 'planned' | 'started' | 'paused' | 'completed' | 'canceled';
-    startDate?: Date | null;
-    targetDate?: Date | null;
-    icon?: string;
-    color?: string;
-  }): ProjectUpdateInput => ({
-    name: input.name,
-    description: input.description,
-    leadId: input.leadId,
-    state: input.state,
-    startDate: input.startDate,
-    targetDate: input.targetDate,
-    icon: input.icon,
-    color: input.color,
-  }),
-
-  /**
-   * Transform to project reference (minimal data for relationships)
-   */
-  toReference: (project: Project) => ({
-    id: project.id,
-    name: project.name,
-    state: project.state,
-    url: project.url,
-  }),
-
-  /**
-   * Transform for list display
-   */
   toListItem: (project: Project) => ({
     id: project.id,
     name: project.name,
     state: project.state,
-    progress: `${Math.round(project.progress * 100)}%`,
-    lead: project.lead?.name || 'No lead',
+    progress: project.progress,
+    startDate: project.startDate,
     targetDate: project.targetDate,
+    leadName: project.lead?.name,
     issueCount: project.issues?.nodes?.length || 0,
+    url: project.url,
   }),
 
-  /**
-   * Transform for project selector
-   */
   toSelectorOption: (project: Project) => ({
     value: project.id,
     label: project.name,
@@ -119,17 +120,30 @@ export const ProjectTransformers = {
     color: project.color,
   }),
 
-  /**
-   * Transform for timeline display
-   */
-  toTimelineItem: (project: Project) => ({
+  toMilestone: (project: Project) => ({
     id: project.id,
     name: project.name,
-    startDate: project.startDate,
+    description: project.description,
     targetDate: project.targetDate,
     completedAt: project.completedAt,
+    progress: project.progress,
+    issueCount: project.issues?.nodes?.length || 0,
+  }),
+
+  toRoadmapItem: (project: Project) => ({
+    id: project.id,
+    name: project.name,
+    description: project.description?.substring(0, 200),
     state: project.state,
     progress: project.progress,
+    startDate: project.startDate,
+    targetDate: project.targetDate,
+    lead: project.lead ? {
+      name: project.lead.name,
+    } : null,
     color: project.color,
+    icon: project.icon,
+    url: project.url,
   }),
+  */
 } as const;

@@ -1,30 +1,13 @@
-import type { Team, TeamCreateInput, TeamUpdateInput } from '@linear/sdk';
+import type { Team, LinearDocument } from '@linear/sdk';
+
+type TeamCreateInput = LinearDocument.TeamCreateInput;
+type TeamUpdateInput = LinearDocument.TeamUpdateInput;
 
 /**
  * Team transformer functions
  * Pure functions for transforming team data between layers
  */
 export const TeamTransformers = {
-  /**
-   * Transform Linear SDK Team to API response
-   */
-  toResponse: (team: Team) => ({
-    id: team.id,
-    key: team.key,
-    name: team.name,
-    description: team.description,
-    icon: team.icon,
-    color: team.color,
-    private: team.private,
-    createdAt: team.createdAt,
-    updatedAt: team.updatedAt,
-    cycleStartDay: team.cycleStartDay,
-    cycleCalenderUrl: team.cycleCalenderUrl,
-    timezone: team.timezone,
-    issueCount: team.issues?.nodes?.length || 0,
-    memberCount: team.members?.nodes?.length || 0,
-  }),
-
   /**
    * Transform create input to Linear SDK format
    */
@@ -34,18 +17,12 @@ export const TeamTransformers = {
     description?: string;
     icon?: string;
     color?: string;
-    private?: boolean;
-    cycleStartDay?: number;
-    timezone?: string;
   }): TeamCreateInput => ({
     name: input.name,
     key: input.key,
     description: input.description,
     icon: input.icon,
     color: input.color,
-    private: input.private,
-    cycleStartDay: input.cycleStartDay,
-    timezone: input.timezone,
   }),
 
   /**
@@ -57,18 +34,12 @@ export const TeamTransformers = {
     description?: string;
     icon?: string;
     color?: string;
-    private?: boolean;
-    cycleStartDay?: number;
-    timezone?: string;
   }): TeamUpdateInput => ({
     name: input.name,
     key: input.key,
     description: input.description,
     icon: input.icon,
     color: input.color,
-    private: input.private,
-    cycleStartDay: input.cycleStartDay,
-    timezone: input.timezone,
   }),
 
   /**
@@ -78,21 +49,6 @@ export const TeamTransformers = {
     id: team.id,
     key: team.key,
     name: team.name,
-    icon: team.icon,
-  }),
-
-  /**
-   * Transform for list display
-   */
-  toListItem: (team: Team) => ({
-    id: team.id,
-    key: team.key,
-    name: team.name,
-    private: team.private ? 'Private' : 'Public',
-    memberCount: team.members?.nodes?.length || 0,
-    activeIssues: team.issues?.nodes?.filter(i => 
-      i.state?.type !== 'completed' && i.state?.type !== 'canceled'
-    ).length || 0,
   }),
 
   /**
@@ -101,7 +57,71 @@ export const TeamTransformers = {
   toSelectorOption: (team: Team) => ({
     value: team.id,
     label: `${team.key} - ${team.name}`,
+    key: team.key,
+    name: team.name,
     icon: team.icon,
-    private: team.private,
+    color: team.color,
   }),
+
+  // TODO: Fix these transformers to handle LinearFetch properties correctly
+  /*
+  toResponse: (team: Team) => ({
+    id: team.id,
+    name: team.name,
+    key: team.key,
+    description: team.description,
+    icon: team.icon,
+    color: team.color,
+    private: team.private,
+    createdAt: team.createdAt,
+    updatedAt: team.updatedAt,
+    issueCount: team.issues?.nodes?.length || 0,
+    memberCount: team.members?.nodes?.length || 0,
+    issueEstimationType: team.issueEstimationType,
+    issueEstimationAllowZero: team.issueEstimationAllowZero,
+    issueOrderingNoPriorityFirst: team.issueOrderingNoPriorityFirst,
+    timezone: team.timezone,
+    activeCycle: team.activeCycle ? {
+      id: team.activeCycle.id,
+      name: team.activeCycle.name,
+      number: team.activeCycle.number,
+    } : null,
+  }),
+
+  toListItem: (team: Team) => ({
+    id: team.id,
+    name: team.name,
+    key: team.key,
+    description: team.description?.substring(0, 100),
+    icon: team.icon,
+    color: team.color,
+    private: team.private,
+    memberCount: team.members?.nodes?.length || 0,
+    issueCount: team.issues?.nodes?.filter(i => !i.completedAt)?.length || 0,
+  }),
+
+  toMembersList: (team: Team) => ({
+    id: team.id,
+    name: team.name,
+    key: team.key,
+    members: team.members?.nodes?.map(member => ({
+      id: member.id,
+      name: member.name,
+      email: member.email,
+      avatarUrl: member.avatarUrl,
+    })) || [],
+  }),
+
+  toWorkflowInfo: (team: Team) => ({
+    id: team.id,
+    name: team.name,
+    key: team.key,
+    states: team.states?.nodes?.map(state => ({
+      id: state.id,
+      name: state.name,
+      type: state.type,
+      color: state.color,
+    })) || [],
+  }),
+  */
 } as const;

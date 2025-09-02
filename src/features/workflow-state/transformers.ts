@@ -1,4 +1,7 @@
-import type { WorkflowState, WorkflowStateCreateInput, WorkflowStateUpdateInput } from '@linear/sdk';
+import type { WorkflowState, LinearDocument } from '@linear/sdk';
+
+type WorkflowStateCreateInput = LinearDocument.WorkflowStateCreateInput;
+type WorkflowStateUpdateInput = LinearDocument.WorkflowStateUpdateInput;
 
 /**
  * WorkflowState transformer functions
@@ -6,14 +9,62 @@ import type { WorkflowState, WorkflowStateCreateInput, WorkflowStateUpdateInput 
  */
 export const WorkflowStateTransformers = {
   /**
-   * Transform Linear SDK WorkflowState to API response
+   * Transform create input to Linear SDK format
    */
+  fromCreateInput: (input: {
+    name: string;
+    type: string;
+    teamId: string;
+    color?: string;
+    description?: string;
+  }): WorkflowStateCreateInput => ({
+    name: input.name,
+    type: input.type as any, // Type assertion needed for enum
+    teamId: input.teamId,
+    color: input.color || '#000000', // Default color if not provided
+    description: input.description,
+  }),
+
+  /**
+   * Transform update input to Linear SDK format
+   */
+  fromUpdateInput: (input: {
+    name?: string;
+    color?: string;
+    description?: string;
+  }): WorkflowStateUpdateInput => ({
+    name: input.name,
+    color: input.color,
+    description: input.description,
+  }),
+
+  /**
+   * Transform to workflow state reference (minimal data for relationships)
+   */
+  toReference: (state: WorkflowState) => ({
+    id: state.id,
+    name: state.name,
+    type: state.type,
+  }),
+
+  /**
+   * Transform for state selector
+   */
+  toSelectorOption: (state: WorkflowState) => ({
+    value: state.id,
+    label: state.name,
+    type: state.type,
+    color: state.color,
+  }),
+
+  // TODO: Fix these transformers to handle LinearFetch properties correctly
+  /*
   toResponse: (state: WorkflowState) => ({
     id: state.id,
     name: state.name,
-    description: state.description,
     color: state.color,
     type: state.type,
+    description: state.description,
     position: state.position,
     createdAt: state.createdAt,
     updatedAt: state.updatedAt,
@@ -25,53 +76,6 @@ export const WorkflowStateTransformers = {
     issueCount: state.issues?.nodes?.length || 0,
   }),
 
-  /**
-   * Transform create input to Linear SDK format
-   */
-  fromCreateInput: (input: {
-    name: string;
-    description?: string;
-    color: string;
-    type: 'backlog' | 'unstarted' | 'started' | 'completed' | 'canceled';
-    teamId: string;
-    position?: number;
-  }): WorkflowStateCreateInput => ({
-    name: input.name,
-    description: input.description,
-    color: input.color,
-    type: input.type,
-    teamId: input.teamId,
-    position: input.position,
-  }),
-
-  /**
-   * Transform update input to Linear SDK format
-   */
-  fromUpdateInput: (input: {
-    name?: string;
-    description?: string;
-    color?: string;
-    position?: number;
-  }): WorkflowStateUpdateInput => ({
-    name: input.name,
-    description: input.description,
-    color: input.color,
-    position: input.position,
-  }),
-
-  /**
-   * Transform to state reference (minimal data for relationships)
-   */
-  toReference: (state: WorkflowState) => ({
-    id: state.id,
-    name: state.name,
-    type: state.type,
-    color: state.color,
-  }),
-
-  /**
-   * Transform for list display
-   */
   toListItem: (state: WorkflowState) => ({
     id: state.id,
     name: state.name,
@@ -81,60 +85,20 @@ export const WorkflowStateTransformers = {
     issueCount: state.issues?.nodes?.length || 0,
   }),
 
-  /**
-   * Transform for workflow selector
-   */
-  toSelectorOption: (state: WorkflowState) => ({
-    value: state.id,
-    label: state.name,
-    type: state.type,
-    color: state.color,
-  }),
-
-  /**
-   * Transform for kanban column
-   */
-  toKanbanColumn: (state: WorkflowState) => ({
+  toWorkflowColumn: (state: WorkflowState) => ({
     id: state.id,
     name: state.name,
     type: state.type,
     color: state.color,
-    position: state.position,
     issues: state.issues?.nodes || [],
   }),
 
-  /**
-   * Group states by type
-   */
-  groupByType: (states: WorkflowState[]) => {
-    const grouped: Record<string, WorkflowState[]> = {
-      backlog: [],
-      unstarted: [],
-      started: [],
-      completed: [],
-      canceled: [],
-    };
-
-    states.forEach(state => {
-      if (state.type in grouped) {
-        grouped[state.type].push(state);
-      }
-    });
-
-    return grouped;
-  },
-
-  /**
-   * Check if state is terminal (completed or canceled)
-   */
-  isTerminal: (state: WorkflowState): boolean => {
-    return state.type === 'completed' || state.type === 'canceled';
-  },
-
-  /**
-   * Check if state is active (started)
-   */
-  isActive: (state: WorkflowState): boolean => {
-    return state.type === 'started';
-  },
+  toTransitionOption: (state: WorkflowState) => ({
+    id: state.id,
+    name: state.name,
+    type: state.type,
+    color: state.color,
+    canTransitionTo: true, // This would need proper validation
+  }),
+  */
 } as const;
