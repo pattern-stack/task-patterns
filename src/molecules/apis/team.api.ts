@@ -42,7 +42,7 @@ export interface TeamTemplate {
  * Predefined team templates
  */
 export const TEAM_TEMPLATES: Record<string, TeamTemplate> = {
-  'engineering': {
+  engineering: {
     name: 'Engineering Team',
     description: 'Standard engineering team with sprints',
     config: {
@@ -59,16 +59,20 @@ export const TEAM_TEMPLATES: Record<string, TeamTemplate> = {
         { name: 'In Progress', type: 'started', color: '#f59e0b' },
         { name: 'In Review', type: 'started', color: '#8b5cf6' },
         { name: 'Done', type: 'completed', color: '#16a34a' },
-        { name: 'Canceled', type: 'canceled', color: '#dc2626' }
+        { name: 'Canceled', type: 'canceled', color: '#dc2626' },
       ],
       defaultLabels: [
         { name: 'bug', color: '#dc2626', description: 'Something is broken' },
         { name: 'feature', color: '#16a34a', description: 'New functionality' },
-        { name: 'improvement', color: '#3b82f6', description: 'Enhancement to existing functionality' }
-      ]
-    }
+        {
+          name: 'improvement',
+          color: '#3b82f6',
+          description: 'Enhancement to existing functionality',
+        },
+      ],
+    },
   },
-  'support': {
+  support: {
     name: 'Support Team',
     description: 'Customer support team with triage',
     config: {
@@ -82,15 +86,15 @@ export const TEAM_TEMPLATES: Record<string, TeamTemplate> = {
         { name: 'Investigating', type: 'started', color: '#8b5cf6' },
         { name: 'Waiting on Customer', type: 'started', color: '#6b7280' },
         { name: 'Resolved', type: 'completed', color: '#16a34a' },
-        { name: 'Closed', type: 'canceled', color: '#6b7280' }
+        { name: 'Closed', type: 'canceled', color: '#6b7280' },
       ],
       defaultLabels: [
         { name: 'critical', color: '#dc2626', description: 'Urgent customer issue' },
         { name: 'question', color: '#3b82f6', description: 'Customer question' },
-        { name: 'feedback', color: '#8b5cf6', description: 'Customer feedback' }
-      ]
-    }
-  }
+        { name: 'feedback', color: '#8b5cf6', description: 'Customer feedback' },
+      ],
+    },
+  },
 };
 
 /**
@@ -120,7 +124,7 @@ export interface TeamAnalytics {
 
 /**
  * TeamAPI - High-level API facade for team management
- * 
+ *
  * Features:
  * - Team CRUD operations
  * - Member management
@@ -211,7 +215,7 @@ export class TeamAPI {
     if (!teamId) {
       throw new Error(`Team not found: ${teamKey}`);
     }
-    
+
     const result = await this.teamService.getMembers(teamId);
     return result.nodes;
   }
@@ -265,7 +269,7 @@ export class TeamAPI {
     if (!teamId) {
       throw new Error(`Team not found: ${teamKey}`);
     }
-    
+
     const result = await this.teamService.getProjects(teamId);
     return result.nodes;
   }
@@ -278,15 +282,15 @@ export class TeamAPI {
     if (!teamId) {
       throw new Error(`Team not found: ${teamKey}`);
     }
-    
+
     const result = await this.teamService.getCycles(teamId);
     const cycles = result.nodes;
-    
+
     if (!options?.includePast) {
       const now = new Date();
-      return cycles.filter(cycle => new Date(cycle.endsAt) >= now);
+      return cycles.filter((cycle) => new Date(cycle.endsAt) >= now);
     }
-    
+
     return cycles;
   }
 
@@ -296,12 +300,14 @@ export class TeamAPI {
   async getCurrentCycle(teamKey: string): Promise<Cycle | null> {
     const cycles = await this.getCycles(teamKey);
     const now = new Date();
-    
-    return cycles.find(cycle => {
-      const start = new Date(cycle.startsAt);
-      const end = new Date(cycle.endsAt);
-      return start <= now && end >= now;
-    }) || null;
+
+    return (
+      cycles.find((cycle) => {
+        const start = new Date(cycle.startsAt);
+        const end = new Date(cycle.endsAt);
+        return start <= now && end >= now;
+      }) || null
+    );
   }
 
   /**
@@ -312,7 +318,7 @@ export class TeamAPI {
     if (!teamId) {
       throw new Error(`Team not found: ${teamKey}`);
     }
-    
+
     const result = await this.teamService.getWorkflowStates(teamId);
     return result.nodes;
   }
@@ -325,7 +331,7 @@ export class TeamAPI {
     if (!teamId) {
       throw new Error(`Team not found: ${teamKey}`);
     }
-    
+
     const result = await this.teamService.getLabels(teamId);
     return result.nodes;
   }
@@ -333,21 +339,24 @@ export class TeamAPI {
   /**
    * Get team issues
    */
-  async getIssues(teamKey: string, options?: { 
-    includeCompleted?: boolean;
-    first?: number;
-  }): Promise<any[]> {
+  async getIssues(
+    teamKey: string,
+    options?: {
+      includeCompleted?: boolean;
+      first?: number;
+    },
+  ): Promise<any[]> {
     const teamId = await this.resolveTeamId(teamKey);
     if (!teamId) {
       throw new Error(`Team not found: ${teamKey}`);
     }
-    
+
     const filter: any = { teamId };
-    
+
     if (!options?.includeCompleted) {
       filter.state = { type: { neq: 'completed' } };
     }
-    
+
     const result = await this.issueService.list(filter, { first: options?.first || 100 });
     return result.nodes;
   }
@@ -372,31 +381,35 @@ export class TeamAPI {
 
     // Get all issues for the team
     const issues = await this.getIssues(teamKey, { includeCompleted: true, first: 1000 });
-    
+
     // Get team members
     const members = await this.getMembers(teamKey);
-    
+
     // Calculate metrics
-    const openIssues = issues.filter(i => i.state?.type !== 'completed' && i.state?.type !== 'canceled');
-    const completedIssues = issues.filter(i => i.state?.type === 'completed');
-    const inProgressIssues = issues.filter(i => i.state?.type === 'started');
-    
+    const openIssues = issues.filter(
+      (i) => i.state?.type !== 'completed' && i.state?.type !== 'canceled',
+    );
+    const completedIssues = issues.filter((i) => i.state?.type === 'completed');
+    const inProgressIssues = issues.filter((i) => i.state?.type === 'started');
+
     // Member statistics
-    const memberStats = await Promise.all(members.map(async (member) => {
-      const memberIssues = issues.filter(i => i.assignee?.id === member.id);
-      const memberCompleted = memberIssues.filter(i => i.state?.type === 'completed');
-      
-      return {
-        userId: member.id,
-        name: member.name || member.email,
-        assignedIssues: memberIssues.length,
-        completedIssues: memberCompleted.length
-      };
-    }));
+    const memberStats = await Promise.all(
+      members.map(async (member) => {
+        const memberIssues = issues.filter((i) => i.assignee?.id === member.id);
+        const memberCompleted = memberIssues.filter((i) => i.state?.type === 'completed');
+
+        return {
+          userId: member.id,
+          name: member.name || member.email,
+          assignedIssues: memberIssues.length,
+          completedIssues: memberCompleted.length,
+        };
+      }),
+    );
 
     // Label distribution
     const labelDistribution = new Map<string, number>();
-    issues.forEach(issue => {
+    issues.forEach((issue) => {
       if (issue.labels?.nodes) {
         issue.labels.nodes.forEach((label: any) => {
           const count = labelDistribution.get(label.name) || 0;
@@ -407,7 +420,7 @@ export class TeamAPI {
 
     // Priority distribution
     const priorityDistribution = new Map<number, number>();
-    issues.forEach(issue => {
+    issues.forEach((issue) => {
       const priority = issue.priority || 0;
       const count = priorityDistribution.get(priority) || 0;
       priorityDistribution.set(priority, count + 1);
@@ -421,11 +434,11 @@ export class TeamAPI {
         totalIssues: issues.length,
         openIssues: openIssues.length,
         completedIssues: completedIssues.length,
-        inProgressIssues: inProgressIssues.length
+        inProgressIssues: inProgressIssues.length,
       },
       memberStats,
       labelDistribution,
-      priorityDistribution
+      priorityDistribution,
     };
   }
 
@@ -440,12 +453,14 @@ export class TeamAPI {
 
     const cycles = await this.getCycles(teamKey, { includePast: true });
     const recentCycles = cycles.slice(0, cycleCount);
-    
-    const velocities = await Promise.all(recentCycles.map(async (cycle) => {
-      const issues = await cycle.issues({ filter: { state: { type: { eq: 'completed' } } } });
-      return issues.nodes.length;
-    }));
-    
+
+    const velocities = await Promise.all(
+      recentCycles.map(async (cycle) => {
+        const issues = await cycle.issues({ filter: { state: { type: { eq: 'completed' } } } });
+        return issues.nodes.length;
+      }),
+    );
+
     return velocities;
   }
 
@@ -457,14 +472,16 @@ export class TeamAPI {
   async applyTemplate(templateName: string, overrides?: Partial<TeamCreate>): Promise<Team> {
     const template = TEAM_TEMPLATES[templateName];
     if (!template) {
-      throw new Error(`Template '${templateName}' not found. Available: ${Object.keys(TEAM_TEMPLATES).join(', ')}`);
+      throw new Error(
+        `Template '${templateName}' not found. Available: ${Object.keys(TEAM_TEMPLATES).join(', ')}`,
+      );
     }
 
     logger.info(`Applying template '${templateName}'`);
 
     const teamData: TeamCreate = {
       ...template.config,
-      ...overrides
+      ...overrides,
     };
 
     // Create the team
@@ -473,7 +490,7 @@ export class TeamAPI {
 
     // Note: Default workflow states are typically created automatically by Linear
     // Labels would need to be created separately using LabelAPI
-    
+
     if (template.config.defaultLabels && template.config.defaultLabels.length > 0) {
       logger.info('Note: Use LabelAPI to create default labels for this team');
     }
@@ -487,7 +504,7 @@ export class TeamAPI {
   static getAvailableTemplates(): Array<{ name: string; template: TeamTemplate }> {
     return Object.entries(TEAM_TEMPLATES).map(([name, template]) => ({
       name,
-      template
+      template,
     }));
   }
 
@@ -497,9 +514,7 @@ export class TeamAPI {
    * Create multiple teams at once
    */
   async bulkCreate(teams: TeamCreate[]): Promise<BatchOperationResult<Team>> {
-    const results = await Promise.allSettled(
-      teams.map(team => this.create(team))
-    );
+    const results = await Promise.allSettled(teams.map((team) => this.create(team)));
 
     const successful: Team[] = [];
     const failed: Array<{ item: TeamCreate; error: string }> = [];
@@ -510,7 +525,7 @@ export class TeamAPI {
       } else {
         failed.push({
           item: teams[index],
-          error: result.reason?.message || 'Unknown error'
+          error: result.reason?.message || 'Unknown error',
         });
       }
     });
@@ -521,17 +536,17 @@ export class TeamAPI {
       failed,
       totalCount: teams.length,
       successCount: successful.length,
-      failureCount: failed.length
+      failureCount: failed.length,
     };
   }
 
   /**
    * Update multiple teams at once
    */
-  async bulkUpdate(updates: Array<{ id: string; data: TeamUpdate }>): Promise<BatchOperationResult<Team>> {
-    const results = await Promise.allSettled(
-      updates.map(({ id, data }) => this.update(id, data))
-    );
+  async bulkUpdate(
+    updates: Array<{ id: string; data: TeamUpdate }>,
+  ): Promise<BatchOperationResult<Team>> {
+    const results = await Promise.allSettled(updates.map(({ id, data }) => this.update(id, data)));
 
     const successful: Team[] = [];
     const failed: Array<{ item: any; error: string }> = [];
@@ -542,7 +557,7 @@ export class TeamAPI {
       } else {
         failed.push({
           item: updates[index],
-          error: result.reason?.message || 'Unknown error'
+          error: result.reason?.message || 'Unknown error',
         });
       }
     });
@@ -553,7 +568,7 @@ export class TeamAPI {
       failed,
       totalCount: updates.length,
       successCount: successful.length,
-      failureCount: failed.length
+      failureCount: failed.length,
     };
   }
 
@@ -576,7 +591,7 @@ export class TeamAPI {
       cyclesEnabled: sourceTeam.cyclesEnabled,
       cycleStartDay: sourceTeam.cycleStartDay,
       cycleDuration: sourceTeam.cycleDuration,
-      triageEnabled: sourceTeam.triageEnabled
+      triageEnabled: sourceTeam.triageEnabled,
     });
 
     // Note: Workflow states are typically created automatically
@@ -606,7 +621,7 @@ export class TeamAPI {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -616,10 +631,10 @@ export class TeamAPI {
   async search(query: string): Promise<Team[]> {
     const teams = await this.list({ first: 100 });
     const lowerQuery = query.toLowerCase();
-    
-    return teams.filter(team => 
-      team.name.toLowerCase().includes(lowerQuery) ||
-      team.key.toLowerCase().includes(lowerQuery)
+
+    return teams.filter(
+      (team) =>
+        team.name.toLowerCase().includes(lowerQuery) || team.key.toLowerCase().includes(lowerQuery),
     );
   }
 }

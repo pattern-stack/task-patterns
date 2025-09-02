@@ -1,6 +1,6 @@
 /**
  * Molecules Layer - Domain Logic and API Facades
- * 
+ *
  * This layer contains:
  * - API Facades: High-level interfaces combining entities and workflows
  * - Entities: Domain aggregates with business logic

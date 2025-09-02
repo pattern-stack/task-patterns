@@ -39,7 +39,7 @@ export const LABEL_TEMPLATES: Record<string, LabelTemplate> = {
           { name: 'docs', color: '#0ea5e9', description: 'Documentation' },
           { name: 'test', color: '#f59e0b', description: 'Testing' },
           { name: 'chore', color: '#6b7280', description: 'Maintenance tasks' },
-        ]
+        ],
       },
       {
         category: 'domain',
@@ -50,7 +50,7 @@ export const LABEL_TEMPLATES: Record<string, LabelTemplate> = {
           { name: 'projects', color: '#14b8a6', description: 'Project features' },
           { name: 'sync', color: '#14b8a6', description: 'Integration/sync' },
           { name: 'reporting', color: '#14b8a6', description: 'Analytics/insights' },
-        ]
+        ],
       },
       {
         category: 'layer',
@@ -59,11 +59,11 @@ export const LABEL_TEMPLATES: Record<string, LabelTemplate> = {
           { name: 'features', color: '#00b894', description: 'Data services' },
           { name: 'molecules', color: '#00b894', description: 'Domain logic' },
           { name: 'organisms', color: '#00b894', description: 'User interfaces' },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
-  'engineering': {
+  engineering: {
     name: 'Engineering Template',
     description: 'Common engineering labels',
     labels: [
@@ -74,7 +74,7 @@ export const LABEL_TEMPLATES: Record<string, LabelTemplate> = {
           { name: 'bug', color: '#dc2626' },
           { name: 'tech-debt', color: '#8b5cf6' },
           { name: 'security', color: '#f97316' },
-        ]
+        ],
       },
       {
         category: 'priority',
@@ -83,15 +83,15 @@ export const LABEL_TEMPLATES: Record<string, LabelTemplate> = {
           { name: 'p1', color: '#f59e0b', description: 'High' },
           { name: 'p2', color: '#3b82f6', description: 'Medium' },
           { name: 'p3', color: '#6b7280', description: 'Low' },
-        ]
-      }
-    ]
-  }
+        ],
+      },
+    ],
+  },
 };
 
 /**
  * LabelAPI - High-level API facade for label management
- * 
+ *
  * Features:
  * - Hierarchical label creation (category:value)
  * - Bulk operations
@@ -171,7 +171,7 @@ export class LabelAPI {
     if (!teamId) {
       throw new Error(`Team not found: ${teamKey}`);
     }
-    
+
     const result = await this.labelService.listByTeam(teamId);
     return result.nodes;
   }
@@ -192,15 +192,15 @@ export class LabelAPI {
     options?: {
       color?: string;
       description?: string;
-    }
+    },
   ): Promise<IssueLabel> {
     const labelName = `${category}:${value}`;
-    
+
     logger.info(`Creating hierarchical label: ${labelName} for team ${teamKey}`);
 
     // Check if parent category exists
     let parentLabel = await this.getByName(category, teamKey);
-    
+
     if (!parentLabel) {
       // Create parent category label
       logger.debug(`Creating parent category: ${category}`);
@@ -208,7 +208,7 @@ export class LabelAPI {
         name: category,
         color: '#6b7280', // Default gray for categories
         description: `Category: ${category}`,
-        team: teamKey
+        team: teamKey,
       });
     }
 
@@ -218,7 +218,7 @@ export class LabelAPI {
       color: options?.color || '#3b82f6', // Default blue
       description: options?.description,
       parentId: parentLabel.id,
-      team: teamKey
+      team: teamKey,
     });
   }
 
@@ -230,7 +230,7 @@ export class LabelAPI {
     if (parts.length === 2) {
       return {
         category: parts[0].trim(),
-        value: parts[1].trim()
+        value: parts[1].trim(),
       };
     }
     return null;
@@ -263,11 +263,9 @@ export class LabelAPI {
    * Create multiple labels at once
    */
   async bulkCreate(
-    labels: Array<LabelCreate & { team?: string }>
+    labels: Array<LabelCreate & { team?: string }>,
   ): Promise<BatchOperationResult<IssueLabel>> {
-    const results = await Promise.allSettled(
-      labels.map(label => this.create(label))
-    );
+    const results = await Promise.allSettled(labels.map((label) => this.create(label)));
 
     const successful: IssueLabel[] = [];
     const failed: Array<{ item: LabelCreate; error: string }> = [];
@@ -278,7 +276,7 @@ export class LabelAPI {
       } else {
         failed.push({
           item: labels[index],
-          error: result.reason?.message || 'Unknown error'
+          error: result.reason?.message || 'Unknown error',
         });
       }
     });
@@ -289,7 +287,7 @@ export class LabelAPI {
       failed,
       totalCount: labels.length,
       successCount: successful.length,
-      failureCount: failed.length
+      failureCount: failed.length,
     };
   }
 
@@ -297,9 +295,7 @@ export class LabelAPI {
    * Delete multiple labels at once
    */
   async bulkDelete(labelIds: string[]): Promise<BatchOperationResult<string>> {
-    const results = await Promise.allSettled(
-      labelIds.map(id => this.delete(id))
-    );
+    const results = await Promise.allSettled(labelIds.map((id) => this.delete(id)));
 
     const successful: string[] = [];
     const failed: Array<{ item: string; error: string }> = [];
@@ -310,9 +306,7 @@ export class LabelAPI {
       } else {
         failed.push({
           item: labelIds[index],
-          error: result.status === 'rejected' 
-            ? result.reason?.message 
-            : 'Failed to delete'
+          error: result.status === 'rejected' ? result.reason?.message : 'Failed to delete',
         });
       }
     });
@@ -323,7 +317,7 @@ export class LabelAPI {
       failed,
       totalCount: labelIds.length,
       successCount: successful.length,
-      failureCount: failed.length
+      failureCount: failed.length,
     };
   }
 
@@ -337,17 +331,15 @@ export class LabelAPI {
       value: string;
       color?: string;
       description?: string;
-    }>
+    }>,
   ): Promise<BatchOperationResult<IssueLabel>> {
     const results = await Promise.allSettled(
-      labels.map(label => 
-        this.createHierarchical(
-          label.category,
-          label.value,
-          teamKey,
-          { color: label.color, description: label.description }
-        )
-      )
+      labels.map((label) =>
+        this.createHierarchical(label.category, label.value, teamKey, {
+          color: label.color,
+          description: label.description,
+        }),
+      ),
     );
 
     const successful: IssueLabel[] = [];
@@ -359,7 +351,7 @@ export class LabelAPI {
       } else {
         failed.push({
           item: labels[index],
-          error: result.reason?.message || 'Unknown error'
+          error: result.reason?.message || 'Unknown error',
         });
       }
     });
@@ -370,7 +362,7 @@ export class LabelAPI {
       failed,
       totalCount: labels.length,
       successCount: successful.length,
-      failureCount: failed.length
+      failureCount: failed.length,
     };
   }
 
@@ -385,7 +377,7 @@ export class LabelAPI {
     options?: {
       skipExisting?: boolean;
       dryRun?: boolean;
-    }
+    },
   ): Promise<{
     created: IssueLabel[];
     skipped: string[];
@@ -393,7 +385,9 @@ export class LabelAPI {
   }> {
     const template = LABEL_TEMPLATES[templateName];
     if (!template) {
-      throw new Error(`Template '${templateName}' not found. Available: ${Object.keys(LABEL_TEMPLATES).join(', ')}`);
+      throw new Error(
+        `Template '${templateName}' not found. Available: ${Object.keys(LABEL_TEMPLATES).join(', ')}`,
+      );
     }
 
     logger.info(`Applying template '${templateName}' to team ${teamKey}`);
@@ -404,12 +398,12 @@ export class LabelAPI {
 
     // Get existing labels to check for duplicates
     const existingLabels = options?.skipExisting ? await this.listByTeam(teamKey) : [];
-    const existingNames = new Set(existingLabels.map(l => l.name));
+    const existingNames = new Set(existingLabels.map((l) => l.name));
 
     for (const category of template.labels) {
       for (const value of category.values) {
         const labelName = `${category.category}:${value.name}`;
-        
+
         // Skip if exists
         if (existingNames.has(labelName)) {
           skipped.push(labelName);
@@ -423,21 +417,16 @@ export class LabelAPI {
         }
 
         try {
-          const label = await this.createHierarchical(
-            category.category,
-            value.name,
-            teamKey,
-            {
-              color: value.color,
-              description: value.description
-            }
-          );
+          const label = await this.createHierarchical(category.category, value.name, teamKey, {
+            color: value.color,
+            description: value.description,
+          });
           created.push(label);
           logger.success(`Created label: ${labelName}`);
         } catch (error: any) {
           errors.push({
             label: labelName,
-            error: error.message || 'Unknown error'
+            error: error.message || 'Unknown error',
           });
           logger.error(`Failed to create label: ${labelName}`, error);
         }
@@ -456,7 +445,7 @@ export class LabelAPI {
   }> {
     return Object.entries(LABEL_TEMPLATES).map(([name, template]) => ({
       name,
-      template
+      template,
     }));
   }
 
@@ -484,9 +473,7 @@ export class LabelAPI {
    * Find labels matching a pattern
    */
   async findByPattern(pattern: string, teamKey?: string): Promise<IssueLabel[]> {
-    const labels = teamKey 
-      ? await this.listByTeam(teamKey)
-      : await this.list();
+    const labels = teamKey ? await this.listByTeam(teamKey) : await this.list();
 
     const regex = new RegExp(pattern, 'i');
     return labels.filter((label: IssueLabel) => regex.test(label.name));
@@ -497,7 +484,7 @@ export class LabelAPI {
    */
   async mergeDuplicates(
     sourceId: string,
-    targetId: string
+    targetId: string,
   ): Promise<{
     issuesUpdated: number;
     sourceDeleted: boolean;
@@ -506,11 +493,11 @@ export class LabelAPI {
 
     // Get issues with source label
     const issues = await this.labelService.getIssues(sourceId);
-    
+
     // Add target label to all issues that had source
     const updateResults = await this.labelService.bulkAddToIssues(
-      issues.nodes.map(i => i.id),
-      targetId
+      issues.nodes.map((i) => i.id),
+      targetId,
     );
 
     // Delete source label
@@ -518,7 +505,7 @@ export class LabelAPI {
 
     return {
       issuesUpdated: updateResults.successCount,
-      sourceDeleted
+      sourceDeleted,
     };
   }
 
@@ -545,14 +532,14 @@ export class LabelAPI {
       if (parts.length !== 2) {
         errors.push('Hierarchical labels must have exactly one colon (category:value)');
       }
-      if (parts.some(p => p.trim().length === 0)) {
+      if (parts.some((p) => p.trim().length === 0)) {
         errors.push('Both category and value must be non-empty');
       }
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }

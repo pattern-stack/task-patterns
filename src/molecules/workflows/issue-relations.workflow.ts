@@ -28,12 +28,12 @@ export interface IssueCreationResult {
 
 /**
  * Workflow for complex issue operations requiring orchestration.
- * 
+ *
  * Following pragmatic architecture principles:
  * - Handles multi-step operations with validation
  * - Orchestrates operations across multiple services
  * - Implements business logic and rules
- * 
+ *
  * Simple field updates should use IssueEntity instead.
  * This workflow focuses on complex scenarios that require:
  * - Multi-entity validation
@@ -92,12 +92,12 @@ export class IssueRelationsWorkflow {
         data.labelIds.map(async (labelId) => {
           const label = await this.labelService.get(labelId);
           return { labelId, exists: !!label };
-        })
+        }),
       );
-      
-      const missingLabels = labelValidations.filter(v => !v.exists);
+
+      const missingLabels = labelValidations.filter((v) => !v.exists);
       if (missingLabels.length > 0) {
-        logger.warn(`Some labels not found: ${missingLabels.map(l => l.labelId).join(', ')}`);
+        logger.warn(`Some labels not found: ${missingLabels.map((l) => l.labelId).join(', ')}`);
       }
     }
 
@@ -195,7 +195,7 @@ export class IssueRelationsWorkflow {
    */
   async createSubIssue(parentId: string, data: IssueCreate): Promise<LinearIssue> {
     logger.info(`Creating sub-issue for parent ${parentId}`);
-    
+
     const parent = await this.issueService.get(parentId);
     if (!parent) {
       throw new NotFoundError('Parent issue', parentId);

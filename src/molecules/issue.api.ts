@@ -41,7 +41,7 @@ const ISSUE_TEMPLATES: Record<string, IssueTemplate> = {
 - OS: 
 - Browser (if applicable): `,
     priority: 2,
-    labels: ['bug']
+    labels: ['bug'],
   },
   feature: {
     description: `## Feature Request
@@ -58,7 +58,7 @@ const ISSUE_TEMPLATES: Record<string, IssueTemplate> = {
 ## Technical Notes
 [Any technical considerations]`,
     priority: 1,
-    labels: ['feature']
+    labels: ['feature'],
   },
   task: {
     description: `## Task Description
@@ -72,7 +72,7 @@ const ISSUE_TEMPLATES: Record<string, IssueTemplate> = {
 ## Notes
 [Additional context]`,
     priority: 1,
-    labels: ['task']
+    labels: ['task'],
   },
   refactor: {
     description: `## Refactoring Goal
@@ -89,18 +89,18 @@ const ISSUE_TEMPLATES: Record<string, IssueTemplate> = {
 ## Testing Plan
 [How will we verify the refactor]`,
     priority: 1,
-    labels: ['refactor']
-  }
+    labels: ['refactor'],
+  },
 };
 
 /**
  * IssueAPI - High-level API facade for all issue operations
- * 
+ *
  * This facade combines:
  * - IssueEntity for domain operations
  * - Workflows for complex business logic
  * - Services for direct data access
- * 
+ *
  * The CLI and MCP should use this API exclusively for issue operations.
  */
 export class IssueAPI {
@@ -137,7 +137,7 @@ export class IssueAPI {
       data.teamId = teamId;
       delete (data as any).team;
     }
-    
+
     return this.issueEntity.create(data);
   }
 
@@ -196,7 +196,7 @@ export class IssueAPI {
       filter.teamId = teamId;
       delete (filter as any).team;
     }
-    
+
     // Fix the options type - IssueEntity.list expects 'first' to be required if provided
     const pagination = options ? { first: options.first || 50 } : undefined;
     return this.issueEntity.list(filter, pagination);
@@ -278,7 +278,8 @@ export class IssueAPI {
    */
   async updateStatus(issueId: string, statusName: string) {
     // First get the issue to find its team
-    const issue = await this.issueEntity.get(issueId) || await this.issueEntity.getByIdentifier(issueId);
+    const issue =
+      (await this.issueEntity.get(issueId)) || (await this.issueEntity.getByIdentifier(issueId));
     if (!issue) {
       throw new Error(`Issue not found: ${issueId}`);
     }
@@ -290,8 +291,8 @@ export class IssueAPI {
 
     // Get workflow states for the team
     const states = await team.states();
-    const targetState = states.nodes.find(s => s.name === statusName);
-    
+    const targetState = states.nodes.find((s) => s.name === statusName);
+
     if (!targetState) {
       throw new Error(`Status '${statusName}' not found for team ${team.key}`);
     }
@@ -307,11 +308,12 @@ export class IssueAPI {
    */
   async updateDescription(issueId: string, description: string) {
     // Resolve identifier if needed
-    const issue = await this.issueEntity.get(issueId) || await this.issueEntity.getByIdentifier(issueId);
+    const issue =
+      (await this.issueEntity.get(issueId)) || (await this.issueEntity.getByIdentifier(issueId));
     if (!issue) {
       throw new Error(`Issue not found: ${issueId}`);
     }
-    
+
     return this.issueEntity.update(issue.id, { description });
   }
 
@@ -322,11 +324,12 @@ export class IssueAPI {
    */
   async updateIssue(issueId: string, data: IssueUpdate) {
     // Resolve identifier if needed
-    const issue = await this.issueEntity.get(issueId) || await this.issueEntity.getByIdentifier(issueId);
+    const issue =
+      (await this.issueEntity.get(issueId)) || (await this.issueEntity.getByIdentifier(issueId));
     if (!issue) {
       throw new Error(`Issue not found: ${issueId}`);
     }
-    
+
     return this.issueEntity.update(issue.id, data);
   }
 
@@ -353,13 +356,15 @@ export class IssueAPI {
    * @returns Created issue
    */
   async createWithTemplate(
-    templateName: string, 
+    templateName: string,
     teamKey: string,
-    data: Partial<IssueCreate> & { title: string }
+    data: Partial<IssueCreate> & { title: string },
   ) {
     const template = ISSUE_TEMPLATES[templateName];
     if (!template) {
-      throw new Error(`Template '${templateName}' not found. Available templates: ${Object.keys(ISSUE_TEMPLATES).join(', ')}`);
+      throw new Error(
+        `Template '${templateName}' not found. Available templates: ${Object.keys(ISSUE_TEMPLATES).join(', ')}`,
+      );
     }
 
     // Merge template with provided data
@@ -377,11 +382,11 @@ export class IssueAPI {
       // Merge description if both exist
       description: data.description || template.description,
       // Merge labels if both exist
-      labelIds: [...(template.labels || []), ...(data.labelIds || [])]
+      labelIds: [...(template.labels || []), ...(data.labelIds || [])],
     };
 
     logger.info(`Creating issue from template '${templateName}' for team ${teamKey}`);
-    
+
     // Use issueEntity.create directly since we already have teamId
     return this.issueEntity.create(issueData);
   }
@@ -391,9 +396,9 @@ export class IssueAPI {
    * @returns List of available template names and their descriptions
    */
   static getAvailableTemplates() {
-    return Object.keys(ISSUE_TEMPLATES).map(name => ({
+    return Object.keys(ISSUE_TEMPLATES).map((name) => ({
       name,
-      template: ISSUE_TEMPLATES[name]
+      template: ISSUE_TEMPLATES[name],
     }));
   }
 
@@ -433,19 +438,23 @@ export class IssueAPI {
           return { id, success: true };
         }
         return { id, success: false, error: 'Issue not found' };
-      })
+      }),
     );
-    
-    const updated = results.filter(r => r.status === 'fulfilled' && r.value.success).map(r => (r as any).value.id);
-    const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.success)).map(r => (r as any).value?.id || 'unknown');
-    
+
+    const updated = results
+      .filter((r) => r.status === 'fulfilled' && r.value.success)
+      .map((r) => (r as any).value.id);
+    const failed = results
+      .filter((r) => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.success))
+      .map((r) => (r as any).value?.id || 'unknown');
+
     return {
       updated,
       failed,
       summary: `Archived ${updated.length} issues, ${failed.length} failed`,
       totalCount: identifiers.length,
       successCount: updated.length,
-      failureCount: failed.length
+      failureCount: failed.length,
     };
   }
 
@@ -454,7 +463,10 @@ export class IssueAPI {
   /**
    * Smart search using natural language
    */
-  async search(query: string, options?: { team?: string; limit?: number; includeArchived?: boolean }) {
+  async search(
+    query: string,
+    options?: { team?: string; limit?: number; includeArchived?: boolean },
+  ) {
     return this.searchWorkflow.search(query, options);
   }
 
@@ -480,7 +492,7 @@ export class IssueAPI {
       projectName?: string;
       priority?: 0 | 1 | 2 | 3 | 4;
       description?: string;
-    }
+    },
   ) {
     // Resolve team first
     const teamId = await this.teamService.resolveTeamId(teamKey);
@@ -524,17 +536,20 @@ export class IssueAPI {
       team: team ? { id: team.id, name: team.name, key: team.key } : null,
       assignee: assignee ? { id: assignee.id, name: assignee.name, email: assignee.email } : null,
       project: project ? { id: project.id, name: project.name } : null,
-      labels: labels.nodes.map(l => ({ id: l.id, name: l.name, color: l.color })),
-      cycleTime: issue.completedAt && issue.startedAt
-        ? new Date(issue.completedAt).getTime() - new Date(issue.startedAt).getTime()
-        : null,
+      labels: labels.nodes.map((l) => ({ id: l.id, name: l.name, color: l.color })),
+      cycleTime:
+        issue.completedAt && issue.startedAt
+          ? new Date(issue.completedAt).getTime() - new Date(issue.startedAt).getTime()
+          : null,
     };
   }
 
   /**
    * Validate issue data before creation
    */
-  async validateCreateData(data: IssueCreate & { team?: string }): Promise<{ valid: boolean; errors: string[] }> {
+  async validateCreateData(
+    data: IssueCreate & { team?: string },
+  ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
     // Validate title
@@ -559,7 +574,7 @@ export class IssueAPI {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }

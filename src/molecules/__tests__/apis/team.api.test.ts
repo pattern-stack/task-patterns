@@ -6,16 +6,16 @@ import { CycleService } from '@features/cycle/service';
 import { WorkflowStateService } from '@features/workflow-state/service';
 import { LabelService } from '@features/label/service';
 import { IssueService } from '@features/issue/service';
-import { 
-  createMockLinearClient, 
-  createMockTeam, 
+import {
+  createMockLinearClient,
+  createMockTeam,
   createMockUser,
   createMockProject,
   createMockCycle,
   createMockWorkflowState,
   createMockLabel,
   createMockIssue,
-  createMockConnection 
+  createMockConnection,
 } from '../../../__tests__/utils/mocks';
 
 jest.mock('@features/team/service');
@@ -42,13 +42,21 @@ describe('TeamAPI', () => {
     teamAPI = new TeamAPI(mockClient);
 
     // Get mocked service instances
-    mockTeamService = (TeamService as jest.MockedClass<typeof TeamService>).mock.instances[0] as jest.Mocked<TeamService>;
-    mockUserService = (UserService as jest.MockedClass<typeof UserService>).mock.instances[0] as jest.Mocked<UserService>;
-    mockProjectService = (ProjectService as jest.MockedClass<typeof ProjectService>).mock.instances[0] as jest.Mocked<ProjectService>;
-    mockCycleService = (CycleService as jest.MockedClass<typeof CycleService>).mock.instances[0] as jest.Mocked<CycleService>;
-    mockWorkflowStateService = (WorkflowStateService as jest.MockedClass<typeof WorkflowStateService>).mock.instances[0] as jest.Mocked<WorkflowStateService>;
-    mockLabelService = (LabelService as jest.MockedClass<typeof LabelService>).mock.instances[0] as jest.Mocked<LabelService>;
-    mockIssueService = (IssueService as jest.MockedClass<typeof IssueService>).mock.instances[0] as jest.Mocked<IssueService>;
+    mockTeamService = (TeamService as jest.MockedClass<typeof TeamService>).mock
+      .instances[0] as jest.Mocked<TeamService>;
+    mockUserService = (UserService as jest.MockedClass<typeof UserService>).mock
+      .instances[0] as jest.Mocked<UserService>;
+    mockProjectService = (ProjectService as jest.MockedClass<typeof ProjectService>).mock
+      .instances[0] as jest.Mocked<ProjectService>;
+    mockCycleService = (CycleService as jest.MockedClass<typeof CycleService>).mock
+      .instances[0] as jest.Mocked<CycleService>;
+    mockWorkflowStateService = (
+      WorkflowStateService as jest.MockedClass<typeof WorkflowStateService>
+    ).mock.instances[0] as jest.Mocked<WorkflowStateService>;
+    mockLabelService = (LabelService as jest.MockedClass<typeof LabelService>).mock
+      .instances[0] as jest.Mocked<LabelService>;
+    mockIssueService = (IssueService as jest.MockedClass<typeof IssueService>).mock
+      .instances[0] as jest.Mocked<IssueService>;
   });
 
   afterEach(() => {
@@ -60,7 +68,7 @@ describe('TeamAPI', () => {
       it('should create a new team', async () => {
         const teamData = { key: 'ENG', name: 'Engineering' };
         const mockTeam = createMockTeam(teamData);
-        
+
         mockTeamService.create.mockResolvedValue(mockTeam);
 
         const result = await teamAPI.create(teamData);
@@ -104,11 +112,8 @@ describe('TeamAPI', () => {
 
     describe('list', () => {
       it('should list teams', async () => {
-        const mockTeams = [
-          createMockTeam({ key: 'ENG' }),
-          createMockTeam({ key: 'PROD' })
-        ];
-        
+        const mockTeams = [createMockTeam({ key: 'ENG' }), createMockTeam({ key: 'PROD' })];
+
         mockTeamService.list.mockResolvedValue(createMockConnection(mockTeams));
 
         const result = await teamAPI.list();
@@ -124,7 +129,7 @@ describe('TeamAPI', () => {
       it('should get team members', async () => {
         const mockMembers = [
           createMockUser({ email: 'user1@test.com' }),
-          createMockUser({ email: 'user2@test.com' })
+          createMockUser({ email: 'user2@test.com' }),
         ];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -150,7 +155,7 @@ describe('TeamAPI', () => {
       it('should get team projects', async () => {
         const mockProjects = [
           createMockProject({ name: 'Project 1' }),
-          createMockProject({ name: 'Project 2' })
+          createMockProject({ name: 'Project 2' }),
         ];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -171,7 +176,7 @@ describe('TeamAPI', () => {
 
         const mockCycles = [
           createMockCycle({ startsAt: now.toISOString(), endsAt: futureDate.toISOString() }),
-          createMockCycle({ startsAt: pastDate.toISOString(), endsAt: pastDate.toISOString() })
+          createMockCycle({ startsAt: pastDate.toISOString(), endsAt: pastDate.toISOString() }),
         ];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -188,7 +193,7 @@ describe('TeamAPI', () => {
       it('should get team workflow states', async () => {
         const mockStates = [
           createMockWorkflowState({ name: 'Backlog' }),
-          createMockWorkflowState({ name: 'In Progress' })
+          createMockWorkflowState({ name: 'In Progress' }),
         ];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -203,10 +208,7 @@ describe('TeamAPI', () => {
 
     describe('getLabels', () => {
       it('should get team labels', async () => {
-        const mockLabels = [
-          createMockLabel({ name: 'bug' }),
-          createMockLabel({ name: 'feature' })
-        ];
+        const mockLabels = [createMockLabel({ name: 'bug' }), createMockLabel({ name: 'feature' })];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
         mockTeamService.getLabels.mockResolvedValue(createMockConnection(mockLabels));
@@ -231,15 +233,16 @@ describe('TeamAPI', () => {
           expect.objectContaining({
             key: 'ENG',
             name: 'Engineering',
-            cyclesEnabled: true
-          })
+            cyclesEnabled: true,
+          }),
         );
         expect(result).toEqual(mockTeam);
       });
 
       it('should throw error for invalid template', async () => {
-        await expect(teamAPI.applyTemplate('invalid'))
-          .rejects.toThrow("Template 'invalid' not found");
+        await expect(teamAPI.applyTemplate('invalid')).rejects.toThrow(
+          "Template 'invalid' not found",
+        );
       });
     });
 
@@ -275,7 +278,7 @@ describe('TeamAPI', () => {
         const mockTeams = [
           createMockTeam({ key: 'ENG', name: 'Engineering' }),
           createMockTeam({ key: 'PROD', name: 'Product' }),
-          createMockTeam({ key: 'SUP', name: 'Support' })
+          createMockTeam({ key: 'SUP', name: 'Support' }),
         ];
 
         mockTeamService.list.mockResolvedValue(createMockConnection(mockTeams));
