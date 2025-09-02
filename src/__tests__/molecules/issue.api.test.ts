@@ -1,6 +1,9 @@
 import { IssueAPI } from '@molecules/issue.api';
 import { IssueEntity } from '@molecules/entities/issue.entity';
-import { BulkOperationsWorkflow, BulkUpdateResult } from '@molecules/workflows/bulk-operations.workflow';
+import {
+  BulkOperationsWorkflow,
+  BulkUpdateResult,
+} from '@molecules/workflows/bulk-operations.workflow';
 import { SmartSearchWorkflow, SmartSearchResult } from '@molecules/workflows/smart-search.workflow';
 import { IssueRelationsWorkflow } from '@molecules/workflows/issue-relations.workflow';
 import { IssueService } from '@features/issue/service';
@@ -43,9 +46,13 @@ describe('IssueAPI', () => {
 
     // Create mocked services
     mockIssueEntity = new IssueEntity(mockClient) as jest.Mocked<IssueEntity>;
-    mockBulkWorkflow = new BulkOperationsWorkflow(mockClient) as jest.Mocked<BulkOperationsWorkflow>;
+    mockBulkWorkflow = new BulkOperationsWorkflow(
+      mockClient,
+    ) as jest.Mocked<BulkOperationsWorkflow>;
     mockSearchWorkflow = new SmartSearchWorkflow(mockClient) as jest.Mocked<SmartSearchWorkflow>;
-    mockRelationsWorkflow = new IssueRelationsWorkflow(mockClient) as jest.Mocked<IssueRelationsWorkflow>;
+    mockRelationsWorkflow = new IssueRelationsWorkflow(
+      mockClient,
+    ) as jest.Mocked<IssueRelationsWorkflow>;
     mockIssueService = new IssueService(mockClient) as jest.Mocked<IssueService>;
     mockTeamService = new TeamService(mockClient) as jest.Mocked<TeamService>;
     mockCommentService = new CommentService(mockClient) as jest.Mocked<CommentService>;
@@ -111,9 +118,7 @@ describe('IssueAPI', () => {
         const statusName = 'Done';
         const mockIssue = createMockIssue();
         const mockTeam = createMockTeam();
-        const mockStates = [
-          createMockWorkflowState({ id: 'state-789', name: 'Done' }),
-        ];
+        const mockStates = [createMockWorkflowState({ id: 'state-789', name: 'Done' })];
 
         mockTeam.states = jest.fn().mockResolvedValue({ nodes: mockStates });
         mockIssue.team = Promise.resolve(mockTeam);
@@ -136,7 +141,9 @@ describe('IssueAPI', () => {
         mockIssueEntity.get.mockResolvedValue(null);
         mockIssueEntity.getByIdentifier.mockResolvedValue(null);
 
-        await expect(api.updateStatus(issueId, 'Done')).rejects.toThrow('Issue not found: invalid-id');
+        await expect(api.updateStatus(issueId, 'Done')).rejects.toThrow(
+          'Issue not found: invalid-id',
+        );
       });
 
       it('should throw error if status not found', async () => {
@@ -155,7 +162,7 @@ describe('IssueAPI', () => {
         mockIssueEntity.get.mockResolvedValue(mockIssue);
 
         await expect(api.updateStatus(issueId, statusName)).rejects.toThrow(
-          `Status 'Invalid Status' not found for team ${mockTeam.key}`
+          `Status 'Invalid Status' not found for team ${mockTeam.key}`,
         );
       });
     });
@@ -184,7 +191,7 @@ describe('IssueAPI', () => {
         mockIssueEntity.getByIdentifier.mockResolvedValue(null);
 
         await expect(api.updateDescription(issueId, 'New description')).rejects.toThrow(
-          'Issue not found: invalid-id'
+          'Issue not found: invalid-id',
         );
       });
     });
@@ -232,14 +239,14 @@ describe('IssueAPI', () => {
             teamId: 'team-123',
             priority: 2,
             description: expect.stringContaining('Bug Description'),
-          })
+          }),
         );
         expect(result).toEqual(mockIssue);
       });
 
       it('should create issue from feature template', async () => {
         const teamKey = 'TASK';
-        const data = { 
+        const data = {
           title: 'Add dark mode',
           description: 'Custom description',
         };
@@ -257,16 +264,16 @@ describe('IssueAPI', () => {
             description: 'Custom description', // Should use provided description
             priority: 1,
             teamId: 'team-123',
-          })
+          }),
         );
         expect(result).toEqual(mockIssue);
       });
 
       it('should throw error for invalid template', async () => {
         await expect(
-          api.createWithTemplate('invalid-template', 'TASK', { title: 'Test' })
+          api.createWithTemplate('invalid-template', 'TASK', { title: 'Test' }),
         ).rejects.toThrow(
-          "Template 'invalid-template' not found. Available templates: bug, feature, task, refactor"
+          "Template 'invalid-template' not found. Available templates: bug, feature, task, refactor",
         );
       });
     });
@@ -276,7 +283,7 @@ describe('IssueAPI', () => {
         const templates = IssueAPI.getAvailableTemplates();
 
         expect(templates).toHaveLength(4);
-        expect(templates.map(t => t.name)).toEqual(['bug', 'feature', 'task', 'refactor']);
+        expect(templates.map((t) => t.name)).toEqual(['bug', 'feature', 'task', 'refactor']);
         expect(templates[0].template).toHaveProperty('description');
         expect(templates[0].template).toHaveProperty('priority');
       });
@@ -308,7 +315,7 @@ describe('IssueAPI', () => {
         summary: 'Bulk assign completed',
         totalCount: 2,
         successCount: 2,
-        failureCount: 0
+        failureCount: 0,
       };
 
       mockBulkWorkflow.bulkAssign.mockResolvedValue(mockResult);
@@ -327,7 +334,7 @@ describe('IssueAPI', () => {
         totalCount: 0,
         parsedQuery: 'bug in login',
         appliedFilters: {},
-        confidence: 0.9
+        confidence: 0.9,
       };
 
       mockSearchWorkflow.search.mockResolvedValue(mockResult);

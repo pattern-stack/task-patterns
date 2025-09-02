@@ -78,7 +78,9 @@ export const createMockIssue = (overrides: any = {}): any => {
     delete merged.assigneeId;
   }
   if ('parentId' in overrides) {
-    merged.parent = jest.fn().mockResolvedValue(overrides.parentId ? createMockIssue({ id: overrides.parentId }) : null);
+    merged.parent = jest
+      .fn()
+      .mockResolvedValue(overrides.parentId ? createMockIssue({ id: overrides.parentId }) : null);
     delete merged.parentId;
   }
 

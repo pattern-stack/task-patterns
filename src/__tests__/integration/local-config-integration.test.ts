@@ -9,7 +9,7 @@ jest.mock('@organisms/cli/settings', () => {
     defaultTeam: undefined,
     activeTeams: undefined,
     backend: 'linear',
-    linearApiKey: 'test-global-api-key'
+    linearApiKey: 'test-global-api-key',
   };
 
   return {
@@ -17,8 +17,8 @@ jest.mock('@organisms/cli/settings', () => {
       get: jest.fn((key: string) => mockGlobalSettings[key]),
       set: jest.fn((key: string, value: any) => {
         mockGlobalSettings[key] = value;
-      })
-    }
+      }),
+    },
   };
 });
 
@@ -29,9 +29,9 @@ jest.mock('@atoms/shared/config', () => ({
       LINEAR_API_KEY: 'test-env-api-key',
       LINEAR_WORKSPACE_ID: 'optional_workspace_id',
       NODE_ENV: 'test',
-      LOG_LEVEL: 'info'
-    }))
-  }
+      LOG_LEVEL: 'info',
+    })),
+  },
 }));
 
 describe('Local Configuration Integration', () => {
@@ -41,31 +41,35 @@ describe('Local Configuration Integration', () => {
 
   beforeEach(() => {
     originalCwd = process.cwd();
-    
+
     // Create temporary project directory
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tp-integration-test-'));
     projectDir = path.join(tempDir, 'test-project');
     fs.mkdirSync(projectDir, { recursive: true });
-    
+
     // Change to project directory
     process.chdir(projectDir);
-    
+
     // Clear all caches
     enhancedConfig.clearCache();
-    
+
     // Reset mocks to default state
     const mockEnvConfig = require('@atoms/shared/config').config;
     mockEnvConfig.get.mockReturnValue({
       LINEAR_API_KEY: 'test-env-api-key',
       LINEAR_WORKSPACE_ID: 'optional_workspace_id',
       NODE_ENV: 'test',
-      LOG_LEVEL: 'info'
+      LOG_LEVEL: 'info',
     });
-    
+
     const mockSettings = require('@organisms/cli/settings').settings;
     mockSettings.get.mockImplementation((key: string) => {
-      if (key === 'linearApiKey') return 'test-global-api-key';
-      if (key === 'backend') return 'linear';
+      if (key === 'linearApiKey') {
+        return 'test-global-api-key';
+      }
+      if (key === 'backend') {
+        return 'linear';
+      }
       return undefined;
     });
   });
@@ -85,18 +89,18 @@ describe('Local Configuration Integration', () => {
         name: 'my-awesome-project',
         version: '1.0.0',
         scripts: {
-          start: 'node index.js'
-        }
+          start: 'node index.js',
+        },
       };
       fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
 
       // 2. Initialize tp configuration
       expect(enhancedConfig.hasLocalConfig()).toBe(false);
-      
+
       enhancedConfig.initLocalConfig({
         defaultTeam: 'AWESOME',
         teamFilter: ['AWESOME', 'DEV'],
-        workspaceId: 'awesome-workspace'
+        workspaceId: 'awesome-workspace',
       });
 
       expect(enhancedConfig.hasLocalConfig()).toBe(true);
@@ -108,7 +112,7 @@ describe('Local Configuration Integration', () => {
       expect(updatedPackageJson.tp).toEqual({
         defaultTeam: 'AWESOME',
         teamFilter: ['AWESOME', 'DEV'],
-        workspaceId: 'awesome-workspace'
+        workspaceId: 'awesome-workspace',
       });
 
       // 4. Get merged configuration (local + global + env)
@@ -139,15 +143,18 @@ describe('Local Configuration Integration', () => {
       // No package.json exists - tp init should create one
       expect(fs.existsSync('package.json')).toBe(false);
 
-      enhancedConfig.initLocalConfig({
-        defaultTeam: 'NEW_PROJECT'
-      }, 'package.json');
+      enhancedConfig.initLocalConfig(
+        {
+          defaultTeam: 'NEW_PROJECT',
+        },
+        'package.json',
+      );
 
       expect(fs.existsSync('package.json')).toBe(true);
-      
+
       const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
       expect(packageJson.tp).toEqual({
-        defaultTeam: 'NEW_PROJECT'
+        defaultTeam: 'NEW_PROJECT',
       });
     });
   });
@@ -155,11 +162,14 @@ describe('Local Configuration Integration', () => {
   describe('Non-Node.js Project Workflow', () => {
     it('should support .tp-config.json for non-Node.js projects', () => {
       // 1. Initialize with .tp-config.json (non-Node.js project)
-      enhancedConfig.initLocalConfig({
-        defaultTeam: 'PYTHON',
-        teamFilter: ['PYTHON', 'DATA'],
-        workspaceId: 'python-workspace'
-      }, '.tp-config.json');
+      enhancedConfig.initLocalConfig(
+        {
+          defaultTeam: 'PYTHON',
+          teamFilter: ['PYTHON', 'DATA'],
+          workspaceId: 'python-workspace',
+        },
+        '.tp-config.json',
+      );
 
       expect(fs.existsSync('.tp-config.json')).toBe(true);
       expect(fs.existsSync('package.json')).toBe(false);
@@ -169,7 +179,7 @@ describe('Local Configuration Integration', () => {
       expect(configContent).toEqual({
         defaultTeam: 'PYTHON',
         teamFilter: ['PYTHON', 'DATA'],
-        workspaceId: 'python-workspace'
+        workspaceId: 'python-workspace',
       });
 
       // 3. Verify merged config works the same way
@@ -181,7 +191,7 @@ describe('Local Configuration Integration', () => {
 
       // 4. Update settings
       enhancedConfig.updateLocalSetting('defaultTeam', 'ML');
-      
+
       const updatedConfigContent = JSON.parse(fs.readFileSync('.tp-config.json', 'utf-8'));
       expect(updatedConfigContent.defaultTeam).toBe('ML');
     });
@@ -195,36 +205,40 @@ describe('Local Configuration Integration', () => {
         LINEAR_API_KEY: 'test-env-api-key',
         // No LINEAR_WORKSPACE_ID
         NODE_ENV: 'test',
-        LOG_LEVEL: 'info'
+        LOG_LEVEL: 'info',
       });
-      
+
       // Setup global config (mocked)
       const mockSettings = require('@organisms/cli/settings').settings;
       mockSettings.get.mockImplementation((key: string) => {
         switch (key) {
-          case 'defaultTeam': return 'GLOBAL_TEAM';
-          case 'activeTeams': return ['GLOBAL', 'TEAMS'];
-          case 'linearApiKey': return 'global-api-key';
-          default: return undefined;
+          case 'defaultTeam':
+            return 'GLOBAL_TEAM';
+          case 'activeTeams':
+            return ['GLOBAL', 'TEAMS'];
+          case 'linearApiKey':
+            return 'global-api-key';
+          default:
+            return undefined;
         }
       });
 
       // Create local config that overrides some global settings
       enhancedConfig.initLocalConfig({
         defaultTeam: 'LOCAL_TEAM',
-        teamFilter: ['LOCAL', 'TEAMS']
+        teamFilter: ['LOCAL', 'TEAMS'],
         // No workspaceId - should be undefined
       });
 
       const mergedConfig = enhancedConfig.getMergedConfig();
-      
+
       // Local overrides global
       expect(mergedConfig.defaultTeam).toBe('LOCAL_TEAM');
       expect(mergedConfig.teamFilter).toEqual(['LOCAL', 'TEAMS']);
-      
+
       // Global settings still used for non-overridden values
       expect(mergedConfig.apiKey).toBe('global-api-key');
-      
+
       // Settings not in local config and not in env should be undefined
       expect(mergedConfig.workspaceId).toBeUndefined();
     });
@@ -236,15 +250,19 @@ describe('Local Configuration Integration', () => {
       const mockSettings = require('@organisms/cli/settings').settings;
       mockSettings.get.mockImplementation((key: string) => {
         switch (key) {
-          case 'defaultTeam': return 'GLOBAL_FALLBACK';
-          case 'activeTeams': return ['FALLBACK'];
-          case 'linearApiKey': return 'fallback-api-key';
-          default: return undefined;
+          case 'defaultTeam':
+            return 'GLOBAL_FALLBACK';
+          case 'activeTeams':
+            return ['FALLBACK'];
+          case 'linearApiKey':
+            return 'fallback-api-key';
+          default:
+            return undefined;
         }
       });
 
       const mergedConfig = enhancedConfig.getMergedConfig();
-      
+
       expect(mergedConfig.defaultTeam).toBe('GLOBAL_FALLBACK');
       expect(mergedConfig.teamFilter).toEqual(['FALLBACK']);
       expect(mergedConfig.apiKey).toBe('fallback-api-key');
@@ -259,7 +277,7 @@ describe('Local Configuration Integration', () => {
 
       // Initialize config in project root
       enhancedConfig.initLocalConfig({
-        defaultTeam: 'ROOT_PROJECT'
+        defaultTeam: 'ROOT_PROJECT',
       });
 
       // Change to nested directory
@@ -267,7 +285,7 @@ describe('Local Configuration Integration', () => {
 
       // Should still find the root config
       expect(enhancedConfig.hasLocalConfig()).toBe(true);
-      
+
       const mergedConfig = enhancedConfig.getMergedConfig();
       expect(mergedConfig.defaultTeam).toBe('ROOT_PROJECT');
     });
@@ -276,7 +294,7 @@ describe('Local Configuration Integration', () => {
   describe('Config Validation', () => {
     it('should validate complete configuration', () => {
       enhancedConfig.initLocalConfig({
-        defaultTeam: 'VALID'
+        defaultTeam: 'VALID',
       });
 
       const mockSettings = require('@organisms/cli/settings').settings;
@@ -285,14 +303,14 @@ describe('Local Configuration Integration', () => {
       });
 
       const { valid, errors } = enhancedConfig.validateConfig();
-      
+
       expect(valid).toBe(true);
       expect(errors).toHaveLength(0);
     });
 
     it('should detect missing required configuration', () => {
       enhancedConfig.initLocalConfig({
-        defaultTeam: 'TEST'
+        defaultTeam: 'TEST',
       });
 
       // Mock env config to not have API key
@@ -300,19 +318,21 @@ describe('Local Configuration Integration', () => {
       mockEnvConfig.get.mockReturnValue({
         // No LINEAR_API_KEY
         NODE_ENV: 'test',
-        LOG_LEVEL: 'info'
+        LOG_LEVEL: 'info',
       });
-      
+
       // No API key in global either
       const mockSettings = require('@organisms/cli/settings').settings;
       mockSettings.get.mockImplementation((key: string) => {
         // Return undefined for linearApiKey specifically
-        if (key === 'linearApiKey') return undefined;
+        if (key === 'linearApiKey') {
+          return undefined;
+        }
         return undefined;
       });
 
       const { valid, errors } = enhancedConfig.validateConfig();
-      
+
       expect(valid).toBe(false);
       // The error comes from zod validation, check for the presence of apiKey error
       expect(errors.length).toBeGreaterThan(0);

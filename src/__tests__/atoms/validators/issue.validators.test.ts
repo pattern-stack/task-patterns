@@ -1,5 +1,10 @@
 import { IssueValidators } from '@atoms/validators/issue.validators';
-import { createMockIssue, createMockLabel, createMockConnection, createMockWorkflowState } from '../../utils/mocks';
+import {
+  createMockIssue,
+  createMockLabel,
+  createMockConnection,
+  createMockWorkflowState,
+} from '../../utils/mocks';
 
 describe('IssueValidators', () => {
   describe('isValidTitle', () => {
@@ -13,7 +18,7 @@ describe('IssueValidators', () => {
         'Title with numbers 123 and special chars !@#',
       ];
 
-      validTitles.forEach(title => {
+      validTitles.forEach((title) => {
         expect(IssueValidators.isValidTitle(title)).toBe(true);
       });
     });
@@ -24,7 +29,7 @@ describe('IssueValidators', () => {
         'a'.repeat(256), // too long
       ];
 
-      invalidTitles.forEach(title => {
+      invalidTitles.forEach((title) => {
         expect(IssueValidators.isValidTitle(title)).toBe(false);
       });
     });
@@ -37,7 +42,7 @@ describe('IssueValidators', () => {
 
   describe('isValidPriority', () => {
     it('should accept valid priorities (0-4)', () => {
-      [0, 1, 2, 3, 4].forEach(priority => {
+      [0, 1, 2, 3, 4].forEach((priority) => {
         expect(IssueValidators.isValidPriority(priority)).toBe(true);
       });
     });
@@ -53,7 +58,7 @@ describe('IssueValidators', () => {
         -Infinity,
       ];
 
-      invalidPriorities.forEach(priority => {
+      invalidPriorities.forEach((priority) => {
         expect(IssueValidators.isValidPriority(priority)).toBe(false);
       });
     });
@@ -61,35 +66,17 @@ describe('IssueValidators', () => {
 
   describe('isValidEstimate', () => {
     it('should accept valid estimates', () => {
-      const validEstimates = [
-        1,
-        2,
-        3,
-        5,
-        8,
-        13,
-        21,
-        0.5,
-        100,
-        0.1,
-      ];
+      const validEstimates = [1, 2, 3, 5, 8, 13, 21, 0.5, 100, 0.1];
 
-      validEstimates.forEach(estimate => {
+      validEstimates.forEach((estimate) => {
         expect(IssueValidators.isValidEstimate(estimate)).toBe(true);
       });
     });
 
     it('should reject invalid estimates', () => {
-      const invalidEstimates = [
-        0,
-        -1,
-        -5,
-        NaN,
-        Infinity,
-        -Infinity,
-      ];
+      const invalidEstimates = [0, -1, -5, NaN, Infinity, -Infinity];
 
-      invalidEstimates.forEach(estimate => {
+      invalidEstimates.forEach((estimate) => {
         expect(IssueValidators.isValidEstimate(estimate)).toBe(false);
       });
     });
@@ -106,7 +93,7 @@ describe('IssueValidators', () => {
         '# Markdown description\n\n- Item 1\n- Item 2',
       ];
 
-      validDescriptions.forEach(description => {
+      validDescriptions.forEach((description) => {
         expect(IssueValidators.isValidDescription(description)).toBe(true);
       });
     });
@@ -117,7 +104,7 @@ describe('IssueValidators', () => {
         'A'.repeat(200000),
       ];
 
-      invalidDescriptions.forEach(description => {
+      invalidDescriptions.forEach((description) => {
         expect(IssueValidators.isValidDescription(description)).toBe(false);
       });
     });
@@ -129,7 +116,7 @@ describe('IssueValidators', () => {
         creatorId: 'user-123',
         assigneeId: 'user-456',
       });
-      
+
       expect(await IssueValidators.canEditIssue(issue, 'user-123')).toBe(true);
     });
 
@@ -138,7 +125,7 @@ describe('IssueValidators', () => {
         creatorId: 'user-456',
         assigneeId: 'user-123',
       });
-      
+
       expect(await IssueValidators.canEditIssue(issue, 'user-123')).toBe(true);
     });
 
@@ -147,7 +134,7 @@ describe('IssueValidators', () => {
         creatorId: 'user-456',
         assigneeId: 'user-789',
       });
-      
+
       expect(await IssueValidators.canEditIssue(issue, 'user-123')).toBe(false);
     });
 
@@ -156,7 +143,7 @@ describe('IssueValidators', () => {
         creatorId: 'user-456',
         assigneeId: undefined,
       });
-      
+
       expect(await IssueValidators.canEditIssue(issue, 'user-123')).toBe(false);
     });
   });
@@ -164,8 +151,8 @@ describe('IssueValidators', () => {
   describe('isActive', () => {
     it('should identify active issues', () => {
       const activeStates = ['unstarted', 'started', 'backlog', 'triage'];
-      
-      activeStates.forEach(type => {
+
+      activeStates.forEach((type) => {
         const issue = createMockIssue({
           state: createMockWorkflowState({ type }),
         });
@@ -175,8 +162,8 @@ describe('IssueValidators', () => {
 
     it('should identify inactive issues', () => {
       const inactiveStates = ['completed', 'canceled'];
-      
-      inactiveStates.forEach(type => {
+
+      inactiveStates.forEach((type) => {
         const issue = createMockIssue({
           state: createMockWorkflowState({ type }),
         });
@@ -201,13 +188,13 @@ describe('IssueValidators', () => {
         createMockLabel({ name: 'is-blocked' }),
       ];
 
-      blockedLabels.forEach(label => {
+      blockedLabels.forEach((label) => {
         const issue = createMockIssue({
           labels: jest.fn().mockResolvedValue(createMockConnection([label])),
         });
         // Synchronously mock the labels property
-        (issue as any).labels = { nodes: [label] };
-        
+        issue.labels = { nodes: [label] };
+
         expect(IssueValidators.isBlocked(issue)).toBe(true);
       });
     });
@@ -219,13 +206,13 @@ describe('IssueValidators', () => {
         createMockLabel({ name: 'blocker' }), // blocker not blocked
       ];
 
-      nonBlockedLabels.forEach(label => {
+      nonBlockedLabels.forEach((label) => {
         const issue = createMockIssue({
           labels: jest.fn().mockResolvedValue(createMockConnection([label])),
         });
         // Synchronously mock the labels property
-        (issue as any).labels = { nodes: [label] };
-        
+        issue.labels = { nodes: [label] };
+
         expect(IssueValidators.isBlocked(issue)).toBe(false);
       });
     });
@@ -235,8 +222,8 @@ describe('IssueValidators', () => {
         labels: jest.fn().mockResolvedValue(createMockConnection([])),
       });
       // Synchronously mock the labels property
-      (issue as any).labels = { nodes: [] };
-      
+      issue.labels = { nodes: [] };
+
       expect(IssueValidators.isBlocked(issue)).toBe(false);
     });
 
@@ -244,7 +231,7 @@ describe('IssueValidators', () => {
       const issue = createMockIssue({
         labels: undefined,
       });
-      
+
       expect(IssueValidators.isBlocked(issue)).toBe(false);
     });
   });
@@ -255,7 +242,7 @@ describe('IssueValidators', () => {
         id: 'issue-123',
         parentId: null,
       });
-      
+
       expect(await IssueValidators.canBeChild(issue, 'issue-456')).toBe(true);
     });
 
@@ -264,7 +251,7 @@ describe('IssueValidators', () => {
         id: 'issue-123',
         parentId: null,
       });
-      
+
       expect(await IssueValidators.canBeChild(issue, 'issue-123')).toBe(false);
     });
 
@@ -273,7 +260,7 @@ describe('IssueValidators', () => {
         id: 'issue-123',
         parentId: 'issue-456',
       });
-      
+
       expect(await IssueValidators.canBeChild(issue, 'issue-456')).toBe(false);
     });
 
@@ -282,7 +269,7 @@ describe('IssueValidators', () => {
         id: 'issue-123',
         parentId: 'issue-456',
       });
-      
+
       expect(await IssueValidators.canBeChild(issue, 'issue-789')).toBe(true);
     });
   });
@@ -292,7 +279,7 @@ describe('IssueValidators', () => {
       const issue = createMockIssue({
         state: createMockWorkflowState({ type: 'completed' }),
       });
-      
+
       expect(IssueValidators.canArchive(issue)).toBe(true);
     });
 
@@ -300,14 +287,14 @@ describe('IssueValidators', () => {
       const issue = createMockIssue({
         state: createMockWorkflowState({ type: 'canceled' }),
       });
-      
+
       expect(IssueValidators.canArchive(issue)).toBe(true);
     });
 
     it('should prevent archiving active issues', () => {
       const activeStates = ['unstarted', 'started', 'backlog', 'triage'];
-      
-      activeStates.forEach(type => {
+
+      activeStates.forEach((type) => {
         const issue = createMockIssue({
           state: createMockWorkflowState({ type }),
         });
@@ -319,7 +306,7 @@ describe('IssueValidators', () => {
       const issue = createMockIssue({
         state: undefined,
       });
-      
+
       expect(IssueValidators.canArchive(issue)).toBe(false);
     });
   });
@@ -328,10 +315,10 @@ describe('IssueValidators', () => {
     it('should accept future dates', () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       const nextWeek = new Date();
       nextWeek.setDate(nextWeek.getDate() + 7);
-      
+
       expect(IssueValidators.isValidDueDate(tomorrow)).toBe(true);
       expect(IssueValidators.isValidDueDate(nextWeek)).toBe(true);
       expect(IssueValidators.isValidDueDate('2099-12-31')).toBe(true);
@@ -340,10 +327,10 @@ describe('IssueValidators', () => {
     it('should reject past dates', () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      
+
       const lastWeek = new Date();
       lastWeek.setDate(lastWeek.getDate() - 7);
-      
+
       expect(IssueValidators.isValidDueDate(yesterday)).toBe(false);
       expect(IssueValidators.isValidDueDate(lastWeek)).toBe(false);
       expect(IssueValidators.isValidDueDate('2020-01-01')).toBe(false);

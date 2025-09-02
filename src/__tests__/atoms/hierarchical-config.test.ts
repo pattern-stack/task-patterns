@@ -8,8 +8,8 @@ import { projectDiscovery } from '@atoms/config/project-discovery';
 // Mock the settings module to avoid file system dependencies in tests
 jest.mock('@organisms/cli/settings', () => ({
   settings: {
-    get: jest.fn()
-  }
+    get: jest.fn(),
+  },
 }));
 
 // Mock the env config
@@ -18,9 +18,9 @@ jest.mock('@atoms/shared/config', () => ({
     get: jest.fn(() => ({
       LINEAR_API_KEY: 'test-api-key',
       NODE_ENV: 'test',
-      LOG_LEVEL: 'error'
-    }))
-  }
+      LOG_LEVEL: 'error',
+    })),
+  },
 }));
 
 describe('HierarchicalConfigManager', () => {
@@ -33,7 +33,7 @@ describe('HierarchicalConfigManager', () => {
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tp-hierarchical-test-'));
     nestedDir = path.join(tempDir, 'nested');
     fs.mkdirSync(nestedDir, { recursive: true });
-    
+
     // Clear caches
     hierarchicalConfig.clearCache();
     localConfigManager.clearCache();
@@ -58,19 +58,24 @@ describe('HierarchicalConfigManager', () => {
         tp: {
           defaultTeam: 'LOCAL_TEAM',
           teamFilter: ['LOCAL', 'TEAM'],
-          workspaceId: 'local-workspace'
-        }
+          workspaceId: 'local-workspace',
+        },
       };
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       // Setup global config mock
       mockSettings.get.mockImplementation((key: string) => {
         switch (key) {
-          case 'defaultTeam': return 'GLOBAL_TEAM';
-          case 'activeTeams': return ['GLOBAL', 'TEAM'];
-          case 'backend': return 'linear';
-          case 'linearApiKey': return 'global-api-key';
-          default: return undefined;
+          case 'defaultTeam':
+            return 'GLOBAL_TEAM';
+          case 'activeTeams':
+            return ['GLOBAL', 'TEAM'];
+          case 'backend':
+            return 'linear';
+          case 'linearApiKey':
+            return 'global-api-key';
+          default:
+            return undefined;
         }
       });
 
@@ -83,7 +88,7 @@ describe('HierarchicalConfigManager', () => {
         apiKey: 'global-api-key', // From global (security)
         logLevel: 'error', // From env
         nodeEnv: 'test', // From env
-        backend: 'linear' // From global
+        backend: 'linear', // From global
       });
 
       expect(sources.local).toEqual(packageJson.tp);
@@ -96,10 +101,14 @@ describe('HierarchicalConfigManager', () => {
 
       mockSettings.get.mockImplementation((key: string) => {
         switch (key) {
-          case 'defaultTeam': return 'GLOBAL_ONLY';
-          case 'activeTeams': return ['GLOBAL'];
-          case 'linearApiKey': return 'global-api-key';
-          default: return undefined;
+          case 'defaultTeam':
+            return 'GLOBAL_ONLY';
+          case 'activeTeams':
+            return ['GLOBAL'];
+          case 'linearApiKey':
+            return 'global-api-key';
+          default:
+            return undefined;
         }
       });
 
@@ -113,7 +122,7 @@ describe('HierarchicalConfigManager', () => {
 
     it('should fallback to env when local and global are missing', () => {
       // No local or global config - only env
-      
+
       mockSettings.get.mockReturnValue(undefined);
 
       const { config } = hierarchicalConfig.getMergedConfig(nestedDir);
@@ -128,7 +137,7 @@ describe('HierarchicalConfigManager', () => {
     it('should cache merged config for performance', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'CACHE_TEST' }
+        tp: { defaultTeam: 'CACHE_TEST' },
       };
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
@@ -138,7 +147,7 @@ describe('HierarchicalConfigManager', () => {
 
       // First call
       const result1 = hierarchicalConfig.getMergedConfig(nestedDir);
-      
+
       // Second call with same directory should use cache
       const result2 = hierarchicalConfig.getMergedConfig(nestedDir);
 
@@ -166,13 +175,15 @@ describe('HierarchicalConfigManager', () => {
     it('should update local setting and clear cache', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'OLD' }
+        tp: { defaultTeam: 'OLD' },
       };
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       hierarchicalConfig.updateLocalSetting('defaultTeam', 'NEW', tempDir);
 
-      const updatedPackageJson = JSON.parse(fs.readFileSync(path.join(tempDir, 'package.json'), 'utf-8'));
+      const updatedPackageJson = JSON.parse(
+        fs.readFileSync(path.join(tempDir, 'package.json'), 'utf-8'),
+      );
       expect(updatedPackageJson.tp.defaultTeam).toBe('NEW');
 
       // Cache should be cleared (new config should be picked up)
@@ -209,12 +220,12 @@ describe('HierarchicalConfigManager', () => {
 
       try {
         hierarchicalConfig.initLocalConfig({
-          defaultTeam: 'INIT_TEST'
+          defaultTeam: 'INIT_TEST',
         });
 
         const packagePath = path.join(tempDir, 'package.json');
         expect(fs.existsSync(packagePath)).toBe(true);
-        
+
         const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
         expect(packageJson.tp.defaultTeam).toBe('INIT_TEST');
       } finally {
@@ -227,7 +238,7 @@ describe('HierarchicalConfigManager', () => {
     it('should return true when local config exists', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'TEST' }
+        tp: { defaultTeam: 'TEST' },
       };
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
@@ -245,8 +256,8 @@ describe('HierarchicalConfigManager', () => {
         name: 'test-project',
         tp: {
           defaultTeam: 'LOCAL',
-          teamFilter: ['LOCAL']
-        }
+          teamFilter: ['LOCAL'],
+        },
       };
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
@@ -267,9 +278,12 @@ describe('HierarchicalConfigManager', () => {
       // Only global and env config
       mockSettings.get.mockImplementation((key: string) => {
         switch (key) {
-          case 'defaultTeam': return 'GLOBAL';
-          case 'linearApiKey': return 'global-key';
-          default: return undefined;
+          case 'defaultTeam':
+            return 'GLOBAL';
+          case 'linearApiKey':
+            return 'global-key';
+          default:
+            return undefined;
         }
       });
 
@@ -298,7 +312,7 @@ describe('HierarchicalConfigManager', () => {
       mockEnvConfig.config.get.mockReturnValueOnce({
         // No LINEAR_API_KEY provided
         NODE_ENV: 'test',
-        LOG_LEVEL: 'info'
+        LOG_LEVEL: 'info',
       });
 
       mockSettings.get.mockReturnValue(undefined);
@@ -327,7 +341,7 @@ describe('HierarchicalConfigManager', () => {
     it('should clear all caches', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'CACHE' }
+        tp: { defaultTeam: 'CACHE' },
       };
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
@@ -342,10 +356,17 @@ describe('HierarchicalConfigManager', () => {
       hierarchicalConfig.clearCache();
 
       // Modify file
-      fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
-        name: 'test-project',
-        tp: { defaultTeam: 'UPDATED' }
-      }, null, 2));
+      fs.writeFileSync(
+        path.join(tempDir, 'package.json'),
+        JSON.stringify(
+          {
+            name: 'test-project',
+            tp: { defaultTeam: 'UPDATED' },
+          },
+          null,
+          2,
+        ),
+      );
 
       // Should pick up new value (cache was cleared)
       const { config } = hierarchicalConfig.getMergedConfig(tempDir);

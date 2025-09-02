@@ -34,7 +34,7 @@ jest.mock('@atoms/client/linear-client', () => ({
 
 const mockCreate = jest.fn(async (input: any) => ({
   id: 'i1',
-  identifier: `${(mockTeams.find(t => t.id === input.teamId)?.key || 'XX')}-101`,
+  identifier: `${mockTeams.find((t) => t.id === input.teamId)?.key || 'XX'}-101`,
   title: input.title,
   url: 'https://linear.app/x/y/z',
 }));
@@ -88,9 +88,7 @@ describe('tp add team selection behavior', () => {
   it('uses command flag over config (DEV)', async () => {
     mergedConfig.teamFilter = ['TASK'];
     await runCliWithArgs(['add', 'Test issue', '--team', 'DEV']);
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 't2' })
-    );
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ teamId: 't2' }));
     // Should not print filter message when explicit team provided
     expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('Using team from filter'));
   });
@@ -98,9 +96,7 @@ describe('tp add team selection behavior', () => {
   it('uses local/global teamFilter when no flag and prints helpful message', async () => {
     mergedConfig.teamFilter = ['MOBILE'];
     await runCliWithArgs(['add', 'Local config issue']);
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 't4' })
-    );
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ teamId: 't4' }));
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Using team from filter'));
   });
 
@@ -109,17 +105,13 @@ describe('tp add team selection behavior', () => {
     mergedConfig.defaultTeam = undefined;
     process.env.LINEAR_DEFAULT_TEAM = 'API';
     await runCliWithArgs(['add', 'Env fallback issue']);
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 't5' })
-    );
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ teamId: 't5' }));
   });
 
   it('uses first team from multiple teamFilter entries and shows message', async () => {
     mergedConfig.teamFilter = ['TASK', 'DEV', 'QA'];
     await runCliWithArgs(['add', 'Multiple filter issue']);
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 't1' })
-    );
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ teamId: 't1' }));
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Using team from filter:'));
   });
 
@@ -127,9 +119,7 @@ describe('tp add team selection behavior', () => {
     mergedConfig.teamFilter = ['NONEXIST'];
     await runCliWithArgs(['add', 'Invalid team fallback']);
     // Fallback uses first node (t1)
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 't1' })
-    );
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ teamId: 't1' }));
   });
 
   it('throws when no teams exist in workspace', async () => {
@@ -142,18 +132,14 @@ describe('tp add team selection behavior', () => {
 
     const errorSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     await runCliWithArgs(['add', 'No teams available']);
-    expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Error:')
-    );
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('Error:'));
     errorSpy.mockRestore();
   });
 
   it('supports global --team option when subcommand flag is absent', async () => {
     mergedConfig.teamFilter = ['TASK'];
     await runCliWithArgs(['--team', 'DEV', 'add', 'Global flag issue']);
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 't2' })
-    );
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ teamId: 't2' }));
   });
 
   it('falls back to hard default "dug" when no config or env present', async () => {
@@ -164,11 +150,9 @@ describe('tp add team selection behavior', () => {
     const { linearClient } = require('@atoms/client/linear-client');
     (linearClient.getClient as jest.Mock).mockReturnValueOnce({
       client: { request: jest.fn() },
-      teams: jest.fn(async () => ({ nodes: [ { id: 'td', key: 'dug', name: 'Dug' } ] })),
+      teams: jest.fn(async () => ({ nodes: [{ id: 'td', key: 'dug', name: 'Dug' }] })),
     });
     await runCliWithArgs(['add', 'Hard default fallback']);
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 'td' })
-    );
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ teamId: 'td' }));
   });
 });

@@ -35,7 +35,7 @@ jest.mock('@atoms/client/linear-client', () => ({
 
 const mockCreate = jest.fn(async (input: any) => ({
   id: 'i1',
-  identifier: `${(mockTeams.find(t => t.id === input.teamId)?.key || 'XX')}-301`,
+  identifier: `${mockTeams.find((t) => t.id === input.teamId)?.key || 'XX'}-301`,
   title: input.title,
   url: 'https://linear.app/x/y/z',
 }));
@@ -83,7 +83,9 @@ describe('Integration: team filter via real local config', () => {
     // Restore cwd
     process.chdir(originalCwd);
     // Cleanup temp dir
-    try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    } catch {}
     logSpy.mockRestore();
     process.env = { ...originalEnv };
   });
@@ -108,9 +110,7 @@ describe('Integration: team filter via real local config', () => {
   it('uses team from .tp-config.json and prints helpful message', async () => {
     writeLocalConfig({ teamFilter: ['MOBILE'] });
     await runCLI(['add', 'Integration local filter']);
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 't4' })
-    );
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ teamId: 't4' }));
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Using team from filter'));
   });
 
@@ -118,7 +118,7 @@ describe('Integration: team filter via real local config', () => {
     writeLocalConfig({ teamFilter: ['NOPE'] });
     await runCLI(['add', 'Integration invalid team fallback']);
     expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 't1' }) // first available team
+      expect.objectContaining({ teamId: 't1' }), // first available team
     );
     // Warning message about not found
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('not found'));
@@ -127,8 +127,6 @@ describe('Integration: team filter via real local config', () => {
   it('uses env LINEAR_DEFAULT_TEAM when no local config exists', async () => {
     process.env.LINEAR_DEFAULT_TEAM = 'API';
     await runCLI(['add', 'Integration env fallback']);
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ teamId: 't5' })
-    );
+    expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ teamId: 't5' }));
   });
 });
