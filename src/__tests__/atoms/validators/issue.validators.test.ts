@@ -117,6 +117,7 @@ describe('IssueValidators', () => {
         assigneeId: 'user-456',
       });
 
+
       expect(await IssueValidators.canEditIssue(issue, 'user-123')).toBe(true);
     });
 
