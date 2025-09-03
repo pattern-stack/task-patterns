@@ -51,18 +51,18 @@ export const createMockIssue = (overrides: any = {}): any => {
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-02'),
     teamId: 'team-123',
-    team: jest.fn().mockResolvedValue(createMockTeam()),
-    assignee: jest.fn().mockResolvedValue(createMockUser()),
-    creator: jest.fn().mockResolvedValue(createMockUser()),
-    state: jest.fn().mockResolvedValue(createMockWorkflowState()),
+    team: Promise.resolve(createMockTeam()),
+    assignee: Promise.resolve(createMockUser()),
+    creator: Promise.resolve(createMockUser()),
+    state: Promise.resolve(createMockWorkflowState()),
     labels: jest.fn().mockResolvedValue(createMockConnection([])),
     comments: jest.fn().mockResolvedValue(createMockConnection([])),
     attachments: jest.fn().mockResolvedValue(createMockConnection([])),
     children: jest.fn().mockResolvedValue(createMockConnection([])),
-    parent: jest.fn().mockResolvedValue(null),
-    project: jest.fn().mockResolvedValue(null),
+    parent: Promise.resolve(null),
+    project: Promise.resolve(null),
     projectId: null,
-    cycle: jest.fn().mockResolvedValue(null),
+    cycle: Promise.resolve(null),
     cycleId: null,
   };
 
@@ -70,17 +70,15 @@ export const createMockIssue = (overrides: any = {}): any => {
 
   // Handle specific override patterns for creator/assignee IDs
   if ('creatorId' in overrides) {
-    merged.creator = jest.fn().mockResolvedValue(createMockUser({ id: overrides.creatorId }));
+    merged.creator = Promise.resolve(createMockUser({ id: overrides.creatorId }));
     delete merged.creatorId;
   }
   if ('assigneeId' in overrides) {
-    merged.assignee = jest.fn().mockResolvedValue(createMockUser({ id: overrides.assigneeId }));
+    merged.assignee = Promise.resolve(createMockUser({ id: overrides.assigneeId }));
     delete merged.assigneeId;
   }
   if ('parentId' in overrides) {
-    merged.parent = jest
-      .fn()
-      .mockResolvedValue(overrides.parentId ? createMockIssue({ id: overrides.parentId }) : null);
+    merged.parent = Promise.resolve(overrides.parentId ? createMockIssue({ id: overrides.parentId }) : null);
     delete merged.parentId;
   }
 

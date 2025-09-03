@@ -1,9 +1,9 @@
-import { SprintCalculations, IssueData } from '@atoms/calculations/sprint.calculations';
+import { SprintCalculations, SprintIssueData } from '@atoms/calculations/sprint.calculations';
 import { CalculationTestUtils } from '../../utils/atoms-test-helpers';
 
 describe('SprintCalculations', () => {
   // Test data generators
-  const createIssue = (overrides: Partial<IssueData> = {}): IssueData => ({
+  const createIssue = (overrides: Partial<SprintIssueData> = {}): SprintIssueData => ({
     id: 'issue-1',
     estimate: 5,
     stateType: 'started',
@@ -12,7 +12,7 @@ describe('SprintCalculations', () => {
     ...overrides,
   });
 
-  const createCompletedIssue = (id: string, estimate = 5): IssueData => ({
+  const createCompletedIssue = (id: string, estimate = 5): SprintIssueData => ({
     id,
     estimate,
     stateType: 'completed',
@@ -22,7 +22,7 @@ describe('SprintCalculations', () => {
 
   describe('velocity', () => {
     it('should calculate velocity for completed issues', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed', estimate: 5 }),
         createIssue({ stateType: 'completed', estimate: 3 }),
         createIssue({ stateType: 'started', estimate: 8 }), // not completed
@@ -33,7 +33,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should handle issues without estimates', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed', estimate: undefined }),
         createIssue({ stateType: 'completed', estimate: 5 }),
         createIssue({ stateType: 'completed', estimate: undefined }),
@@ -47,7 +47,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should return 0 when no issues are completed', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'started', estimate: 5 }),
         createIssue({ stateType: 'backlog', estimate: 3 }),
       ];
@@ -58,7 +58,7 @@ describe('SprintCalculations', () => {
 
   describe('progress', () => {
     it('should calculate progress percentage', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'started' }),
@@ -69,7 +69,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should count canceled issues as completed', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'canceled' }),
         createIssue({ stateType: 'started' }),
@@ -84,7 +84,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should return 100 when all issues are completed', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'canceled' }),
@@ -96,7 +96,7 @@ describe('SprintCalculations', () => {
 
   describe('pointsProgress', () => {
     it('should calculate points progress', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed', estimate: 5 }),
         createIssue({ stateType: 'completed', estimate: 3 }),
         createIssue({ stateType: 'started', estimate: 8 }),
@@ -110,7 +110,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should handle issues without estimates', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed', estimate: undefined }),
         createIssue({ stateType: 'completed', estimate: 5 }),
         createIssue({ stateType: 'started', estimate: undefined }),
@@ -123,7 +123,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should return 0 percentage when no points exist', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ estimate: undefined }),
         createIssue({ estimate: undefined }),
       ];
@@ -135,7 +135,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should only count completed issues, not canceled', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed', estimate: 5 }),
         createIssue({ stateType: 'canceled', estimate: 3 }), // not counted
         createIssue({ stateType: 'started', estimate: 2 }),
@@ -150,7 +150,7 @@ describe('SprintCalculations', () => {
 
   describe('burndown', () => {
     it('should generate burndown data', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ estimate: 10 }),
         createIssue({ estimate: 10 }),
         createIssue({ estimate: 10 }),
@@ -165,7 +165,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should handle issues without estimates', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ estimate: 10 }),
         createIssue({ estimate: undefined }),
         createIssue({ estimate: 5 }),
@@ -187,7 +187,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should never go negative', () => {
-      const issues: IssueData[] = [createIssue({ estimate: 5 })];
+      const issues: SprintIssueData[] = [createIssue({ estimate: 5 })];
 
       const burndown = SprintCalculations.burndown(issues, 3);
 
@@ -238,8 +238,8 @@ describe('SprintCalculations', () => {
       const sprintEndDate = new Date('2024-01-31');
       const result = SprintCalculations.estimateCompletion(20, 0, sprintEndDate);
 
-      // With zero velocity, should estimate Infinity days
-      expect(result.estimatedDate.getTime()).toBe(Infinity);
+      // With zero velocity, should estimate an invalid date (never completes)
+      expect(result.estimatedDate.getTime()).toBeNaN();
       expect(result.onTrack).toBe(false);
     });
   });
@@ -270,7 +270,7 @@ describe('SprintCalculations', () => {
 
   describe('healthScore', () => {
     it('should calculate healthy sprint', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'completed' }),
@@ -283,7 +283,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should penalize blocked issues', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'started', labels: [{ name: 'blocked' }] }),
@@ -297,7 +297,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should identify at-risk sprint', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'started' }),
         createIssue({ stateType: 'started' }),
@@ -310,7 +310,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should cap score at 100', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ stateType: 'completed' }),
         createIssue({ stateType: 'completed' }),
       ];
@@ -321,7 +321,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should handle various blocked label formats', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ labels: [{ name: 'BLOCKED' }] }),
         createIssue({ labels: [{ name: 'Blocked by dependency' }] }),
         createIssue({ labels: [{ name: 'is-blocked' }] }),
@@ -337,7 +337,7 @@ describe('SprintCalculations', () => {
 
   describe('workloadDistribution', () => {
     it('should distribute work by assignee', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ assigneeId: 'user-1', estimate: 5 }),
         createIssue({ assigneeId: 'user-1', estimate: 3 }),
         createIssue({ assigneeId: 'user-2', estimate: 8 }),
@@ -353,7 +353,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should handle unassigned issues', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ assigneeId: undefined, estimate: 5 }),
         createIssue({ assigneeId: undefined, estimate: 3 }),
         createIssue({ assigneeId: 'user-1', estimate: 2 }),
@@ -366,7 +366,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should handle issues without estimates', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         createIssue({ assigneeId: 'user-1', estimate: undefined }),
         createIssue({ assigneeId: 'user-1', estimate: 5 }),
       ];
@@ -384,7 +384,7 @@ describe('SprintCalculations', () => {
 
   describe('averageCycleTime', () => {
     it('should calculate average cycle time', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         {
           id: 'issue-1',
           startedAt: '2024-01-10T00:00:00Z',
@@ -407,7 +407,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should ignore issues without dates', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         {
           id: 'issue-1',
           startedAt: '2024-01-10T00:00:00Z',
@@ -434,7 +434,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should return 0 when no issues have both dates', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         { id: 'issue-1', startedAt: '2024-01-10T00:00:00Z' },
         { id: 'issue-2', completedAt: '2024-01-15T00:00:00Z' },
         { id: 'issue-3' },
@@ -444,7 +444,7 @@ describe('SprintCalculations', () => {
     });
 
     it('should handle fractional days', () => {
-      const issues: IssueData[] = [
+      const issues: SprintIssueData[] = [
         {
           id: 'issue-1',
           startedAt: '2024-01-10T00:00:00Z',

@@ -131,7 +131,7 @@ describe('IssueAPI', () => {
 
         expect(mockIssueEntity.get).toHaveBeenCalledWith(identifier);
         expect(mockIssueEntity.getByIdentifier).toHaveBeenCalledWith(identifier);
-        expect(mockIssueEntity.update).toHaveBeenCalledWith(identifier, { stateId: 'state-789' });
+        expect(mockIssueEntity.update).toHaveBeenCalledWith(mockIssue.id, { stateId: 'state-789' });
         expect(result).toEqual(mockIssue);
       });
 

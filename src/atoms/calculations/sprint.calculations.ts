@@ -83,6 +83,16 @@ export const SprintCalculations = {
     dailyVelocity: number,
     sprintEndDate: Date,
   ): { estimatedDate: Date; onTrack: boolean } => {
+    if (dailyVelocity === 0) {
+      // If velocity is zero, completion will never happen
+      const infiniteDate = new Date();
+      infiniteDate.setTime(Infinity);
+      return {
+        estimatedDate: infiniteDate,
+        onTrack: false,
+      };
+    }
+
     const daysNeeded = Math.ceil(remainingPoints / dailyVelocity);
     const estimatedDate = new Date();
     estimatedDate.setDate(estimatedDate.getDate() + daysNeeded);
