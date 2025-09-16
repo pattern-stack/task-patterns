@@ -1,4 +1,5 @@
-import type { Team, TeamCreateInput, TeamUpdateInput } from '@linear/sdk';
+import type { Team } from '@linear/sdk';
+import type { TeamCreateInput, TeamUpdateInput } from '@linear/sdk/dist/_generated_documents';
 
 /**
  * Team transformer functions
@@ -8,22 +9,29 @@ export const TeamTransformers = {
   /**
    * Transform Linear SDK Team to API response
    */
-  toResponse: (team: Team) => ({
-    id: team.id,
-    key: team.key,
-    name: team.name,
-    description: team.description,
-    icon: team.icon,
-    color: team.color,
-    private: team.private,
-    createdAt: team.createdAt,
-    updatedAt: team.updatedAt,
-    cycleStartDay: team.cycleStartDay,
-    cycleCalenderUrl: team.cycleCalenderUrl,
-    timezone: team.timezone,
-    issueCount: team.issues?.nodes?.length || 0,
-    memberCount: team.members?.nodes?.length || 0,
-  }),
+  toResponse: async (team: Team) => {
+    const [issues, members] = await Promise.all([
+      team.issues(),
+      team.members(),
+    ]);
+
+    return {
+      id: team.id,
+      key: team.key,
+      name: team.name,
+      description: team.description,
+      icon: team.icon,
+      color: team.color,
+      private: team.private,
+      createdAt: team.createdAt,
+      updatedAt: team.updatedAt,
+      cycleStartDay: team.cycleStartDay,
+      cycleCalenderUrl: team.cycleCalenderUrl,
+      timezone: team.timezone,
+      issueCount: issues?.nodes?.length || 0,
+      memberCount: members?.nodes?.length || 0,
+    };
+  },
 
   /**
    * Transform create input to Linear SDK format
@@ -84,16 +92,29 @@ export const TeamTransformers = {
   /**
    * Transform for list display
    */
-  toListItem: (team: Team) => ({
-    id: team.id,
-    key: team.key,
-    name: team.name,
-    private: team.private ? 'Private' : 'Public',
-    memberCount: team.members?.nodes?.length || 0,
-    activeIssues: team.issues?.nodes?.filter(i => 
-      i.state?.type !== 'completed' && i.state?.type !== 'canceled'
-    ).length || 0,
-  }),
+  toListItem: async (team: Team) => {
+    const [members, issues] = await Promise.all([
+      team.members(),
+      team.issues(),
+    ]);
+
+    const activeIssuesPromises = issues?.nodes?.map(async (i: any) => {
+      const state = await i.state;
+      return state?.type !== 'completed' && state?.type !== 'canceled';
+    }) || [];
+
+    const activeIssuesResults = await Promise.all(activeIssuesPromises);
+    const activeIssuesCount = activeIssuesResults.filter(Boolean).length;
+
+    return {
+      id: team.id,
+      key: team.key,
+      name: team.name,
+      private: team.private ? 'Private' : 'Public',
+      memberCount: members?.nodes?.length || 0,
+      activeIssues: activeIssuesCount,
+    };
+  },
 
   /**
    * Transform for team selector

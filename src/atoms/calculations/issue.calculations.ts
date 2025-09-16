@@ -18,6 +18,7 @@ export interface IssueData {
   labels?: Array<{ name: string }>;
   children?: Array<{ id: string }>;
   comments?: Array<{ createdAt: string }>;
+  assigneeId?: string;
 }
 
 export const IssueCalculations = {

@@ -1,4 +1,5 @@
-import type { Issue, IssueCreateInput, IssueUpdateInput } from '@linear/sdk';
+import type { Issue } from '@linear/sdk';
+import type { IssueCreateInput, IssueUpdateInput } from '@linear/sdk/dist/_generated_documents';
 
 /**
  * Issue transformer functions
@@ -8,60 +9,58 @@ export const IssueTransformers = {
   /**
    * Transform Linear SDK Issue to API response
    */
-  toResponse: (issue: Issue) => ({
-    id: issue.id,
-    identifier: issue.identifier,
-    title: issue.title,
-    description: issue.description,
-    priority: issue.priority,
-    estimate: issue.estimate,
-    url: issue.url,
-    createdAt: issue.createdAt,
-    updatedAt: issue.updatedAt,
-    completedAt: issue.completedAt,
-    canceledAt: issue.canceledAt,
-    startedAt: issue.startedAt,
-    dueDate: issue.dueDate,
-    sortOrder: issue.sortOrder,
-    assignee: issue.assignee ? {
-      id: issue.assignee.id,
-      name: issue.assignee.name,
-      email: issue.assignee.email,
-    } : null,
-    state: issue.state ? {
-      id: issue.state.id,
-      name: issue.state.name,
-      type: issue.state.type,
-    } : null,
-    team: issue.team ? {
-      id: issue.team.id,
-      name: issue.team.name,
-      key: issue.team.key,
-    } : null,
-    project: issue.project ? {
-      id: issue.project.id,
-      name: issue.project.name,
-    } : null,
-    cycle: issue.cycle ? {
-      id: issue.cycle.id,
-      name: issue.cycle.name,
-      number: issue.cycle.number,
-    } : null,
-    labels: issue.labels?.nodes?.map(label => ({
-      id: label.id,
-      name: label.name,
-      color: label.color,
-    })) || [],
-    comments: issue.comments?.nodes?.map(comment => ({
-      id: comment.id,
-      body: comment.body,
-      createdAt: comment.createdAt,
-      user: {
-        id: comment.user.id,
-        name: comment.user.name,
-      },
-    })) || [],
-  }),
+  toResponse: async (issue: Issue) => {
+    const [assignee, state, team, project, cycle] = await Promise.all([
+      issue.assignee,
+      issue.state,
+      issue.team,
+      issue.project,
+      issue.cycle,
+    ]);
+
+    return {
+      id: issue.id,
+      identifier: issue.identifier,
+      title: issue.title,
+      description: issue.description,
+      priority: issue.priority,
+      estimate: issue.estimate,
+      url: issue.url,
+      createdAt: issue.createdAt,
+      updatedAt: issue.updatedAt,
+      completedAt: issue.completedAt,
+      canceledAt: issue.canceledAt,
+      startedAt: issue.startedAt,
+      dueDate: issue.dueDate,
+      sortOrder: issue.sortOrder,
+      assignee: assignee ? {
+        id: assignee.id,
+        name: assignee.name,
+        email: assignee.email,
+      } : null,
+      state: state ? {
+        id: state.id,
+        name: state.name,
+        type: state.type,
+      } : null,
+      team: team ? {
+        id: team.id,
+        name: team.name,
+        key: team.key,
+      } : null,
+      project: project ? {
+        id: project.id,
+        name: project.name,
+      } : null,
+      cycle: cycle ? {
+        id: cycle.id,
+        name: cycle.name,
+        number: cycle.number,
+      } : null,
+      labels: [],
+      comments: [],
+    };
+  },
 
   /**
    * Transform create input to Linear SDK format
@@ -132,28 +131,39 @@ export const IssueTransformers = {
   /**
    * Transform for list display
    */
-  toListItem: (issue: Issue) => ({
-    id: issue.id,
-    identifier: issue.identifier,
-    title: issue.title,
-    priority: issue.priority,
-    state: issue.state?.name || 'Unknown',
-    assignee: issue.assignee?.name || 'Unassigned',
-    labels: issue.labels?.nodes?.map(l => l.name).join(', ') || '',
-    estimate: issue.estimate,
-    dueDate: issue.dueDate,
-  }),
+  toListItem: async (issue: Issue) => {
+    const [state, assignee, labels] = await Promise.all([
+      issue.state,
+      issue.assignee,
+      issue.labels(),
+    ]);
+
+    return {
+      id: issue.id,
+      identifier: issue.identifier,
+      title: issue.title,
+      priority: issue.priority,
+      state: state?.name || 'Unknown',
+      assignee: assignee?.name || 'Unassigned',
+      labels: labels?.nodes?.map(l => l.name).join(', ') || '',
+      estimate: issue.estimate,
+      dueDate: issue.dueDate,
+    };
+  },
 
   /**
    * Transform for search results
    */
-  toSearchResult: (issue: Issue, searchQuery: string) => ({
-    ...IssueTransformers.toReference(issue),
-    description: issue.description?.substring(0, 200),
-    priority: issue.priority,
-    state: issue.state?.name,
-    matchContext: issue.description?.includes(searchQuery) 
-      ? 'description' 
-      : 'title',
-  }),
+  toSearchResult: async (issue: Issue, searchQuery: string) => {
+    const state = await issue.state;
+    return {
+      ...IssueTransformers.toReference(issue),
+      description: issue.description?.substring(0, 200),
+      priority: issue.priority,
+      state: state?.name,
+      matchContext: issue.description?.includes(searchQuery)
+        ? 'description'
+        : 'title',
+    };
+  },
 } as const;

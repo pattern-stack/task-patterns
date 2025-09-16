@@ -4,15 +4,7 @@
  * Note: These functions expect pre-fetched data, not Linear SDK objects
  */
 
-export interface IssueData {
-  id: string;
-  estimate?: number;
-  stateType?: 'backlog' | 'unstarted' | 'started' | 'completed' | 'canceled';
-  labels?: Array<{ name: string }>;
-  assigneeId?: string;
-  completedAt?: string;
-  startedAt?: string;
-}
+import type { IssueData } from './issue.calculations';
 
 export const SprintCalculations = {
   /**

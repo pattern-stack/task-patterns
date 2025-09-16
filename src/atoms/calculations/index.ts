@@ -2,5 +2,5 @@
  * Central export for all calculation functions
  */
 
-export * from './issue.calculations';
-export * from './sprint.calculations';
+export { IssueCalculations, type IssueData } from './issue.calculations';
+export { SprintCalculations } from './sprint.calculations';

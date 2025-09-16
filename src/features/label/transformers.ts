@@ -1,4 +1,5 @@
-import type { IssueLabel, IssueLabelCreateInput, IssueLabelUpdateInput } from '@linear/sdk';
+import type { IssueLabel } from '@linear/sdk';
+import type { IssueLabelCreateInput, IssueLabelUpdateInput } from '@linear/sdk/dist/_generated_documents';
 
 /**
  * Label transformer functions
@@ -8,15 +9,18 @@ export const LabelTransformers = {
   /**
    * Transform Linear SDK Label to API response
    */
-  toResponse: (label: IssueLabel) => ({
-    id: label.id,
-    name: label.name,
-    description: label.description,
-    color: label.color,
-    createdAt: label.createdAt,
-    updatedAt: label.updatedAt,
-    issueCount: label.issues?.nodes?.length || 0,
-  }),
+  toResponse: async (label: IssueLabel) => {
+    const issues = await label.issues();
+    return {
+      id: label.id,
+      name: label.name,
+      description: label.description,
+      color: label.color,
+      createdAt: label.createdAt,
+      updatedAt: label.updatedAt,
+      issueCount: issues?.nodes?.length || 0,
+    };
+  },
 
   /**
    * Transform create input to Linear SDK format
@@ -58,13 +62,16 @@ export const LabelTransformers = {
   /**
    * Transform for list display
    */
-  toListItem: (label: IssueLabel) => ({
-    id: label.id,
-    name: label.name,
-    color: label.color,
-    issueCount: label.issues?.nodes?.length || 0,
-    description: label.description?.substring(0, 100),
-  }),
+  toListItem: async (label: IssueLabel) => {
+    const issues = await label.issues();
+    return {
+      id: label.id,
+      name: label.name,
+      color: label.color,
+      issueCount: issues?.nodes?.length || 0,
+      description: label.description?.substring(0, 100),
+    };
+  },
 
   /**
    * Transform for label selector

@@ -1,4 +1,5 @@
-import type { Comment, CommentCreateInput, CommentUpdateInput } from '@linear/sdk';
+import type { Comment } from '@linear/sdk';
+import type { CommentCreateInput, CommentUpdateInput } from '@linear/sdk/dist/_generated_documents';
 
 /**
  * Comment transformer functions
@@ -7,26 +8,34 @@ import type { Comment, CommentCreateInput, CommentUpdateInput } from '@linear/sd
 export const CommentTransformers = {
   /**
    * Transform Linear SDK Comment to API response
+   * NOTE: Needs update for Linear SDK v28 - relations are now async
    */
-  toResponse: (comment: Comment) => ({
-    id: comment.id,
-    body: comment.body,
-    createdAt: comment.createdAt,
-    updatedAt: comment.updatedAt,
-    editedAt: comment.editedAt,
-    url: comment.url,
-    user: comment.user ? {
-      id: comment.user.id,
-      name: comment.user.name,
-      email: comment.user.email,
-      avatarUrl: comment.user.avatarUrl,
-    } : null,
-    issue: comment.issue ? {
-      id: comment.issue.id,
-      identifier: comment.issue.identifier,
-      title: comment.issue.title,
-    } : null,
-  }),
+  toResponse: async (comment: Comment) => {
+    const [user, issue] = await Promise.all([
+      comment.user,
+      comment.issue,
+    ]);
+
+    return {
+      id: comment.id,
+      body: comment.body,
+      createdAt: comment.createdAt,
+      updatedAt: comment.updatedAt,
+      editedAt: comment.editedAt,
+      url: comment.url,
+      user: user ? {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatarUrl: user.avatarUrl,
+      } : null,
+      issue: issue ? {
+        id: issue.id,
+        identifier: issue.identifier,
+        title: issue.title,
+      } : null,
+    };
+  },
 
   /**
    * Transform create input to Linear SDK format
@@ -51,52 +60,71 @@ export const CommentTransformers = {
   /**
    * Transform to comment reference (minimal data for relationships)
    */
-  toReference: (comment: Comment) => ({
-    id: comment.id,
-    createdAt: comment.createdAt,
-    userId: comment.user?.id,
-  }),
+  toReference: async (comment: Comment) => {
+    const user = await comment.user;
+    return {
+      id: comment.id,
+      createdAt: comment.createdAt,
+      userId: user?.id,
+    };
+  },
 
   /**
    * Transform for thread display
    */
-  toThreadItem: (comment: Comment) => ({
-    id: comment.id,
-    body: comment.body,
-    createdAt: comment.createdAt,
-    edited: comment.editedAt !== null,
-    user: {
-      name: comment.user?.name || 'Unknown',
-      avatarUrl: comment.user?.avatarUrl,
-    },
-  }),
+  toThreadItem: async (comment: Comment) => {
+    const user = await comment.user;
+    return {
+      id: comment.id,
+      body: comment.body,
+      createdAt: comment.createdAt,
+      edited: comment.editedAt !== null,
+      user: {
+        name: user?.name || 'Unknown',
+        avatarUrl: user?.avatarUrl,
+      },
+    };
+  },
 
   /**
    * Transform for activity feed
    */
-  toActivityItem: (comment: Comment) => ({
-    type: 'comment' as const,
-    id: comment.id,
-    timestamp: comment.createdAt,
-    user: comment.user?.name || 'Unknown',
-    action: 'commented',
-    target: comment.issue?.identifier,
-    preview: comment.body.substring(0, 150),
-  }),
+  toActivityItem: async (comment: Comment) => {
+    const [user, issue] = await Promise.all([
+      comment.user,
+      comment.issue,
+    ]);
+    return {
+      type: 'comment' as const,
+      id: comment.id,
+      timestamp: comment.createdAt,
+      user: user?.name || 'Unknown',
+      action: 'commented',
+      target: issue?.identifier,
+      preview: comment.body.substring(0, 150),
+    };
+  },
 
   /**
    * Transform for notification
    */
-  toNotification: (comment: Comment, recipientId: string) => ({
-    type: 'comment' as const,
-    commentId: comment.id,
-    issueId: comment.issue?.id,
-    issueIdentifier: comment.issue?.identifier,
-    issueTitle: comment.issue?.title,
-    authorName: comment.user?.name || 'Someone',
-    preview: comment.body.substring(0, 100),
-    createdAt: comment.createdAt,
-    url: comment.url,
-    isForUser: comment.issue?.assignee?.id === recipientId,
-  }),
+  toNotification: async (comment: Comment, recipientId: string) => {
+    const [user, issue] = await Promise.all([
+      comment.user,
+      comment.issue,
+    ]);
+    const assignee = issue ? await issue.assignee : undefined;
+    return {
+      type: 'comment' as const,
+      commentId: comment.id,
+      issueId: issue?.id,
+      issueIdentifier: issue?.identifier,
+      issueTitle: issue?.title,
+      authorName: user?.name || 'Someone',
+      preview: comment.body.substring(0, 100),
+      createdAt: comment.createdAt,
+      url: comment.url,
+      isForUser: assignee?.id === recipientId,
+    };
+  },
 } as const;

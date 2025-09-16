@@ -1,4 +1,5 @@
-import type { WorkflowState, WorkflowStateCreateInput, WorkflowStateUpdateInput } from '@linear/sdk';
+import type { WorkflowState } from '@linear/sdk';
+import type { WorkflowStateCreateInput, WorkflowStateUpdateInput } from '@linear/sdk/dist/_generated_documents';
 
 /**
  * WorkflowState transformer functions
@@ -8,22 +9,29 @@ export const WorkflowStateTransformers = {
   /**
    * Transform Linear SDK WorkflowState to API response
    */
-  toResponse: (state: WorkflowState) => ({
-    id: state.id,
-    name: state.name,
-    description: state.description,
-    color: state.color,
-    type: state.type,
-    position: state.position,
-    createdAt: state.createdAt,
-    updatedAt: state.updatedAt,
-    team: state.team ? {
-      id: state.team.id,
-      key: state.team.key,
-      name: state.team.name,
-    } : null,
-    issueCount: state.issues?.nodes?.length || 0,
-  }),
+  toResponse: async (state: WorkflowState) => {
+    const [team, issues] = await Promise.all([
+      state.team,
+      state.issues(),
+    ]);
+
+    return {
+      id: state.id,
+      name: state.name,
+      description: state.description,
+      color: state.color,
+      type: state.type,
+      position: state.position,
+      createdAt: state.createdAt,
+      updatedAt: state.updatedAt,
+      team: team ? {
+        id: team.id,
+        key: team.key,
+        name: team.name,
+      } : null,
+      issueCount: issues?.nodes?.length || 0,
+    };
+  },
 
   /**
    * Transform create input to Linear SDK format
@@ -72,14 +80,17 @@ export const WorkflowStateTransformers = {
   /**
    * Transform for list display
    */
-  toListItem: (state: WorkflowState) => ({
-    id: state.id,
-    name: state.name,
-    type: state.type,
-    color: state.color,
-    position: state.position,
-    issueCount: state.issues?.nodes?.length || 0,
-  }),
+  toListItem: async (state: WorkflowState) => {
+    const issues = await state.issues();
+    return {
+      id: state.id,
+      name: state.name,
+      type: state.type,
+      color: state.color,
+      position: state.position,
+      issueCount: issues?.nodes?.length || 0,
+    };
+  },
 
   /**
    * Transform for workflow selector
@@ -94,14 +105,17 @@ export const WorkflowStateTransformers = {
   /**
    * Transform for kanban column
    */
-  toKanbanColumn: (state: WorkflowState) => ({
-    id: state.id,
-    name: state.name,
-    type: state.type,
-    color: state.color,
-    position: state.position,
-    issues: state.issues?.nodes || [],
-  }),
+  toKanbanColumn: async (state: WorkflowState) => {
+    const issues = await state.issues();
+    return {
+      id: state.id,
+      name: state.name,
+      type: state.type,
+      color: state.color,
+      position: state.position,
+      issues: issues?.nodes || [],
+    };
+  },
 
   /**
    * Group states by type
