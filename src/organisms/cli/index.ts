@@ -326,60 +326,106 @@ program
 
 // Show details of an issue
 program
-  .command('show <identifier>')
+  .command('show <identifier> [moreIdentifiers...]')
   .alias('s')
-  .description('Show details of an issue')
-  .action(async (identifier) => {
-    const spinner = ora(`Loading ${identifier}...`).start();
-    
-    try {
-      const client = linearClient.getClient();
-      
-      // Get the issue with relations
-      const issue = await client.issue(identifier);
-      if (!issue) {
-        spinner.fail(`Could not find issue ${identifier}`);
-        return;
-      }
-      
-      spinner.stop();
-      
-      // Display issue details
-      console.log(chalk.cyan(`\n==> ${issue.identifier}: ${issue.title}\n`));
-      
-      const state = await issue.state;
-      const assignee = await issue.assignee;
-      const team = await issue.team;
-      const labels = await issue.labels();
-      
-      console.log(chalk.gray('  Status:    '), state?.name || 'Unknown');
-      console.log(chalk.gray('  Team:      '), team?.name || 'Unknown');
-      console.log(chalk.gray('  Assignee:  '), assignee?.name || 'Unassigned');
-      console.log(chalk.gray('  Priority:  '), issue.priority ? `P${issue.priority}` : 'None');
-      
-      if (labels.nodes.length > 0) {
-        console.log(chalk.gray('  Labels:    '), labels.nodes.map(l => l.name).join(', '));
-      }
-      
-      if (issue.description) {
-        console.log(chalk.gray('\n  Description:'));
-        console.log(chalk.dim('  ' + issue.description.replace(/\n/g, '\n  ')));
-      }
-      
-      console.log(chalk.gray('\n  View online: '), chalk.blue(issue.url));
-      
-      // Show available actions
-      if (state?.name !== 'Done') {
-        console.log(chalk.dim('\n  Actions:'));
-        if (state?.name !== 'In Progress') {
-          console.log(chalk.dim(`    • tp working ${identifier} - Start working on this`));
+  .description('Show details of an issue (or multiple issues)')
+  .option('--no-comments', 'Hide comments from the output')
+  .action(async (identifier, moreIdentifiers = [], options) => {
+    // Combine all identifiers and normalize to uppercase
+    const allIdentifiers = [identifier, ...moreIdentifiers].map(id => id.toUpperCase());
+
+    for (const id of allIdentifiers) {
+      const spinner = ora(`Loading ${id}...`).start();
+
+      try {
+        const client = linearClient.getClient();
+        const api = new IssueAPI(client);
+
+        // Get the issue with relations - Linear API handles case-insensitive lookup
+        const issue = await client.issue(id);
+        if (!issue) {
+          spinner.fail(`Could not find issue ${id}`);
+          if (allIdentifiers.length > 1) {
+            console.log(); // Add space between multiple issues
+          }
+          continue;
         }
-        console.log(chalk.dim(`    • tp done ${identifier} - Mark as complete`));
+
+        spinner.stop();
+
+        // Display issue details
+        console.log(chalk.cyan(`\n==> ${issue.identifier}: ${issue.title}\n`));
+
+        const state = await issue.state;
+        const assignee = await issue.assignee;
+        const team = await issue.team;
+        const labels = await issue.labels();
+        const parent = await issue.parent;
+        const project = await issue.project;
+        const children = await issue.children();
+
+        console.log(chalk.gray('  Status:    '), state?.name || 'Unknown');
+        console.log(chalk.gray('  Team:      '), team?.name || 'Unknown');
+        console.log(chalk.gray('  Assignee:  '), assignee?.name || 'Unassigned');
+        console.log(chalk.gray('  Priority:  '), issue.priority ? `P${issue.priority}` : 'None');
+
+        if (project) {
+          console.log(chalk.gray('  Project:   '), project.name);
+        }
+
+        if (parent) {
+          console.log(chalk.gray('  Parent:    '), `${parent.identifier}: ${parent.title}`);
+        }
+
+        if (children && children.nodes.length > 0) {
+          console.log(chalk.gray('  Children:  '), children.nodes.map(c => c.identifier).join(', '));
+        }
+
+        if (labels.nodes.length > 0) {
+          console.log(chalk.gray('  Labels:    '), labels.nodes.map(l => l.name).join(', '));
+        }
+
+        if (issue.description) {
+          console.log(chalk.gray('\n  Description:'));
+          console.log(chalk.dim('  ' + issue.description.replace(/\n/g, '\n  ')));
+        }
+
+        // Show comments by default unless --no-comments is passed
+        if (options.comments !== false) {
+          const comments = await issue.comments();
+          if (comments.nodes.length > 0) {
+            console.log(chalk.gray('\n  Comments:'));
+            for (const comment of comments.nodes) {
+              const user = await comment.user;
+              console.log(chalk.dim(`\n    ${user?.name || 'Unknown'} • ${new Date(comment.createdAt).toLocaleDateString()}`));
+              console.log(chalk.white('    ' + comment.body.replace(/\n/g, '\n    ')));
+            }
+          }
+        }
+
+        console.log(chalk.gray('\n  View online: '), chalk.blue(issue.url));
+
+        // Show available actions
+        if (state?.name !== 'Done' && state?.name !== 'Completed') {
+          console.log(chalk.dim('\n  Actions:'));
+          if (state?.name !== 'In Progress' && state?.name !== 'In Development') {
+            console.log(chalk.dim(`    • tp working ${issue.identifier} - Start working on this`));
+          }
+          console.log(chalk.dim(`    • tp done ${issue.identifier} - Mark as complete`));
+        }
+
+        // Add separator between multiple issues
+        if (allIdentifiers.length > 1 && id !== allIdentifiers[allIdentifiers.length - 1]) {
+          console.log(chalk.gray('\n' + '-'.repeat(80)));
+        }
+
+      } catch (error) {
+        spinner.fail(`Could not load ${id}`);
+        console.log(chalk.dim('  Error:', error));
+        if (allIdentifiers.length > 1) {
+          console.log(); // Add space between multiple issues
+        }
       }
-      
-    } catch (error) {
-      spinner.fail(`Could not load ${identifier}`);
-      console.log(chalk.dim('  Error:', error));
     }
   });
 
@@ -473,6 +519,191 @@ program
     } catch (error: any) {
       spinner.fail(`Could not update ${identifier}`);
       console.log(chalk.dim('  Error:', error.message || error));
+    }
+  });
+
+// Add comment to issue
+program
+  .command('comment <identifier> <message...>')
+  .description('Add a comment to an issue')
+  .action(async (identifier, messageArray) => {
+    const message = messageArray.join(' ');
+    const normalizedId = identifier.toUpperCase();
+    const spinner = ora(`Adding comment to ${normalizedId}...`).start();
+
+    try {
+      const client = linearClient.getClient();
+      const api = new IssueAPI(client);
+
+      // Get the issue first to verify it exists
+      const issue = await client.issue(normalizedId);
+      if (!issue) {
+        spinner.fail(`Could not find issue ${normalizedId}`);
+        return;
+      }
+
+      // Add the comment
+      await api.addComment(issue.id, message);
+
+      spinner.succeed(chalk.green(`✓ Comment added to ${issue.identifier}`));
+      console.log(chalk.dim(`  "${message.substring(0, 50)}${message.length > 50 ? '...' : ''}"`));
+
+    } catch (error) {
+      spinner.fail(`Could not add comment to ${normalizedId}`);
+      console.log(chalk.dim('  Error:', error));
+    }
+  });
+
+// Show comments on issue
+program
+  .command('comments <identifier>')
+  .description('Show all comments on an issue')
+  .action(async (identifier) => {
+    const normalizedId = identifier.toUpperCase();
+    const spinner = ora(`Loading comments for ${normalizedId}...`).start();
+
+    try {
+      const client = linearClient.getClient();
+
+      // Get the issue with comments
+      const issue = await client.issue(normalizedId);
+      if (!issue) {
+        spinner.fail(`Could not find issue ${normalizedId}`);
+        return;
+      }
+
+      spinner.stop();
+
+      console.log(chalk.cyan(`\n==> Comments for ${issue.identifier}: ${issue.title}\n`));
+
+      const comments = await issue.comments();
+      if (comments.nodes.length === 0) {
+        console.log(chalk.dim('  No comments yet.'));
+        console.log(chalk.dim(`  Use "tp comment ${issue.identifier} <message>" to add one.`));
+      } else {
+        for (const comment of comments.nodes) {
+          const user = await comment.user;
+          console.log(chalk.gray(`  ${user?.name || 'Unknown'} • ${new Date(comment.createdAt).toLocaleDateString()}`));
+          console.log(chalk.white('  ' + comment.body.replace(/\n/g, '\n  ')));
+          console.log(); // Add space between comments
+        }
+      }
+
+    } catch (error) {
+      spinner.fail(`Could not load comments for ${normalizedId}`);
+      console.log(chalk.dim('  Error:', error));
+    }
+  });
+
+// Create parent-child relationship (epic/sub-task)
+program
+  .command('link-parent <childIdentifier> <parentIdentifier>')
+  .description('Link an issue as a child of another issue (create epic relationship)')
+  .action(async (childId, parentId) => {
+    const normalizedChildId = childId.toUpperCase();
+    const normalizedParentId = parentId.toUpperCase();
+    const spinner = ora(`Linking ${normalizedChildId} as child of ${normalizedParentId}...`).start();
+
+    try {
+      const client = linearClient.getClient();
+
+      // Verify both issues exist
+      const childIssue = await client.issue(normalizedChildId);
+      const parentIssue = await client.issue(normalizedParentId);
+
+      if (!childIssue) {
+        spinner.fail(`Could not find child issue ${normalizedChildId}`);
+        return;
+      }
+
+      if (!parentIssue) {
+        spinner.fail(`Could not find parent issue ${normalizedParentId}`);
+        return;
+      }
+
+      // Update the child to set its parent
+      await childIssue.update({ parentId: parentIssue.id });
+
+      spinner.succeed(chalk.green(`✓ Linked ${childIssue.identifier} as child of ${parentIssue.identifier}`));
+      console.log(chalk.dim(`  Epic: ${parentIssue.title}`));
+      console.log(chalk.dim(`  └─ Sub-task: ${childIssue.title}`));
+
+    } catch (error) {
+      spinner.fail(`Could not create parent-child relationship`);
+      console.log(chalk.dim('  Error:', error));
+    }
+  });
+
+// Remove parent-child relationship
+program
+  .command('unlink-parent <childIdentifier>')
+  .description('Remove the parent relationship from an issue')
+  .action(async (childId) => {
+    const normalizedChildId = childId.toUpperCase();
+    const spinner = ora(`Removing parent link from ${normalizedChildId}...`).start();
+
+    try {
+      const client = linearClient.getClient();
+
+      const childIssue = await client.issue(normalizedChildId);
+      if (!childIssue) {
+        spinner.fail(`Could not find issue ${normalizedChildId}`);
+        return;
+      }
+
+      // Remove the parent by setting it to null
+      await childIssue.update({ parentId: null });
+
+      spinner.succeed(chalk.green(`✓ Removed parent link from ${childIssue.identifier}`));
+
+    } catch (error) {
+      spinner.fail(`Could not remove parent link`);
+      console.log(chalk.dim('  Error:', error));
+    }
+  });
+
+// Add issue to project
+program
+  .command('add-to-project <identifier> <projectName>')
+  .description('Add an issue to a project')
+  .action(async (identifier, projectName) => {
+    const normalizedId = identifier.toUpperCase();
+    const spinner = ora(`Adding ${normalizedId} to project "${projectName}"...`).start();
+
+    try {
+      const client = linearClient.getClient();
+
+      // Get the issue
+      const issue = await client.issue(normalizedId);
+      if (!issue) {
+        spinner.fail(`Could not find issue ${normalizedId}`);
+        return;
+      }
+
+      // Find the project by name
+      const team = await issue.team;
+      const projects = await client.projects({
+        filter: {
+          name: { contains: projectName }
+        }
+      });
+
+      if (projects.nodes.length === 0) {
+        spinner.fail(`Could not find project "${projectName}"`);
+        console.log(chalk.dim('  Use "tp projects list" to see available projects'));
+        return;
+      }
+
+      const project = projects.nodes[0];
+
+      // Update the issue to add it to the project
+      await issue.update({ projectId: project.id });
+
+      spinner.succeed(chalk.green(`✓ Added ${issue.identifier} to project "${project.name}"`));
+
+    } catch (error) {
+      spinner.fail(`Could not add to project`);
+      console.log(chalk.dim('  Error:', error));
     }
   });
 
