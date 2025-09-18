@@ -97,10 +97,9 @@ export class EnhancedConfigManager {
   }
 
   initLocalConfig(
-    config: LocalConfig = {},
-    configType: 'package.json' | '.tp-config.json' = 'package.json'
+    config: LocalConfig = {}
   ): void {
-    hierarchicalConfig.initLocalConfig(config, configType);
+    hierarchicalConfig.initLocalConfig(config);
   }
 
   hasLocalConfig(workingDir?: string): boolean {

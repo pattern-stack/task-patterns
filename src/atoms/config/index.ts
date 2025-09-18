@@ -1,8 +1,8 @@
 /**
  * Configuration Module
- * 
+ *
  * Provides hierarchical configuration management with support for:
- * - Local project configuration (package.json or .tp-config.json)
+ * - Local project configuration (.tp/config.json)
  * - Global user configuration (~/.task-pattern/config.json)
  * - Environment variables
  */

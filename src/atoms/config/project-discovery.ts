@@ -3,17 +3,15 @@ import * as path from 'path';
 
 /**
  * Project Discovery Utility
- * 
+ *
  * Discovers project root by walking up directory tree looking for:
- * 1. package.json with "tp" section (Node.js projects)
- * 2. .tp-config.json file (non-Node.js projects)
- * 
+ * .tp/config.json file
+ *
  * Implements caching to avoid repeated filesystem operations.
  */
 
 interface ProjectRoot {
   path: string;
-  configType: 'package.json' | '.tp-config.json';
   configPath: string;
 }
 
@@ -35,7 +33,7 @@ class ProjectDiscovery {
    * @param startDir Directory to start search from (defaults to cwd)
    * @returns ProjectRoot info or null if not found
    */
-  findProjectRoot(startDir: string = process.cwd()): ProjectRoot | null {
+  findProjectRoot(startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()): ProjectRoot | null {
     // Check cache first
     const cacheKey = path.resolve(startDir);
     if (this.cache.has(cacheKey)) {
@@ -59,32 +57,14 @@ class ProjectDiscovery {
     const rootDir = path.parse(currentDir).root;
 
     while (currentDir !== rootDir) {
-      // Check for package.json with "tp" section first (Node.js projects)
-      const packageJsonPath = path.join(currentDir, 'package.json');
-      if (fs.existsSync(packageJsonPath)) {
-        try {
-          const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-          if (packageJson.tp && typeof packageJson.tp === 'object') {
-            return {
-              path: currentDir,
-              configType: 'package.json',
-              configPath: packageJsonPath
-            };
-          }
-        } catch (error) {
-          // Invalid package.json, continue searching
-        }
-      }
-
-      // Check for .tp-config.json (non-Node.js projects)
-      const tpConfigPath = path.join(currentDir, '.tp-config.json');
+      // Check for .tp/config.json
+      const tpConfigPath = path.join(currentDir, '.tp', 'config.json');
       if (fs.existsSync(tpConfigPath)) {
         try {
           // Validate that it's valid JSON
           JSON.parse(fs.readFileSync(tpConfigPath, 'utf-8'));
           return {
             path: currentDir,
-            configType: '.tp-config.json',
             configPath: tpConfigPath
           };
         } catch (error) {
@@ -104,7 +84,7 @@ class ProjectDiscovery {
    * @param dirPath Directory to check
    * @returns True if project config found
    */
-  hasProjectConfig(dirPath: string = process.cwd()): boolean {
+  hasProjectConfig(dirPath: string = process.env.TP_ORIGINAL_CWD || process.cwd()): boolean {
     return this.findProjectRoot(dirPath) !== null;
   }
 
@@ -113,7 +93,7 @@ class ProjectDiscovery {
    * @param startDir Directory to start search from
    * @returns Project root path or null
    */
-  getProjectRootPath(startDir: string = process.cwd()): string | null {
+  getProjectRootPath(startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()): string | null {
     const root = this.findProjectRoot(startDir);
     return root ? root.path : null;
   }

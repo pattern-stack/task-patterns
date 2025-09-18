@@ -5,10 +5,9 @@ import { z } from 'zod';
 
 /**
  * Local Configuration Handler
- * 
+ *
  * Handles reading and writing local project configurations from:
- * - package.json "tp" section (Node.js projects)
- * - .tp-config.json (non-Node.js projects)
+ * .tp/config.json
  */
 
 // Schema for local configuration settings (project-specific only)
@@ -38,7 +37,7 @@ export class LocalConfigManager {
    * @param startDir Directory to start search from (defaults to cwd)
    * @returns Local config object or null if not found
    */
-  readLocalConfig(startDir: string = process.cwd()): LocalConfig | null {
+  readLocalConfig(startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()): LocalConfig | null {
     const projectRoot = projectDiscovery.findProjectRoot(startDir);
     if (!projectRoot) {
       return null;
@@ -51,14 +50,7 @@ export class LocalConfigManager {
     }
 
     try {
-      let config: LocalConfig;
-
-      if (projectRoot.configType === 'package.json') {
-        const packageJson = JSON.parse(fs.readFileSync(projectRoot.configPath, 'utf-8'));
-        config = packageJson.tp || {};
-      } else {
-        config = JSON.parse(fs.readFileSync(projectRoot.configPath, 'utf-8'));
-      }
+      const config: LocalConfig = JSON.parse(fs.readFileSync(projectRoot.configPath, 'utf-8'));
 
       // Validate configuration
       const validatedConfig = localConfigSchema.parse(config);
@@ -74,61 +66,39 @@ export class LocalConfigManager {
    * Write local configuration to project root
    * @param config Configuration to write
    * @param projectPath Project root path (defaults to discovered root)
-   * @param preferredType Preferred config type ('package.json' or '.tp-config.json')
    */
   writeLocalConfig(
-    config: LocalConfig, 
-    projectPath?: string,
-    preferredType?: 'package.json' | '.tp-config.json'
+    config: LocalConfig,
+    projectPath?: string
   ): void {
     let targetPath: string;
-    let configType: 'package.json' | '.tp-config.json';
 
     if (projectPath) {
-      // Use specified project path
       targetPath = projectPath;
-      
-      // Determine config type
-      if (preferredType) {
-        configType = preferredType;
-      } else if (fs.existsSync(path.join(projectPath, 'package.json'))) {
-        configType = 'package.json';
-      } else {
-        configType = '.tp-config.json';
-      }
     } else {
       // Find existing project root or use current directory
       const projectRoot = projectDiscovery.findProjectRoot();
       if (projectRoot) {
         targetPath = projectRoot.path;
-        configType = projectRoot.configType;
       } else {
-        targetPath = process.cwd();
-        configType = fs.existsSync(path.join(targetPath, 'package.json')) 
-          ? 'package.json' 
-          : '.tp-config.json';
+        targetPath = process.env.TP_ORIGINAL_CWD || process.cwd();
       }
     }
 
-    const configPath = path.join(targetPath, configType);
+    // Create .tp directory if it doesn't exist
+    const tpDir = path.join(targetPath, '.tp');
+    if (!fs.existsSync(tpDir)) {
+      fs.mkdirSync(tpDir, { recursive: true });
+    }
+
+    const configPath = path.join(tpDir, 'config.json');
 
     try {
       // Validate config before writing
       const validatedConfig = localConfigSchema.parse(config);
 
-      if (configType === 'package.json') {
-        // Update package.json with tp section
-        let packageJson = {};
-        if (fs.existsSync(configPath)) {
-          packageJson = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-        }
-
-        (packageJson as any).tp = validatedConfig;
-        fs.writeFileSync(configPath, JSON.stringify(packageJson, null, 2), 'utf-8');
-      } else {
-        // Write standalone .tp-config.json
-        fs.writeFileSync(configPath, JSON.stringify(validatedConfig, null, 2), 'utf-8');
-      }
+      // Write .tp/config.json
+      fs.writeFileSync(configPath, JSON.stringify(validatedConfig, null, 2), 'utf-8');
 
       // Update cache
       this.configCache.set(configPath, validatedConfig);
@@ -142,20 +112,18 @@ export class LocalConfigManager {
   /**
    * Initialize a new local config in current directory
    * @param config Initial configuration
-   * @param configType Type of config file to create
    */
   initLocalConfig(
-    config: LocalConfig = {},
-    configType: 'package.json' | '.tp-config.json' = 'package.json'
+    config: LocalConfig = {}
   ): void {
-    const currentDir = process.cwd();
-    
+    const currentDir = process.env.TP_ORIGINAL_CWD || process.cwd();
+
     // Check if config already exists
     if (projectDiscovery.hasProjectConfig(currentDir)) {
       throw new Error('Project already has a tp configuration');
     }
 
-    this.writeLocalConfig(config, currentDir, configType);
+    this.writeLocalConfig(config, currentDir);
   }
 
   /**
@@ -167,7 +135,7 @@ export class LocalConfigManager {
   updateLocalSetting<K extends keyof LocalConfig>(
     key: K,
     value: LocalConfig[K],
-    startDir: string = process.cwd()
+    startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()
   ): void {
     const projectRoot = projectDiscovery.findProjectRoot(startDir);
     if (!projectRoot) {
@@ -185,7 +153,7 @@ export class LocalConfigManager {
     });
 
     // Use the project root path for writing
-    this.writeLocalConfig(updatedConfig, projectRoot.path, projectRoot.configType);
+    this.writeLocalConfig(updatedConfig, projectRoot.path);
   }
 
   /**
@@ -200,7 +168,7 @@ export class LocalConfigManager {
    * @param startDir Directory to start search from
    * @returns Config path or null if no project found
    */
-  getConfigPath(startDir: string = process.cwd()): string | null {
+  getConfigPath(startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()): string | null {
     const projectRoot = projectDiscovery.findProjectRoot(startDir);
     return projectRoot ? projectRoot.configPath : null;
   }

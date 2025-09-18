@@ -54,7 +54,7 @@ export class HierarchicalConfigManager {
    * @param startDir Directory to start search from (defaults to cwd)
    * @returns Merged configuration with source information
    */
-  getMergedConfig(startDir: string = process.cwd()): { config: MergedConfig; sources: ConfigSource } {
+  getMergedConfig(startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()): { config: MergedConfig; sources: ConfigSource } {
     const cacheKey = startDir;
     
     // Check cache
@@ -143,8 +143,8 @@ export class HierarchicalConfigManager {
   /**
    * Initialize local config for current project
    */
-  initLocalConfig(config: LocalConfig = {}, configType: 'package.json' | '.tp-config.json' = 'package.json'): void {
-    localConfigManager.initLocalConfig(config, configType);
+  initLocalConfig(config: LocalConfig = {}): void {
+    localConfigManager.initLocalConfig(config);
     this.clearCache(); // Invalidate cache
   }
 
@@ -158,7 +158,7 @@ export class HierarchicalConfigManager {
   /**
    * Get configuration with source attribution for display
    */
-  getConfigWithSources(startDir: string = process.cwd()): {
+  getConfigWithSources(startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()): {
     config: MergedConfig;
     sources: { [key: string]: 'local' | 'global' | 'env' };
   } {
