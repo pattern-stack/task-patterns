@@ -1,164 +1,180 @@
-# task-patterns
+# Task Patterns (tp)
 
-> AI-first task management patterns for collaborative development (part of pattern-stack)
+> Lightning-fast task management for AI-human collaborative development
 
-## What is task-patterns?
+Task Patterns is a CLI tool that brings joy to task management. Built for developers who work with AI assistants, it provides instant task capture, smart context switching, and celebration of progress—all from your terminal.
 
-Task-patterns is a CLI tool designed specifically for AI-human collaboration in software development. It provides a unified interface to multiple task management backends (starting with Linear) while maintaining a consistent, encouraging, and efficient workflow.
+## ✨ Why Task Patterns?
 
-## Key Features
+Working with AI on code? You need a task system that:
+- **Captures tasks instantly** - No context switching, no browser tabs
+- **Shows what matters** - Your current work, not everything
+- **Celebrates progress** - Because shipping code should feel good
+- **Works anywhere** - Local configs follow your projects
 
-### 🤝 AI-First Design
-- Built for seamless AI-human collaboration
-- Positive reinforcement and encouraging messages
-- Context-aware commands that keep both parties in sync
-
-### 🔌 Backend Agnostic
-- Linear support (current)
-- GitHub Issues (planned)
-- Jira (planned)
-- Extensible architecture for any backend
-
-### 🎯 Smart Team Filtering
-- Focus on specific teams or projects
-- Persistent settings in `~/.task-pattern/config.json`
-- Environment variable support
-
-### 📊 Unified Label System
-- Consistent two-level hierarchy (`group:label`)
-- Works across different backends
-- Enables powerful cross-tool workflows
-
-## Installation
+## 🚀 Quick Start
 
 ```bash
-# Clone the repository
-git clone https://github.com/pattern-stack/task-patterns.git
-cd task-patterns
-
-# Install dependencies
-npm install
-
 # Install globally
-npm link
+npm install -g task-pattern
 
-# Install tsx if needed
-npm install -g tsx
+# Or clone and link
+git clone https://github.com/DougsHub/task-patterns.git
+cd task-patterns
+npm install && npm link
+
+# Configure (one-time)
+export LINEAR_API_KEY=lin_api_xxx  # Add to ~/.zshrc or ~/.bashrc
+tp config init                     # Initialize local project config
 ```
 
-## Configuration
-
-Create a `.env` file:
-```bash
-LINEAR_API_KEY=your_linear_api_key
-LINEAR_DEFAULT_TEAM=TP  # Your default team key
-```
-
-## Usage
-
-### Core Commands
+## 🎯 Core Commands
 
 ```bash
-# Check what you're working on
-tp context  # or tp c
+# What am I working on?
+tp context              # Shows your current sprint at a glance
 
-# Add a new task
-tp add "Implement authentication"  # or tp a
+# Capture a task (stay in flow)
+tp add "Fix auth bug"   # Creates task instantly
 
-# Start working on an issue
-tp working TASK-123  # or tp w
+# Work on something
+tp working TASK-19      # Marks as in progress
+tp done TASK-19         # Complete with celebration! 🎉
 
-# Mark as complete (with celebration!)
-tp done TASK-123  # or tp d
-
-# View issue details
-tp show TASK-123  # or tp s
+# Get details when needed
+tp show TASK-19         # Full issue details
+tp update TASK-19 --status "In Review"
 ```
 
-### Team Management
+## 🏗️ Configuration
 
+Task Patterns uses a hierarchical configuration system:
+
+### Project Config (`.tp/config.json`)
+Each project can have its own settings:
 ```bash
-# List all available teams
-tp config list-teams
-
-# Filter to specific teams
-tp config teams BE FRO INT
-
-# Add/remove teams from filter
-tp config add-team DUG
-tp config remove-team BE
-
-# Clear filters (show all)
-tp config clear
+tp config init                    # Create .tp/config.json
+tp config teams TASK TECH         # Set team filters for this project
+tp config set defaultTeam TASK    # Set default team for new tasks
 ```
 
-## Architecture
+### Global Config (`~/.task-pattern/config.json`)
+User preferences that apply everywhere:
+```bash
+tp config set --global backend linear  # Choose task backend
+```
+
+### Environment Variables
+```bash
+LINEAR_API_KEY=lin_api_xxx       # Required for Linear
+LINEAR_WORKSPACE_ID=xxx           # Optional workspace
+```
+
+**Priority**: Local project → Global user → Environment variables
+
+## 🎨 Smart Features
+
+### Team Filtering
+Focus on what's relevant:
+```bash
+tp config teams TASK TECH    # Only see TASK and TECH team issues
+tp context                   # Now shows filtered view
+```
+
+### Interactive Configuration
+No more remembering flags:
+```bash
+tp config set defaultTeam TASK
+# Prompts: "Save to project or global config?"
+# Choose with arrow keys - easy!
+```
+
+### Project-Aware
+Your settings follow your code:
+```bash
+cd ~/projects/auth-service
+tp config init && tp config teams AUTH
+# This project now only shows AUTH team tasks
+
+cd ~/projects/frontend
+tp config init && tp config teams FE
+# This project only shows FE team tasks
+```
+
+## 📁 Architecture
+
+Built with **Atomic Architecture** for maintainability:
 
 ```
 src/
-├── atoms/       # Foundation layer - utilities, client, types
-├── features/    # Service layer - data operations
-├── molecules/   # Domain layer - entities, workflows, APIs
-│   ├── entities/
-│   ├── workflows/
-│   └── *.api.ts # API facades (main interface)
-└── organisms/   # Interface layer - CLI, MCP (future)
-    └── cli/
-        ├── index.ts     # Main CLI
-        └── settings.ts  # Configuration management
+├── atoms/       # Foundation (config, client, types)
+├── features/    # Service layer (Linear SDK wrapper)
+├── molecules/   # Business logic (entities, workflows)
+└── organisms/   # User interfaces (CLI commands)
 ```
 
-## Label Hierarchy
+**Key Files:**
+- `bin/tp.js` - CLI entry point
+- `src/organisms/cli/index.ts` - Command definitions
+- `src/atoms/config/` - Configuration system
+- `.tp/config.json` - Your project settings
 
-Task-patterns uses a consistent two-level label system (`group:label`):
+## 🔌 Extensibility
 
-- **type:** `feature`, `bug`, `refactor`, `docs`, `test`
-- **area:** `tasks`, `teams`, `labels`, `projects`, `auth`, `sync`, `reporting`
-- **stage:** `design`, `implement`, `review`, `ready`
-- **layer:** `atoms`, `molecules`, `organisms`, `features`
-- **backend:** `linear`, `github`, `jira`, `agnostic`
+### Current Backend
+- ✅ **Linear** - Full support with GraphQL API
 
-See [LABEL_HIERARCHY.md](./LABEL_HIERARCHY.md) for details.
+### Planned Backends
+- 🚧 GitHub Issues
+- 🚧 Jira
+- 🚧 Custom APIs
 
-## Philosophy
+The architecture supports any backend through consistent interfaces.
 
-1. **Shared Context**: Keep AI and human developers in sync
-2. **Positive Experience**: Celebrate wins, encourage progress
-3. **Minimal Friction**: Short aliases, smart defaults
-4. **Pattern-First**: Part of the pattern-stack ecosystem
-5. **Tool Agnostic**: Your workflow, any backend
+## 🧪 Development
 
-## Roadmap
+```bash
+# Setup
+npm install
+npm run build
 
-- [x] Linear backend support
-- [x] Team filtering
-- [x] Settings management
-- [ ] Team setup wizard
-- [ ] GitHub integration
-- [ ] Bulk label creation
-- [ ] MCP server
-- [ ] GitHub Issues backend
-- [ ] Jira backend
-- [ ] Custom backend API
+# Development
+npm run dev             # Watch mode
+npm test               # Run tests
+npm run verify         # Full check (lint, type, test)
 
-## Pattern-Stack Ecosystem
+# Testing
+npm run test:watch     # TDD mode
+npm run test:coverage  # Coverage report
+```
 
-Task-patterns is part of the pattern-stack family:
+### Using tp While Developing
+```bash
+npm link               # Link globally
+tp context            # Use anywhere
 
-- **backend-patterns** - Backend architecture patterns
-- **frontend-patterns** - UI/UX patterns
-- **bi-patterns** - Business intelligence patterns
-- **agent-patterns** - AI agent patterns
-- **task-patterns** - Task management patterns (this project)
+# Or run directly
+npm run cli context   # Without global install
+```
 
-## Contributing
+## 📚 Documentation
 
-This is currently a personal project but may open for contributions in the future.
+- [`CLAUDE.md`](./CLAUDE.md) - AI assistant instructions
+- [`docs/`](./docs/) - Architecture, testing, and technical documentation
+- [`.claude/tickets/`](./.claude/tickets/) - Development tickets
 
-## License
+## 🤝 Contributing
+
+We welcome contributions! Please:
+1. Use `tp` to track your work
+2. Follow TDD practices (see `.claude/tickets/TDD-GUIDELINES.md`)
+3. Run `npm run verify` before committing
+4. Tag commits with issue numbers (e.g., `[TASK-19]`)
+
+## 📜 License
 
 MIT
 
 ---
 
-Built with ❤️ for AI-assisted development
+Built with ❤️ for developers who ship with AI
