@@ -1,4 +1,4 @@
-import { LinearClient, Issue as LinearIssue, User, Project, Team } from '@linear/sdk';
+import { LinearClient, Issue as LinearIssue } from '@linear/sdk';
 import { IssueService } from '@features/issue/service';
 import { TeamService } from '@features/team/service';
 import { ProjectService } from '@features/project/service';

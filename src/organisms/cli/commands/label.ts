@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import * as readline from 'readline';
 import { linearClient } from '@atoms/client/linear-client';
-import { LabelAPI, LABEL_TEMPLATES } from '@molecules/apis/label.api';
+import { LabelAPI } from '@molecules/apis/label.api';
 import { formatters } from '../formatters';
 
 /**

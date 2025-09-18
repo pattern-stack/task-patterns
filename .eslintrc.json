@@ -46,7 +46,7 @@
   },
   "overrides": [
     {
-      "files": ["src/__tests__/**/*.ts"],
+      "files": ["src/__tests__/**/*.ts", "src/**/__tests__/**/*.ts", "src/**/*.test.ts"],
       "env": { "jest": true, "node": true },
       "rules": {
         "@typescript-eslint/unbound-method": "off",
@@ -56,7 +56,7 @@
       }
     },
     {
-      "files": ["src/organisms/cli/commands/**/*.ts"],
+      "files": ["src/organisms/cli/**/*.ts", "src/atoms/config/**/*.ts"],
       "rules": {
         "no-console": "off"
       }

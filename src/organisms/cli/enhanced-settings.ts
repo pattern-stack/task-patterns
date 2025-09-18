@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import chalk from 'chalk';
-import { enhancedConfig } from '@atoms/config';
+import { enhancedConfig, projectDiscovery } from '@atoms/config';
 
 /**
  * Enhanced Settings Manager
@@ -225,7 +225,7 @@ class EnhancedSettingsManager {
     return {
       global: this.configPath,
       local: enhancedConfig.hasLocalConfig()
-        ? require('@atoms/config').projectDiscovery.findProjectRoot()?.configPath || null
+        ? projectDiscovery.findProjectRoot()?.configPath || null
         : null,
     };
   }

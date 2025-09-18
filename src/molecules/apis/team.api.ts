@@ -9,7 +9,7 @@ import { LabelService } from '@features/label/service';
 import { IssueService } from '@features/issue/service';
 import { TeamCreate, TeamUpdate } from '@features/team/schemas';
 import { logger } from '@atoms/shared/logger';
-import { BatchOperationResult, Pagination } from '@atoms/types/common';
+import { BatchOperationResult } from '@atoms/types/common';
 
 /**
  * Team template definitions for common team setups
@@ -394,7 +394,7 @@ export class TeamAPI {
 
     // Member statistics
     const memberStats = await Promise.all(
-      members.map(async (member) => {
+      members.map((member) => {
         const memberIssues = issues.filter((i) => i.assignee?.id === member.id);
         const memberCompleted = memberIssues.filter((i) => i.state?.type === 'completed');
 

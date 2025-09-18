@@ -5,7 +5,6 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { linearClient } from '@atoms/client/linear-client';
 import { IssueAPI } from '@molecules/issue.api';
-import { enhancedSettings } from './enhanced-settings';
 import { enhancedConfig } from '@atoms/config';
 import { createTeamCommand } from './commands/team';
 import { createLabelCommand } from './commands/label';
@@ -359,7 +358,6 @@ program
 
       try {
         const client = linearClient.getClient();
-        const api = new IssueAPI(client);
 
         // Get the issue with relations - Linear API handles case-insensitive lookup
         const issue = await client.issue(id);
@@ -719,7 +717,6 @@ program
       }
 
       // Find the project by name
-      const team = await issue.team;
       const projects = await client.projects({
         filter: {
           name: { contains: projectName },

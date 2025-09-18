@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { linearClient } from '@atoms/client/linear-client';
-import { TeamAPI, TEAM_TEMPLATES } from '@molecules/apis/team.api';
+import { TeamAPI } from '@molecules/apis/team.api';
 import { formatters } from '../formatters';
 import { settings } from '../settings';
 
