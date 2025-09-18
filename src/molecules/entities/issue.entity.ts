@@ -28,19 +28,19 @@ export interface IssueWithRelations {
 
 /**
  * IssueEntity provides convenient methods for issue operations.
- * 
+ *
  * Following pragmatic architecture principles:
  * - Handles SDK-natural operations (field updates, native methods)
  * - Provides convenience wrappers for common operations
  * - Complex validation and multi-step operations should use IssueRelationsWorkflow
- * 
+ *
  * This entity focuses on:
  * - CRUD operations for issues
  * - Managing comments (SDK native: createComment)
  * - Managing labels (SDK native: updating labelIds[])
  * - Assignment operations (SDK native: updating assigneeId)
  * - Sub-issue management
- * 
+ *
  * For complex operations use IssueRelationsWorkflow:
  * - Multi-entity validation
  * - Smart creation with team/user resolution
@@ -312,7 +312,7 @@ export class IssueEntity {
     const subIssueData: IssueCreate = {
       ...data,
       parentId,
-      teamId: teamId!,
+      teamId: teamId,
     };
 
     return await this.issueService.create(subIssueData);

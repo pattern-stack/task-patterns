@@ -1,5 +1,8 @@
 import type { IssueLabel } from '@linear/sdk';
-import type { IssueLabelCreateInput, IssueLabelUpdateInput } from '@linear/sdk/dist/_generated_documents';
+import type {
+  IssueLabelCreateInput,
+  IssueLabelUpdateInput,
+} from '@linear/sdk/dist/_generated_documents';
 
 /**
  * Label transformer functions

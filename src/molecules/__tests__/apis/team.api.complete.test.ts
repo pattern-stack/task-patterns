@@ -1,4 +1,4 @@
-import { TeamAPI, TEAM_TEMPLATES } from '@molecules/apis/team.api';
+import { TeamAPI } from '@molecules/apis/team.api';
 import { TeamService } from '@features/team/service';
 import { UserService } from '@features/user/service';
 import { ProjectService } from '@features/project/service';
@@ -6,16 +6,14 @@ import { CycleService } from '@features/cycle/service';
 import { WorkflowStateService } from '@features/workflow-state/service';
 import { LabelService } from '@features/label/service';
 import { IssueService } from '@features/issue/service';
-import { 
-  createMockLinearClient, 
-  createMockTeam, 
+import {
+  createMockLinearClient,
+  createMockTeam,
   createMockUser,
   createMockProject,
   createMockCycle,
-  createMockWorkflowState,
-  createMockLabel,
   createMockIssue,
-  createMockConnection 
+  createMockConnection,
 } from '../../../__tests__/utils/mocks';
 
 jest.mock('@features/team/service');
@@ -31,10 +29,10 @@ describe('TeamAPI - Complete Test Suite', () => {
   let mockClient: any;
   let mockTeamService: jest.Mocked<TeamService>;
   let mockUserService: jest.Mocked<UserService>;
-  let mockProjectService: jest.Mocked<ProjectService>;
-  let mockCycleService: jest.Mocked<CycleService>;
-  let mockWorkflowStateService: jest.Mocked<WorkflowStateService>;
-  let mockLabelService: jest.Mocked<LabelService>;
+  let _mockProjectService: jest.Mocked<ProjectService>;
+  let _mockCycleService: jest.Mocked<CycleService>;
+  let _mockWorkflowStateService: jest.Mocked<WorkflowStateService>;
+  let _mockLabelService: jest.Mocked<LabelService>;
   let mockIssueService: jest.Mocked<IssueService>;
 
   beforeEach(() => {
@@ -42,13 +40,21 @@ describe('TeamAPI - Complete Test Suite', () => {
     teamAPI = new TeamAPI(mockClient);
 
     // Get mocked service instances
-    mockTeamService = (TeamService as jest.MockedClass<typeof TeamService>).mock.instances[0] as jest.Mocked<TeamService>;
-    mockUserService = (UserService as jest.MockedClass<typeof UserService>).mock.instances[0] as jest.Mocked<UserService>;
-    mockProjectService = (ProjectService as jest.MockedClass<typeof ProjectService>).mock.instances[0] as jest.Mocked<ProjectService>;
-    mockCycleService = (CycleService as jest.MockedClass<typeof CycleService>).mock.instances[0] as jest.Mocked<CycleService>;
-    mockWorkflowStateService = (WorkflowStateService as jest.MockedClass<typeof WorkflowStateService>).mock.instances[0] as jest.Mocked<WorkflowStateService>;
-    mockLabelService = (LabelService as jest.MockedClass<typeof LabelService>).mock.instances[0] as jest.Mocked<LabelService>;
-    mockIssueService = (IssueService as jest.MockedClass<typeof IssueService>).mock.instances[0] as jest.Mocked<IssueService>;
+    mockTeamService = (TeamService as jest.MockedClass<typeof TeamService>).mock
+      .instances[0] as jest.Mocked<TeamService>;
+    mockUserService = (UserService as jest.MockedClass<typeof UserService>).mock
+      .instances[0] as jest.Mocked<UserService>;
+    _mockProjectService = (ProjectService as jest.MockedClass<typeof ProjectService>).mock
+      .instances[0] as jest.Mocked<ProjectService>;
+    _mockCycleService = (CycleService as jest.MockedClass<typeof CycleService>).mock
+      .instances[0] as jest.Mocked<CycleService>;
+    _mockWorkflowStateService = (
+      WorkflowStateService as jest.MockedClass<typeof WorkflowStateService>
+    ).mock.instances[0] as jest.Mocked<WorkflowStateService>;
+    _mockLabelService = (LabelService as jest.MockedClass<typeof LabelService>).mock
+      .instances[0] as jest.Mocked<LabelService>;
+    mockIssueService = (IssueService as jest.MockedClass<typeof IssueService>).mock
+      .instances[0] as jest.Mocked<IssueService>;
   });
 
   afterEach(() => {
@@ -60,7 +66,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should create a new team', async () => {
         const teamData = { key: 'ENG', name: 'Engineering' };
         const mockTeam = createMockTeam(teamData);
-        
+
         mockTeamService.create.mockResolvedValue(mockTeam);
 
         const result = await teamAPI.create(teamData);
@@ -81,7 +87,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should update a team', async () => {
         const updateData = { name: 'Updated Engineering' };
         const mockTeam = createMockTeam(updateData);
-        
+
         mockTeamService.update.mockResolvedValue(mockTeam);
 
         const result = await teamAPI.update('team-123', updateData);
@@ -118,11 +124,8 @@ describe('TeamAPI - Complete Test Suite', () => {
 
     describe('list', () => {
       it('should list teams with pagination', async () => {
-        const mockTeams = [
-          createMockTeam({ key: 'ENG' }),
-          createMockTeam({ key: 'PROD' })
-        ];
-        
+        const mockTeams = [createMockTeam({ key: 'ENG' }), createMockTeam({ key: 'PROD' })];
+
         mockTeamService.list.mockResolvedValue(createMockConnection(mockTeams));
 
         const result = await teamAPI.list({ first: 10 });
@@ -166,7 +169,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should get team members', async () => {
         const mockMembers = [
           createMockUser({ email: 'user1@test.com' }),
-          createMockUser({ email: 'user2@test.com' })
+          createMockUser({ email: 'user2@test.com' }),
         ];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -191,23 +194,26 @@ describe('TeamAPI - Complete Test Suite', () => {
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
         mockUserService.getByEmail.mockResolvedValue(createMockUser());
 
-        await expect(teamAPI.addMember('ENG', 'user@test.com'))
-          .rejects.toThrow('Team member management requires organization admin API access');
+        await expect(teamAPI.addMember('ENG', 'user@test.com')).rejects.toThrow(
+          'Team member management requires organization admin API access',
+        );
       });
 
       it('should throw error if team not found', async () => {
         mockTeamService.resolveTeamId.mockResolvedValue(null);
 
-        await expect(teamAPI.addMember('INVALID', 'user@test.com'))
-          .rejects.toThrow('Team not found: INVALID');
+        await expect(teamAPI.addMember('INVALID', 'user@test.com')).rejects.toThrow(
+          'Team not found: INVALID',
+        );
       });
 
       it('should throw error if user not found', async () => {
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
         mockUserService.getByEmail.mockResolvedValue(null);
 
-        await expect(teamAPI.addMember('ENG', 'invalid@test.com'))
-          .rejects.toThrow('User not found: invalid@test.com');
+        await expect(teamAPI.addMember('ENG', 'invalid@test.com')).rejects.toThrow(
+          'User not found: invalid@test.com',
+        );
       });
     });
 
@@ -216,8 +222,9 @@ describe('TeamAPI - Complete Test Suite', () => {
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
         mockUserService.getByEmail.mockResolvedValue(createMockUser());
 
-        await expect(teamAPI.removeMember('ENG', 'user@test.com'))
-          .rejects.toThrow('Team member management requires organization admin API access');
+        await expect(teamAPI.removeMember('ENG', 'user@test.com')).rejects.toThrow(
+          'Team member management requires organization admin API access',
+        );
       });
     });
   });
@@ -227,7 +234,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should get team projects', async () => {
         const mockProjects = [
           createMockProject({ name: 'Project 1' }),
-          createMockProject({ name: 'Project 2' })
+          createMockProject({ name: 'Project 2' }),
         ];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -242,8 +249,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should throw error if team not found', async () => {
         mockTeamService.resolveTeamId.mockResolvedValue(null);
 
-        await expect(teamAPI.getProjects('INVALID'))
-          .rejects.toThrow('Team not found: INVALID');
+        await expect(teamAPI.getProjects('INVALID')).rejects.toThrow('Team not found: INVALID');
       });
     });
 
@@ -255,7 +261,7 @@ describe('TeamAPI - Complete Test Suite', () => {
 
         const mockCycles = [
           createMockCycle({ startsAt: now.toISOString(), endsAt: futureDate.toISOString() }),
-          createMockCycle({ startsAt: pastDate.toISOString(), endsAt: pastDate.toISOString() })
+          createMockCycle({ startsAt: pastDate.toISOString(), endsAt: pastDate.toISOString() }),
         ];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -268,10 +274,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       });
 
       it('should include past cycles when requested', async () => {
-        const mockCycles = [
-          createMockCycle(),
-          createMockCycle()
-        ];
+        const mockCycles = [createMockCycle(), createMockCycle()];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
         mockTeamService.getCycles.mockResolvedValue(createMockConnection(mockCycles));
@@ -284,8 +287,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should throw error if team not found', async () => {
         mockTeamService.resolveTeamId.mockResolvedValue(null);
 
-        await expect(teamAPI.getCycles('INVALID'))
-          .rejects.toThrow('Team not found: INVALID');
+        await expect(teamAPI.getCycles('INVALID')).rejects.toThrow('Team not found: INVALID');
       });
     });
 
@@ -295,17 +297,19 @@ describe('TeamAPI - Complete Test Suite', () => {
         const startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-        const currentCycle = createMockCycle({ 
-          startsAt: startDate.toISOString(), 
-          endsAt: endDate.toISOString() 
+        const currentCycle = createMockCycle({
+          startsAt: startDate.toISOString(),
+          endsAt: endDate.toISOString(),
         });
-        const futureCycle = createMockCycle({ 
-          startsAt: endDate.toISOString(), 
-          endsAt: new Date(endDate.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString() 
+        const futureCycle = createMockCycle({
+          startsAt: endDate.toISOString(),
+          endsAt: new Date(endDate.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString(),
         });
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
-        mockTeamService.getCycles.mockResolvedValue(createMockConnection([currentCycle, futureCycle]));
+        mockTeamService.getCycles.mockResolvedValue(
+          createMockConnection([currentCycle, futureCycle]),
+        );
 
         const result = await teamAPI.getCurrentCycle('ENG');
 
@@ -326,7 +330,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should get team issues excluding completed by default', async () => {
         const mockIssues = [
           createMockIssue({ title: 'Issue 1' }),
-          createMockIssue({ title: 'Issue 2' })
+          createMockIssue({ title: 'Issue 2' }),
         ];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -336,7 +340,7 @@ describe('TeamAPI - Complete Test Suite', () => {
 
         expect(mockIssueService.list).toHaveBeenCalledWith(
           { teamId: 'team-123', state: { type: { neq: 'completed' } } },
-          { first: 100 }
+          { first: 100 },
         );
         expect(result).toEqual(mockIssues);
       });
@@ -349,10 +353,7 @@ describe('TeamAPI - Complete Test Suite', () => {
 
         const result = await teamAPI.getIssues('ENG', { includeCompleted: true, first: 50 });
 
-        expect(mockIssueService.list).toHaveBeenCalledWith(
-          { teamId: 'team-123' },
-          { first: 50 }
-        );
+        expect(mockIssueService.list).toHaveBeenCalledWith({ teamId: 'team-123' }, { first: 50 });
         expect(result).toEqual(mockIssues);
       });
     });
@@ -364,32 +365,32 @@ describe('TeamAPI - Complete Test Suite', () => {
         const mockTeam = createMockTeam({ id: 'team-123', key: 'ENG', name: 'Engineering' });
         const mockMembers = [
           createMockUser({ id: 'user-1', name: 'User 1' }),
-          createMockUser({ id: 'user-2', name: 'User 2' })
+          createMockUser({ id: 'user-2', name: 'User 2' }),
         ];
         const mockIssues = [
-          createMockIssue({ 
+          createMockIssue({
             assignee: { id: 'user-1' } as any,
             state: { type: 'completed' } as any,
             priority: 1,
-            labels: { nodes: [{ name: 'bug' }, { name: 'urgent' }] } as any
+            labels: { nodes: [{ name: 'bug' }, { name: 'urgent' }] } as any,
           }),
-          createMockIssue({ 
+          createMockIssue({
             assignee: { id: 'user-1' } as any,
             state: { type: 'started' } as any,
             priority: 2,
-            labels: { nodes: [{ name: 'feature' }] } as any
+            labels: { nodes: [{ name: 'feature' }] } as any,
           }),
-          createMockIssue({ 
+          createMockIssue({
             assignee: { id: 'user-2' } as any,
             state: { type: 'started' } as any,
             priority: 1,
-            labels: { nodes: [{ name: 'bug' }] } as any
+            labels: { nodes: [{ name: 'bug' }] } as any,
           }),
-          createMockIssue({ 
+          createMockIssue({
             assignee: { id: 'user-2' } as any,
             state: { type: 'unstarted' } as any,
-            priority: 3
-          })
+            priority: 3,
+          }),
         ];
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -402,25 +403,25 @@ describe('TeamAPI - Complete Test Suite', () => {
         expect(result.teamId).toBe('team-123');
         expect(result.teamKey).toBe('ENG');
         expect(result.teamName).toBe('Engineering');
-        
+
         // Metrics
         expect(result.metrics.totalIssues).toBe(4);
         expect(result.metrics.completedIssues).toBe(1);
         expect(result.metrics.inProgressIssues).toBe(2);
         expect(result.metrics.openIssues).toBe(3);
-        
+
         // Member stats
         expect(result.memberStats).toHaveLength(2);
         expect(result.memberStats[0].assignedIssues).toBe(2);
         expect(result.memberStats[0].completedIssues).toBe(1);
         expect(result.memberStats[1].assignedIssues).toBe(2);
         expect(result.memberStats[1].completedIssues).toBe(0);
-        
+
         // Label distribution
         expect(result.labelDistribution.get('bug')).toBe(2);
         expect(result.labelDistribution.get('feature')).toBe(1);
         expect(result.labelDistribution.get('urgent')).toBe(1);
-        
+
         // Priority distribution
         expect(result.priorityDistribution.get(1)).toBe(2);
         expect(result.priorityDistribution.get(2)).toBe(1);
@@ -446,8 +447,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should throw error if team not found', async () => {
         mockTeamService.resolveTeamId.mockResolvedValue(null);
 
-        await expect(teamAPI.getAnalytics('INVALID'))
-          .rejects.toThrow('Team not found: INVALID');
+        await expect(teamAPI.getAnalytics('INVALID')).rejects.toThrow('Team not found: INVALID');
       });
     });
 
@@ -456,18 +456,24 @@ describe('TeamAPI - Complete Test Suite', () => {
         const mockCycles = [
           createMockCycle({ id: 'cycle-1' }),
           createMockCycle({ id: 'cycle-2' }),
-          createMockCycle({ id: 'cycle-3' })
+          createMockCycle({ id: 'cycle-3' }),
         ];
 
         // Mock different completed issue counts for each cycle
         mockCycles[0].issues = jest.fn().mockResolvedValue({
-          nodes: [createMockIssue(), createMockIssue(), createMockIssue()]
+          nodes: [createMockIssue(), createMockIssue(), createMockIssue()],
         });
         mockCycles[1].issues = jest.fn().mockResolvedValue({
-          nodes: [createMockIssue(), createMockIssue(), createMockIssue(), createMockIssue(), createMockIssue()]
+          nodes: [
+            createMockIssue(),
+            createMockIssue(),
+            createMockIssue(),
+            createMockIssue(),
+            createMockIssue(),
+          ],
         });
         mockCycles[2].issues = jest.fn().mockResolvedValue({
-          nodes: [createMockIssue(), createMockIssue(), createMockIssue(), createMockIssue()]
+          nodes: [createMockIssue(), createMockIssue(), createMockIssue(), createMockIssue()],
         });
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
@@ -476,8 +482,8 @@ describe('TeamAPI - Complete Test Suite', () => {
         const result = await teamAPI.getVelocity('ENG', 3);
 
         expect(result).toEqual([3, 5, 4]);
-        expect(mockCycles[0].issues).toHaveBeenCalledWith({ 
-          filter: { state: { type: { eq: 'completed' } } } 
+        expect(mockCycles[0].issues).toHaveBeenCalledWith({
+          filter: { state: { type: { eq: 'completed' } } },
         });
       });
 
@@ -491,11 +497,13 @@ describe('TeamAPI - Complete Test Suite', () => {
       });
 
       it('should use default cycle count', async () => {
-        const mockCycles = Array(5).fill(null).map(() => {
-          const cycle = createMockCycle();
-          cycle.issues = jest.fn().mockResolvedValue({ nodes: [] });
-          return cycle;
-        });
+        const mockCycles = Array(5)
+          .fill(null)
+          .map(() => {
+            const cycle = createMockCycle();
+            cycle.issues = jest.fn().mockResolvedValue({ nodes: [] });
+            return cycle;
+          });
 
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
         mockTeamService.getCycles.mockResolvedValue(createMockConnection(mockCycles));
@@ -522,8 +530,8 @@ describe('TeamAPI - Complete Test Suite', () => {
             cyclesEnabled: true,
             cycleDuration: 14,
             cycleStartDay: 1,
-            triageEnabled: true
-          })
+            triageEnabled: true,
+          }),
         );
         expect(result).toEqual(mockTeam);
       });
@@ -539,8 +547,8 @@ describe('TeamAPI - Complete Test Suite', () => {
             key: 'SUP',
             name: 'Support',
             cyclesEnabled: false,
-            triageEnabled: true
-          })
+            triageEnabled: true,
+          }),
         );
         expect(result).toEqual(mockTeam);
       });
@@ -552,7 +560,7 @@ describe('TeamAPI - Complete Test Suite', () => {
         const result = await teamAPI.applyTemplate('engineering', {
           key: 'CUSTOM',
           name: 'Custom Team',
-          cycleDuration: 7
+          cycleDuration: 7,
         });
 
         expect(mockTeamService.create).toHaveBeenCalledWith(
@@ -560,22 +568,22 @@ describe('TeamAPI - Complete Test Suite', () => {
             key: 'CUSTOM',
             name: 'Custom Team',
             cycleDuration: 7,
-            cyclesEnabled: true
-          })
+            cyclesEnabled: true,
+          }),
         );
         expect(result).toEqual(mockTeam);
       });
 
       it('should throw error for invalid template', async () => {
-        await expect(teamAPI.applyTemplate('invalid'))
-          .rejects.toThrow("Template 'invalid' not found. Available: engineering, support");
+        await expect(teamAPI.applyTemplate('invalid')).rejects.toThrow(
+          "Template 'invalid' not found. Available: engineering, support",
+        );
       });
 
       it('should handle template application errors', async () => {
         mockTeamService.create.mockRejectedValue(new Error('Failed to create team'));
 
-        await expect(teamAPI.applyTemplate('engineering'))
-          .rejects.toThrow('Failed to create team');
+        await expect(teamAPI.applyTemplate('engineering')).rejects.toThrow('Failed to create team');
       });
     });
 
@@ -584,8 +592,8 @@ describe('TeamAPI - Complete Test Suite', () => {
         const templates = TeamAPI.getAvailableTemplates();
 
         expect(templates).toHaveLength(2);
-        expect(templates.map(t => t.name)).toEqual(['engineering', 'support']);
-        templates.forEach(template => {
+        expect(templates.map((t) => t.name)).toEqual(['engineering', 'support']);
+        templates.forEach((template) => {
           expect(template).toHaveProperty('name');
           expect(template).toHaveProperty('template');
           expect(template.template).toHaveProperty('name');
@@ -602,9 +610,9 @@ describe('TeamAPI - Complete Test Suite', () => {
         const teamInputs = [
           { key: 'ENG', name: 'Engineering' },
           { key: 'PROD', name: 'Product' },
-          { key: 'QA', name: 'Quality Assurance' }
+          { key: 'QA', name: 'Quality Assurance' },
         ];
-        const mockTeams = teamInputs.map(input => createMockTeam(input));
+        const mockTeams = teamInputs.map((input) => createMockTeam(input));
 
         mockTeamService.create
           .mockResolvedValueOnce(mockTeams[0])
@@ -624,7 +632,7 @@ describe('TeamAPI - Complete Test Suite', () => {
         const teamInputs = [
           { key: 'ENG', name: 'Engineering' },
           { key: 'PROD', name: 'Product' },
-          { key: 'QA', name: 'Quality Assurance' }
+          { key: 'QA', name: 'Quality Assurance' },
         ];
 
         mockTeamService.create
@@ -660,9 +668,9 @@ describe('TeamAPI - Complete Test Suite', () => {
         const updates = [
           { id: 'team-1', data: { name: 'Updated Team 1' } },
           { id: 'team-2', data: { name: 'Updated Team 2' } },
-          { id: 'team-3', data: { cycleDuration: 7 } }
+          { id: 'team-3', data: { cycleDuration: 7 } },
         ];
-        const mockTeams = updates.map(u => createMockTeam(u.data));
+        const mockTeams = updates.map((u) => createMockTeam(u.data));
 
         mockTeamService.update
           .mockResolvedValueOnce(mockTeams[0])
@@ -680,7 +688,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should handle partial failures in bulk update', async () => {
         const updates = [
           { id: 'team-1', data: { name: 'Updated Team 1' } },
-          { id: 'team-2', data: { name: 'Updated Team 2' } }
+          { id: 'team-2', data: { name: 'Updated Team 2' } },
         ];
 
         mockTeamService.update
@@ -699,22 +707,22 @@ describe('TeamAPI - Complete Test Suite', () => {
   describe('Utility Operations', () => {
     describe('cloneTeam', () => {
       it('should clone a team configuration', async () => {
-        const sourceTeam = createMockTeam({ 
+        const sourceTeam = createMockTeam({
           key: 'ENG',
           name: 'Engineering',
           cyclesEnabled: true,
           cycleDuration: 14,
           cycleStartDay: 1,
-          triageEnabled: true
+          triageEnabled: true,
         });
         const newTeam = createMockTeam({ key: 'ENG2', name: 'Engineering 2' });
 
         mockTeamService.getByKey.mockResolvedValue(sourceTeam);
         mockTeamService.create.mockResolvedValue(newTeam);
 
-        const result = await teamAPI.cloneTeam('ENG', { 
-          key: 'ENG2', 
-          name: 'Engineering 2' 
+        const result = await teamAPI.cloneTeam('ENG', {
+          key: 'ENG2',
+          name: 'Engineering 2',
         });
 
         expect(mockTeamService.create).toHaveBeenCalledWith(
@@ -724,8 +732,8 @@ describe('TeamAPI - Complete Test Suite', () => {
             cyclesEnabled: true,
             cycleDuration: 14,
             cycleStartDay: 1,
-            triageEnabled: true
-          })
+            triageEnabled: true,
+          }),
         );
         expect(result).toEqual(newTeam);
       });
@@ -733,8 +741,9 @@ describe('TeamAPI - Complete Test Suite', () => {
       it('should throw error if source team not found', async () => {
         mockTeamService.getByKey.mockResolvedValue(null);
 
-        await expect(teamAPI.cloneTeam('INVALID', { key: 'NEW', name: 'New' }))
-          .rejects.toThrow('Source team not found: INVALID');
+        await expect(teamAPI.cloneTeam('INVALID', { key: 'NEW', name: 'New' })).rejects.toThrow(
+          'Source team not found: INVALID',
+        );
       });
 
       it('should handle clone errors', async () => {
@@ -742,16 +751,17 @@ describe('TeamAPI - Complete Test Suite', () => {
         mockTeamService.getByKey.mockResolvedValue(sourceTeam);
         mockTeamService.create.mockRejectedValue(new Error('Clone failed'));
 
-        await expect(teamAPI.cloneTeam('ENG', { key: 'NEW', name: 'New' }))
-          .rejects.toThrow('Clone failed');
+        await expect(teamAPI.cloneTeam('ENG', { key: 'NEW', name: 'New' })).rejects.toThrow(
+          'Clone failed',
+        );
       });
     });
 
     describe('validateTeamKey', () => {
       it('should validate valid team keys', () => {
         const validKeys = ['ENG', 'PROD', 'QA', 'A1', 'ABC12'];
-        
-        validKeys.forEach(key => {
+
+        validKeys.forEach((key) => {
           const result = TeamAPI.validateTeamKey(key);
           expect(result.valid).toBe(true);
           expect(result.errors).toHaveLength(0);
@@ -760,35 +770,35 @@ describe('TeamAPI - Complete Test Suite', () => {
 
       it('should reject empty team key', () => {
         const result = TeamAPI.validateTeamKey('');
-        
+
         expect(result.valid).toBe(false);
         expect(result.errors).toContain('Team key cannot be empty');
       });
 
       it('should reject team key that is too long', () => {
         const result = TeamAPI.validateTeamKey('TOOLONG');
-        
+
         expect(result.valid).toBe(false);
         expect(result.errors).toContain('Team key cannot exceed 5 characters');
       });
 
       it('should reject team key with lowercase letters', () => {
         const result = TeamAPI.validateTeamKey('eng');
-        
+
         expect(result.valid).toBe(false);
         expect(result.errors).toContain('Team key must contain only uppercase letters and numbers');
       });
 
       it('should reject team key with special characters', () => {
         const result = TeamAPI.validateTeamKey('E-NG');
-        
+
         expect(result.valid).toBe(false);
         expect(result.errors).toContain('Team key must contain only uppercase letters and numbers');
       });
 
       it('should provide multiple error messages', () => {
         const result = TeamAPI.validateTeamKey('too-long');
-        
+
         expect(result.valid).toBe(false);
         expect(result.errors.length).toBeGreaterThan(1);
       });
@@ -799,7 +809,7 @@ describe('TeamAPI - Complete Test Suite', () => {
         const mockTeams = [
           createMockTeam({ key: 'ENG', name: 'Engineering' }),
           createMockTeam({ key: 'PROD', name: 'Product' }),
-          createMockTeam({ key: 'SUP', name: 'Support' })
+          createMockTeam({ key: 'SUP', name: 'Support' }),
         ];
 
         mockTeamService.list.mockResolvedValue(createMockConnection(mockTeams));
@@ -814,7 +824,7 @@ describe('TeamAPI - Complete Test Suite', () => {
         const mockTeams = [
           createMockTeam({ key: 'ENG', name: 'Engineering' }),
           createMockTeam({ key: 'PROD', name: 'Product' }),
-          createMockTeam({ key: 'SUP', name: 'Support' })
+          createMockTeam({ key: 'SUP', name: 'Support' }),
         ];
 
         mockTeamService.list.mockResolvedValue(createMockConnection(mockTeams));
@@ -829,7 +839,7 @@ describe('TeamAPI - Complete Test Suite', () => {
         const mockTeams = [
           createMockTeam({ key: 'ENG', name: 'Engineering' }),
           createMockTeam({ key: 'SENG', name: 'Senior Engineering' }),
-          createMockTeam({ key: 'PROD', name: 'Product Engineering' })
+          createMockTeam({ key: 'PROD', name: 'Product Engineering' }),
         ];
 
         mockTeamService.list.mockResolvedValue(createMockConnection(mockTeams));
@@ -840,9 +850,7 @@ describe('TeamAPI - Complete Test Suite', () => {
       });
 
       it('should return empty array for no matches', async () => {
-        const mockTeams = [
-          createMockTeam({ key: 'ENG', name: 'Engineering' })
-        ];
+        const mockTeams = [createMockTeam({ key: 'ENG', name: 'Engineering' })];
 
         mockTeamService.list.mockResolvedValue(createMockConnection(mockTeams));
 
@@ -871,8 +879,7 @@ describe('TeamAPI - Complete Test Suite', () => {
         mockTeamService.resolveTeamId.mockResolvedValue('team-123');
         mockTeamService.get.mockResolvedValue(null);
 
-        await expect(teamAPI.getAnalytics('ENG'))
-          .rejects.toThrow('Team not found: ENG');
+        await expect(teamAPI.getAnalytics('ENG')).rejects.toThrow('Team not found: ENG');
       });
     });
 
@@ -888,7 +895,7 @@ describe('TeamAPI - Complete Test Suite', () => {
           () => teamAPI.getLabels('INVALID'),
           () => teamAPI.getIssues('INVALID'),
           () => teamAPI.getAnalytics('INVALID'),
-          () => teamAPI.getVelocity('INVALID')
+          () => teamAPI.getVelocity('INVALID'),
         ];
 
         for (const operation of operations) {

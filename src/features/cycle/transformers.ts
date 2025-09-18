@@ -10,10 +10,7 @@ export const CycleTransformers = {
    * Transform Linear SDK Cycle to API response
    */
   toResponse: async (cycle: Cycle) => {
-    const [team, issues] = await Promise.all([
-      cycle.team,
-      cycle.issues(),
-    ]);
+    const [team, issues] = await Promise.all([cycle.team, cycle.issues()]);
 
     return {
       id: cycle.id,
@@ -26,14 +23,17 @@ export const CycleTransformers = {
       createdAt: cycle.createdAt,
       updatedAt: cycle.updatedAt,
       issueCount: issues?.nodes?.length || 0,
-      completedIssueCount: cycle.completedIssueCountHistory?.[cycle.completedIssueCountHistory.length - 1] || 0,
+      completedIssueCount:
+        cycle.completedIssueCountHistory?.[cycle.completedIssueCountHistory.length - 1] || 0,
       scopeHistory: cycle.scopeHistory,
       completedScopeHistory: cycle.completedScopeHistory,
-      team: team ? {
-        id: team.id,
-        key: team.key,
-        name: team.name,
-      } : null,
+      team: team
+        ? {
+            id: team.id,
+            key: team.key,
+            name: team.name,
+          }
+        : null,
     };
   },
 
@@ -94,7 +94,8 @@ export const CycleTransformers = {
       status: CycleTransformers.getStatus(cycle),
       progress: await CycleTransformers.getProgress(cycle),
       issueCount: issues?.nodes?.length || 0,
-      completedCount: cycle.completedIssueCountHistory?.[cycle.completedIssueCountHistory.length - 1] || 0,
+      completedCount:
+        cycle.completedIssueCountHistory?.[cycle.completedIssueCountHistory.length - 1] || 0,
     };
   },
 
@@ -133,10 +134,16 @@ export const CycleTransformers = {
     const now = new Date();
     const start = new Date(cycle.startsAt);
     const end = new Date(cycle.endsAt);
-    
-    if (cycle.completedAt) return 'completed';
-    if (now < start) return 'upcoming';
-    if (now > end) return 'completed';
+
+    if (cycle.completedAt) {
+      return 'completed';
+    }
+    if (now < start) {
+      return 'upcoming';
+    }
+    if (now > end) {
+      return 'completed';
+    }
     return 'active';
   },
 
@@ -146,9 +153,12 @@ export const CycleTransformers = {
   getProgress: async (cycle: Cycle): Promise<number> => {
     const issues = await cycle.issues();
     const total = issues?.nodes?.length || 0;
-    if (total === 0) return 0;
+    if (total === 0) {
+      return 0;
+    }
 
-    const completed = cycle.completedIssueCountHistory?.[cycle.completedIssueCountHistory.length - 1] || 0;
+    const completed =
+      cycle.completedIssueCountHistory?.[cycle.completedIssueCountHistory.length - 1] || 0;
     return Math.round((completed / total) * 100);
   },
 } as const;

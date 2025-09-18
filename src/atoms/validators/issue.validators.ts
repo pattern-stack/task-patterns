@@ -1,4 +1,4 @@
-import type { Issue, User } from '@linear/sdk';
+import type { Issue } from '@linear/sdk';
 
 /**
  * Issue validation functions
@@ -59,18 +59,19 @@ export const IssueValidators = {
   isBlocked: (issue: Issue): boolean => {
     // Check for blocking issues or blocked label
     const labels = (issue.labels as any)?.nodes || [];
-    return labels.some((label: any) => 
-      label.name?.toLowerCase().includes('blocked')
-    ) || false;
+    return labels.some((label: any) => label.name?.toLowerCase().includes('blocked')) || false;
   },
 
   /**
    * Validate parent-child relationship
    */
   canBeChild: async (issue: Issue, parentId: string): Promise<boolean> => {
-    // Prevent circular dependencies
+    // Prevent circular dependencies and redundant assignment
+    if (issue.id === parentId) {
+      return false; // Can't be parent of itself
+    }
     const parent = await issue.parent;
-    return issue.id !== parentId && parent?.id !== parentId;
+    return parent?.id !== parentId; // Allow if no parent or different parent
   },
 
   /**

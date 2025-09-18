@@ -1,15 +1,26 @@
 {
-  "name": "task-pattern",
-  "version": "1.0.0",
-  "description": "Task management patterns for AI-assisted development (pattern-stack)",
+  "name": "@pattern-stack/task-patterns",
+  "version": "0.1.0",
+  "description": "Lightning-fast task management for AI-human collaborative development",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
-    "task-pattern": "./bin/tp.js",
-    "tp": "./bin/tp.js",
-    "pattern": "./bin/tp.js"
+    "tp": "./dist/cli.js"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
+    "prebuild": "rm -rf dist",
     "build": "tsc",
+    "prepublishOnly": "npm run verify && npm run build",
+    "postpublish": "echo 'Successfully published @dugsnodes/task-patterns'",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "cli": "tsx src/organisms/cli/index.ts",
@@ -26,14 +37,29 @@
     "typecheck": "tsc --noEmit",
     "verify": "npm run typecheck && npm run lint && npm run test"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DougsHub/task-patterns.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DougsHub/task-patterns/issues"
+  },
+  "homepage": "https://github.com/DougsHub/task-patterns#readme",
   "keywords": [
+    "task-management",
     "linear",
+    "cli",
+    "productivity",
+    "ai-collaboration",
     "graphql",
-    "api",
-    "agent"
+    "api"
   ],
-  "author": "",
+  "author": "Dug McFarlane <dug.mcfarlane@icloud.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
   "dependencies": {
     "@linear/sdk": "^28.0.0",
     "chalk": "^4.1.2",
@@ -55,11 +81,5 @@
     "ts-jest": "^29.2.2",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"
-  },
-  "tp": {
-    "teamFilter": [
-      "TASK"
-    ],
-    "workspaceId": "optional_workspace_id"
   }
 }

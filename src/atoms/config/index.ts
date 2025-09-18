@@ -9,10 +9,10 @@
 
 export { projectDiscovery, type ProjectRoot } from './project-discovery';
 export { localConfigManager, type LocalConfig, LocalConfigManager } from './local-config';
-export { 
-  hierarchicalConfig, 
-  type MergedConfig, 
+export {
+  hierarchicalConfig,
+  type MergedConfig,
   type ConfigSource,
-  HierarchicalConfigManager 
+  HierarchicalConfigManager,
 } from './hierarchical-config';
 export { enhancedConfig, EnhancedConfigManager } from './enhanced-config';

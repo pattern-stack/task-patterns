@@ -27,7 +27,9 @@ import {
 } from './schemas';
 import type { DataService } from '@atoms/contracts/service.contracts';
 
-export class WorkflowStateService implements DataService<WorkflowState, never, WorkflowStateUpdate> {
+export class WorkflowStateService
+  implements DataService<WorkflowState, never, WorkflowStateUpdate>
+{
   constructor(private readonly client: LinearClient) {}
 
   /**
@@ -489,14 +491,16 @@ export class WorkflowStateService implements DataService<WorkflowState, never, W
    * Workflow states cannot be created via API in most cases - throw error
    * Note: Linear manages workflow states internally per team
    */
-  async create(): Promise<never> {
-    throw new ValidationError('Workflow states cannot be created via the Linear API. They are managed by Linear per team.');
+  create(): Promise<never> {
+    throw new ValidationError(
+      'Workflow states cannot be created via the Linear API. They are managed by Linear per team.',
+    );
   }
 
   /**
    * Workflow states cannot be deleted via API - throw error
    */
-  async delete(id: string): Promise<never> {
+  delete(id: string): Promise<never> {
     throw new ValidationError(`Workflow state ${id} cannot be deleted via the Linear API`);
   }
 }

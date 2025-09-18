@@ -33,30 +33,40 @@ export const IssueTransformers = {
       startedAt: issue.startedAt,
       dueDate: issue.dueDate,
       sortOrder: issue.sortOrder,
-      assignee: assignee ? {
-        id: assignee.id,
-        name: assignee.name,
-        email: assignee.email,
-      } : null,
-      state: state ? {
-        id: state.id,
-        name: state.name,
-        type: state.type,
-      } : null,
-      team: team ? {
-        id: team.id,
-        name: team.name,
-        key: team.key,
-      } : null,
-      project: project ? {
-        id: project.id,
-        name: project.name,
-      } : null,
-      cycle: cycle ? {
-        id: cycle.id,
-        name: cycle.name,
-        number: cycle.number,
-      } : null,
+      assignee: assignee
+        ? {
+            id: assignee.id,
+            name: assignee.name,
+            email: assignee.email,
+          }
+        : null,
+      state: state
+        ? {
+            id: state.id,
+            name: state.name,
+            type: state.type,
+          }
+        : null,
+      team: team
+        ? {
+            id: team.id,
+            name: team.name,
+            key: team.key,
+          }
+        : null,
+      project: project
+        ? {
+            id: project.id,
+            name: project.name,
+          }
+        : null,
+      cycle: cycle
+        ? {
+            id: cycle.id,
+            name: cycle.name,
+            number: cycle.number,
+          }
+        : null,
       labels: [],
       comments: [],
     };
@@ -145,7 +155,7 @@ export const IssueTransformers = {
       priority: issue.priority,
       state: state?.name || 'Unknown',
       assignee: assignee?.name || 'Unassigned',
-      labels: labels?.nodes?.map(l => l.name).join(', ') || '',
+      labels: labels?.nodes?.map((l) => l.name).join(', ') || '',
       estimate: issue.estimate,
       dueDate: issue.dueDate,
     };
@@ -161,9 +171,7 @@ export const IssueTransformers = {
       description: issue.description?.substring(0, 200),
       priority: issue.priority,
       state: state?.name,
-      matchContext: issue.description?.includes(searchQuery)
-        ? 'description'
-        : 'title',
+      matchContext: issue.description?.includes(searchQuery) ? 'description' : 'title',
     };
   },
 } as const;

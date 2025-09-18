@@ -10,10 +10,7 @@ export const TeamTransformers = {
    * Transform Linear SDK Team to API response
    */
   toResponse: async (team: Team) => {
-    const [issues, members] = await Promise.all([
-      team.issues(),
-      team.members(),
-    ]);
+    const [issues, members] = await Promise.all([team.issues(), team.members()]);
 
     return {
       id: team.id,
@@ -93,15 +90,13 @@ export const TeamTransformers = {
    * Transform for list display
    */
   toListItem: async (team: Team) => {
-    const [members, issues] = await Promise.all([
-      team.members(),
-      team.issues(),
-    ]);
+    const [members, issues] = await Promise.all([team.members(), team.issues()]);
 
-    const activeIssuesPromises = issues?.nodes?.map(async (i: any) => {
-      const state = await i.state;
-      return state?.type !== 'completed' && state?.type !== 'canceled';
-    }) || [];
+    const activeIssuesPromises =
+      issues?.nodes?.map(async (i: any) => {
+        const state = await i.state;
+        return state?.type !== 'completed' && state?.type !== 'canceled';
+      }) || [];
 
     const activeIssuesResults = await Promise.all(activeIssuesPromises);
     const activeIssuesCount = activeIssuesResults.filter(Boolean).length;

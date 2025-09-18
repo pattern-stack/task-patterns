@@ -12,7 +12,7 @@ describe('ProjectDiscovery', () => {
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tp-test-'));
     nestedDir = path.join(tempDir, 'nested', 'deeply');
     fs.mkdirSync(nestedDir, { recursive: true });
-    
+
     // Clear cache before each test
     projectDiscovery.clearCache();
   });
@@ -28,68 +28,68 @@ describe('ProjectDiscovery', () => {
         name: 'test-project',
         tp: {
           defaultTeam: 'TEST',
-          teamFilter: ['TEST', 'DEV']
-        }
+          teamFilter: ['TEST', 'DEV'],
+        },
       };
-      
+
       const packagePath = path.join(tempDir, 'package.json');
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
 
       const result = projectDiscovery.findProjectRoot(nestedDir);
-      
+
       expect(result).toEqual({
         path: tempDir,
         configType: 'package.json',
-        configPath: packagePath
+        configPath: packagePath,
       });
     });
 
     it('should find .tp-config.json file', () => {
       const tpConfig = {
         defaultTeam: 'MOBILE',
-        teamFilter: ['MOBILE', 'API']
+        teamFilter: ['MOBILE', 'API'],
       };
-      
+
       const configPath = path.join(tempDir, '.tp-config.json');
       fs.writeFileSync(configPath, JSON.stringify(tpConfig, null, 2));
 
       const result = projectDiscovery.findProjectRoot(nestedDir);
-      
+
       expect(result).toEqual({
         path: tempDir,
         configType: '.tp-config.json',
-        configPath: configPath
+        configPath: configPath,
       });
     });
 
     it('should prefer package.json over .tp-config.json', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'PACKAGE' }
+        tp: { defaultTeam: 'PACKAGE' },
       };
       const tpConfig = { defaultTeam: 'CONFIG' };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
       fs.writeFileSync(path.join(tempDir, '.tp-config.json'), JSON.stringify(tpConfig, null, 2));
 
       const result = projectDiscovery.findProjectRoot(nestedDir);
-      
-      expect(result?.configType).toBe('package.json');
+
+      expect(result?.configPath).toContain('package.json');
     });
 
     it('should ignore package.json without tp section', () => {
       const packageJson = {
         name: 'test-project',
-        dependencies: {}
+        dependencies: {},
       };
       const tpConfig = { defaultTeam: 'CONFIG' };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
       fs.writeFileSync(path.join(tempDir, '.tp-config.json'), JSON.stringify(tpConfig, null, 2));
 
       const result = projectDiscovery.findProjectRoot(nestedDir);
-      
-      expect(result?.configType).toBe('.tp-config.json');
+
+      expect(result?.configPath).toContain('.tp-config.json');
     });
 
     it('should return null if no config found', () => {
@@ -108,35 +108,35 @@ describe('ProjectDiscovery', () => {
     it('should walk up directory tree', () => {
       const packageJson = {
         name: 'root-project',
-        tp: { defaultTeam: 'ROOT' }
+        tp: { defaultTeam: 'ROOT' },
       };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       // Search from deeply nested directory
       const result = projectDiscovery.findProjectRoot(nestedDir);
-      
+
       expect(result?.path).toBe(tempDir);
     });
 
     it('should use cache for repeated calls', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'TEST' }
+        tp: { defaultTeam: 'TEST' },
       };
-      
+
       const packagePath = path.join(tempDir, 'package.json');
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
 
       // First call
       const result1 = projectDiscovery.findProjectRoot(nestedDir);
-      
+
       // Remove file to test cache
       fs.unlinkSync(packagePath);
-      
+
       // Second call should return cached result
       const result2 = projectDiscovery.findProjectRoot(nestedDir);
-      
+
       expect(result1).toEqual(result2);
       expect(result2).not.toBeNull();
     });
@@ -146,9 +146,9 @@ describe('ProjectDiscovery', () => {
     it('should return true when config exists', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'TEST' }
+        tp: { defaultTeam: 'TEST' },
       };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       expect(projectDiscovery.hasProjectConfig(nestedDir)).toBe(true);
@@ -163,9 +163,9 @@ describe('ProjectDiscovery', () => {
     it('should return project root path when found', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'TEST' }
+        tp: { defaultTeam: 'TEST' },
       };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       expect(projectDiscovery.getProjectRootPath(nestedDir)).toBe(tempDir);
@@ -180,19 +180,19 @@ describe('ProjectDiscovery', () => {
     it('should clear the cache', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'TEST' }
+        tp: { defaultTeam: 'TEST' },
       };
-      
+
       const packagePath = path.join(tempDir, 'package.json');
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
 
       // First call to populate cache
       projectDiscovery.findProjectRoot(nestedDir);
-      
+
       // Remove file and clear cache
       fs.unlinkSync(packagePath);
       projectDiscovery.clearCache();
-      
+
       // Should return null now
       const result = projectDiscovery.findProjectRoot(nestedDir);
       expect(result).toBeNull();

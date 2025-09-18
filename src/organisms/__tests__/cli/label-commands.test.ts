@@ -23,7 +23,7 @@ describe('Label CLI Commands', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Setup mock client
     mockClient = {};
     (linearClient.getClient as jest.Mock).mockReturnValue(mockClient);
@@ -39,9 +39,9 @@ describe('Label CLI Commands', () => {
       applyTemplate: jest.fn(),
       bulkCreate: jest.fn(),
     } as any;
-    
+
     (LabelAPI as jest.MockedClass<typeof LabelAPI>).mockImplementation(() => mockLabelAPI);
-    
+
     // Mock static methods
     (LabelAPI.getAvailableTemplates as jest.Mock) = jest.fn().mockReturnValue([
       {
@@ -83,9 +83,7 @@ describe('Label CLI Commands', () => {
     });
 
     it('should list labels by team', async () => {
-      const mockLabels = [
-        { id: '1', name: 'type:bug', color: '#ff0000' },
-      ];
+      const mockLabels = [{ id: '1', name: 'type:bug', color: '#ff0000' }];
 
       mockLabelAPI.listByTeam.mockResolvedValue(mockLabels as any);
 
@@ -184,7 +182,7 @@ describe('Label CLI Commands', () => {
       expect(mockLabelAPI.applyTemplate).toHaveBeenCalledWith(
         'task-patterns',
         undefined,
-        undefined
+        undefined,
       );
 
       consoleSpy.mockRestore();
@@ -210,11 +208,7 @@ describe('Label CLI Commands', () => {
         'ENG',
       ]);
 
-      expect(mockLabelAPI.applyTemplate).toHaveBeenCalledWith(
-        'task-patterns',
-        'ENG',
-        undefined
-      );
+      expect(mockLabelAPI.applyTemplate).toHaveBeenCalledWith('task-patterns', 'ENG', undefined);
 
       consoleSpy.mockRestore();
     });
@@ -285,13 +279,7 @@ describe('Label CLI Commands', () => {
 
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
-      await labelCommand.parseAsync([
-        'node',
-        'test',
-        'delete',
-        'to-delete',
-        '--confirm',
-      ]);
+      await labelCommand.parseAsync(['node', 'test', 'delete', 'to-delete', '--confirm']);
 
       expect(mockLabelAPI.getByName).toHaveBeenCalledWith('to-delete');
       expect(mockLabelAPI.delete).toHaveBeenCalledWith('123');

@@ -5,6 +5,7 @@ describe('SprintCalculations', () => {
   // Test data generators
   const createIssue = (overrides: Partial<IssueData> = {}): IssueData => ({
     id: 'issue-1',
+    createdAt: new Date('2024-01-01').toISOString(),
     estimate: 5,
     stateType: 'started',
     labels: [],
@@ -14,6 +15,7 @@ describe('SprintCalculations', () => {
 
   const createCompletedIssue = (id: string, estimate = 5): IssueData => ({
     id,
+    createdAt: new Date('2024-01-01').toISOString(),
     estimate,
     stateType: 'completed',
     completedAt: new Date('2024-01-15').toISOString(),
@@ -157,7 +159,7 @@ describe('SprintCalculations', () => {
       ];
 
       const burndown = SprintCalculations.burndown(issues, 10);
-      
+
       expect(burndown).toHaveLength(11); // 10 days + day 0
       expect(burndown[0]).toEqual({ day: 0, remaining: 30 });
       expect(burndown[5]).toEqual({ day: 5, remaining: 15 });
@@ -172,28 +174,26 @@ describe('SprintCalculations', () => {
       ];
 
       const burndown = SprintCalculations.burndown(issues, 5);
-      
+
       expect(burndown[0].remaining).toBe(15);
       expect(burndown[5].remaining).toBe(0);
     });
 
     it('should handle empty issues array', () => {
       const burndown = SprintCalculations.burndown([], 10);
-      
+
       expect(burndown).toHaveLength(11);
-      burndown.forEach(point => {
+      burndown.forEach((point) => {
         expect(point.remaining).toBe(0);
       });
     });
 
     it('should never go negative', () => {
-      const issues: IssueData[] = [
-        createIssue({ estimate: 5 }),
-      ];
+      const issues: IssueData[] = [createIssue({ estimate: 5 })];
 
       const burndown = SprintCalculations.burndown(issues, 3);
-      
-      burndown.forEach(point => {
+
+      burndown.forEach((point) => {
         expect(point.remaining).toBeGreaterThanOrEqual(0);
       });
     });
@@ -203,11 +203,11 @@ describe('SprintCalculations', () => {
     it('should estimate completion date', () => {
       const sprintEndDate = new Date('2024-01-31');
       const result = SprintCalculations.estimateCompletion(20, 5, sprintEndDate);
-      
+
       // Should take 4 days to complete 20 points at 5 points/day
       const expectedDate = new Date();
       expectedDate.setDate(expectedDate.getDate() + 4);
-      
+
       expect(result.estimatedDate.getDate()).toBe(expectedDate.getDate());
     });
 
@@ -215,11 +215,11 @@ describe('SprintCalculations', () => {
       const today = new Date();
       const sprintEndDate = new Date();
       sprintEndDate.setDate(today.getDate() + 10);
-      
+
       // On track scenario
       const onTrack = SprintCalculations.estimateCompletion(20, 5, sprintEndDate);
       expect(onTrack.onTrack).toBe(true);
-      
+
       // Off track scenario
       const offTrack = SprintCalculations.estimateCompletion(100, 5, sprintEndDate);
       expect(offTrack.onTrack).toBe(false);
@@ -228,18 +228,18 @@ describe('SprintCalculations', () => {
     it('should round up days needed', () => {
       const sprintEndDate = new Date('2024-01-31');
       const result = SprintCalculations.estimateCompletion(22, 5, sprintEndDate);
-      
+
       // Should take 5 days (22/5 = 4.4, rounded up to 5)
       const expectedDate = new Date();
       expectedDate.setDate(expectedDate.getDate() + 5);
-      
+
       expect(result.estimatedDate.getDate()).toBe(expectedDate.getDate());
     });
 
     it('should handle zero velocity', () => {
       const sprintEndDate = new Date('2024-01-31');
       const result = SprintCalculations.estimateCompletion(20, 0, sprintEndDate);
-      
+
       // With zero velocity, should estimate Infinity days
       expect(result.estimatedDate.getTime()).toBe(Infinity);
       expect(result.onTrack).toBe(false);
@@ -348,7 +348,7 @@ describe('SprintCalculations', () => {
       ];
 
       const distribution = SprintCalculations.workloadDistribution(issues);
-      
+
       expect(distribution.get('user-1')).toEqual({ count: 2, points: 8 });
       expect(distribution.get('user-2')).toEqual({ count: 2, points: 10 });
       expect(distribution.get('user-3')).toEqual({ count: 1, points: 5 });
@@ -362,7 +362,7 @@ describe('SprintCalculations', () => {
       ];
 
       const distribution = SprintCalculations.workloadDistribution(issues);
-      
+
       expect(distribution.get('unassigned')).toEqual({ count: 2, points: 8 });
       expect(distribution.get('user-1')).toEqual({ count: 1, points: 2 });
     });
@@ -374,7 +374,7 @@ describe('SprintCalculations', () => {
       ];
 
       const distribution = SprintCalculations.workloadDistribution(issues);
-      
+
       expect(distribution.get('user-1')).toEqual({ count: 2, points: 5 });
     });
 

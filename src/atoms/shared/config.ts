@@ -32,7 +32,7 @@ export class ConfigManager {
     if (!this.config.LINEAR_API_KEY && !globalApiKey) {
       console.error('Invalid environment configuration:', {
         formErrors: [],
-        fieldErrors: { LINEAR_API_KEY: [ 'Required' ] }
+        fieldErrors: { LINEAR_API_KEY: ['Required'] },
       });
       process.exit(1);
     }

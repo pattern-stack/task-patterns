@@ -4,10 +4,10 @@ import { projectDiscovery } from './project-discovery';
 
 /**
  * Enhanced Configuration Manager
- * 
+ *
  * Provides a unified interface to the hierarchical configuration system
  * while maintaining backward compatibility with the existing ConfigManager interface.
- * 
+ *
  * This serves as the primary config interface for the CLI system.
  */
 
@@ -43,7 +43,7 @@ export class EnhancedConfigManager {
   /**
    * Backward compatibility methods (match existing ConfigManager interface)
    */
-  
+
   get apiKey(): string {
     return this.getMergedConfig().apiKey;
   }
@@ -87,7 +87,7 @@ export class EnhancedConfigManager {
   updateLocalSetting<K extends keyof LocalConfig>(
     key: K,
     value: LocalConfig[K],
-    workingDir?: string
+    workingDir?: string,
   ): void {
     hierarchicalConfig.updateLocalSetting(key, value, workingDir);
   }
@@ -96,9 +96,7 @@ export class EnhancedConfigManager {
     hierarchicalConfig.updateGlobalSetting(key, value);
   }
 
-  initLocalConfig(
-    config: LocalConfig = {}
-  ): void {
+  initLocalConfig(config: LocalConfig = {}): void {
     hierarchicalConfig.initLocalConfig(config);
   }
 
@@ -115,29 +113,29 @@ export class EnhancedConfigManager {
    */
   showConfig(workingDir?: string): void {
     const { config, sources } = this.getConfigWithSources(workingDir);
-    
+
     console.log('\n==> Configuration Summary:\n');
-    
+
     if (config.defaultTeam) {
       console.log(`  Default Team:     ${config.defaultTeam} (${sources.defaultTeam})`);
     }
-    
+
     if (config.teamFilter && config.teamFilter.length > 0) {
       console.log(`  Team Filter:      ${config.teamFilter.join(', ')} (${sources.teamFilter})`);
     }
-    
+
     if (config.workspaceId) {
       console.log(`  Workspace ID:     ${config.workspaceId} (${sources.workspaceId})`);
     }
-    
+
     if (config.backend) {
       console.log(`  Backend:          ${config.backend} (${sources.backend})`);
     }
-    
+
     console.log(`  API Key:          ${'*'.repeat(20)} (${sources.apiKey})`);
     console.log(`  Log Level:        ${config.logLevel} (${sources.logLevel})`);
     console.log(`  Environment:      ${config.nodeEnv} (${sources.nodeEnv})`);
-    
+
     // Show local config info
     if (hierarchicalConfig.hasLocalConfig(workingDir)) {
       const localPath = projectDiscovery.findProjectRoot(workingDir)?.configPath;

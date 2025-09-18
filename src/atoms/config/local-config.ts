@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { projectDiscovery, ProjectRoot } from './project-discovery';
+import { projectDiscovery } from './project-discovery';
 import { z } from 'zod';
 
 /**
@@ -11,11 +11,13 @@ import { z } from 'zod';
  */
 
 // Schema for local configuration settings (project-specific only)
-const localConfigSchema = z.object({
-  defaultTeam: z.string().optional(),
-  teamFilter: z.array(z.string()).optional(), // renamed from activeTeams for clarity
-  workspaceId: z.string().optional(),
-}).strict();
+const localConfigSchema = z
+  .object({
+    defaultTeam: z.string().optional(),
+    teamFilter: z.array(z.string()).optional(), // renamed from activeTeams for clarity
+    workspaceId: z.string().optional(),
+  })
+  .strict();
 
 export type LocalConfig = z.infer<typeof localConfigSchema>;
 
@@ -37,7 +39,9 @@ export class LocalConfigManager {
    * @param startDir Directory to start search from (defaults to cwd)
    * @returns Local config object or null if not found
    */
-  readLocalConfig(startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()): LocalConfig | null {
+  readLocalConfig(
+    startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd(),
+  ): LocalConfig | null {
     const projectRoot = projectDiscovery.findProjectRoot(startDir);
     if (!projectRoot) {
       return null;
@@ -67,10 +71,7 @@ export class LocalConfigManager {
    * @param config Configuration to write
    * @param projectPath Project root path (defaults to discovered root)
    */
-  writeLocalConfig(
-    config: LocalConfig,
-    projectPath?: string
-  ): void {
+  writeLocalConfig(config: LocalConfig, projectPath?: string): void {
     let targetPath: string;
 
     if (projectPath) {
@@ -105,7 +106,7 @@ export class LocalConfigManager {
       // Clear project discovery cache so it detects the new config
       projectDiscovery.clearCache();
     } catch (error) {
-      throw new Error(`Failed to write local config: ${error}`);
+      throw new Error(`Failed to write local config: ${String(error)}`);
     }
   }
 
@@ -113,9 +114,7 @@ export class LocalConfigManager {
    * Initialize a new local config in current directory
    * @param config Initial configuration
    */
-  initLocalConfig(
-    config: LocalConfig = {}
-  ): void {
+  initLocalConfig(config: LocalConfig = {}): void {
     const currentDir = process.env.TP_ORIGINAL_CWD || process.cwd();
 
     // Check if config already exists
@@ -135,7 +134,7 @@ export class LocalConfigManager {
   updateLocalSetting<K extends keyof LocalConfig>(
     key: K,
     value: LocalConfig[K],
-    startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()
+    startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd(),
   ): void {
     const projectRoot = projectDiscovery.findProjectRoot(startDir);
     if (!projectRoot) {
@@ -144,9 +143,9 @@ export class LocalConfigManager {
 
     const currentConfig = this.readLocalConfig(startDir) || {};
     const updatedConfig = { ...currentConfig, [key]: value };
-    
+
     // Remove undefined values
-    Object.keys(updatedConfig).forEach(k => {
+    Object.keys(updatedConfig).forEach((k) => {
       if (updatedConfig[k as keyof LocalConfig] === undefined) {
         delete updatedConfig[k as keyof LocalConfig];
       }

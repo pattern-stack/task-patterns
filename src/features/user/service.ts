@@ -406,14 +406,14 @@ export class UserService implements DataService<User, never, UserUpdate> {
   /**
    * Users cannot be created via API - throw error
    */
-  async create(): Promise<never> {
+  create(): Promise<never> {
     throw new ValidationError('Users cannot be created via the Linear API');
   }
 
   /**
    * Users cannot be deleted via API - throw error
    */
-  async delete(id: string): Promise<never> {
+  delete(id: string): Promise<never> {
     throw new ValidationError(`User ${id} cannot be deleted via the Linear API`);
   }
 }

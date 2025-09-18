@@ -7,13 +7,16 @@
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 // Email regex pattern - more strict validation
-const EMAIL_REGEX = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+// Does not allow consecutive dots, leading/trailing dots in local or domain parts
+const EMAIL_REGEX =
+  /^[a-zA-Z0-9]+([._+-][a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
 
 // URL regex pattern - handle localhost and more cases
-const URL_REGEX = /^https?:\/\/(localhost(:\d+)?|(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6})\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+const URL_REGEX =
+  /^https?:\/\/(localhost(:\d+)?|(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6})\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
 
-// Linear identifier pattern (e.g., ENG-123) - must be 2-5 uppercase letters followed by dash and numbers
-const LINEAR_IDENTIFIER_REGEX = /^[A-Z]{2,5}-\d+$/;
+// Linear identifier pattern (e.g., ENG-123) - must be 1-5 uppercase letters followed by dash and numbers
+const LINEAR_IDENTIFIER_REGEX = /^[A-Z]{1,5}-\d+$/;
 
 export const CommonValidators = {
   /**

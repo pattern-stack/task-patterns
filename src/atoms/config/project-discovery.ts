@@ -33,7 +33,9 @@ class ProjectDiscovery {
    * @param startDir Directory to start search from (defaults to cwd)
    * @returns ProjectRoot info or null if not found
    */
-  findProjectRoot(startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()): ProjectRoot | null {
+  findProjectRoot(
+    startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd(),
+  ): ProjectRoot | null {
     // Check cache first
     const cacheKey = path.resolve(startDir);
     if (this.cache.has(cacheKey)) {
@@ -65,7 +67,7 @@ class ProjectDiscovery {
           JSON.parse(fs.readFileSync(tpConfigPath, 'utf-8'));
           return {
             path: currentDir,
-            configPath: tpConfigPath
+            configPath: tpConfigPath,
           };
         } catch (error) {
           // Invalid JSON, continue searching
@@ -93,7 +95,9 @@ class ProjectDiscovery {
    * @param startDir Directory to start search from
    * @returns Project root path or null
    */
-  getProjectRootPath(startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd()): string | null {
+  getProjectRootPath(
+    startDir: string = process.env.TP_ORIGINAL_CWD || process.cwd(),
+  ): string | null {
     const root = this.findProjectRoot(startDir);
     return root ? root.path : null;
   }

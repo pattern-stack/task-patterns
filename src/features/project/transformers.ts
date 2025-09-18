@@ -32,16 +32,20 @@ export const ProjectTransformers = {
       progress: project.progress,
       icon: project.icon,
       color: project.color,
-      lead: lead ? {
-        id: lead.id,
-        name: lead.name,
-        email: lead.email,
-      } : null,
-      team: teams?.nodes?.[0] ? {
-        id: teams.nodes[0].id,
-        key: teams.nodes[0].key,
-        name: teams.nodes[0].name,
-      } : null,
+      lead: lead
+        ? {
+            id: lead.id,
+            name: lead.name,
+            email: lead.email,
+          }
+        : null,
+      team: teams?.nodes?.[0]
+        ? {
+            id: teams.nodes[0].id,
+            key: teams.nodes[0].key,
+            name: teams.nodes[0].name,
+          }
+        : null,
       issueCount: issues?.nodes?.length || 0,
     };
   },
@@ -108,10 +112,7 @@ export const ProjectTransformers = {
    * Transform for list display
    */
   toListItem: async (project: Project) => {
-    const [lead, issues] = await Promise.all([
-      project.lead,
-      project.issues(),
-    ]);
+    const [lead, issues] = await Promise.all([project.lead, project.issues()]);
 
     return {
       id: project.id,

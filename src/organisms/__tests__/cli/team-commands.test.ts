@@ -23,7 +23,7 @@ describe('Team CLI Commands', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Setup mock client
     mockClient = {
       teams: jest.fn(),
@@ -44,7 +44,7 @@ describe('Team CLI Commands', () => {
       applyTemplate: jest.fn(),
       search: jest.fn(),
     } as any;
-    
+
     (TeamAPI as jest.MockedClass<typeof TeamAPI>).mockImplementation(() => mockTeamAPI);
 
     // Mock static methods
@@ -62,7 +62,7 @@ describe('Team CLI Commands', () => {
         },
       },
     ]);
-    
+
     (TeamAPI.validateTeamKey as jest.Mock) = jest.fn().mockReturnValue({
       valid: true,
       errors: [],
@@ -172,13 +172,9 @@ describe('Team CLI Commands', () => {
         cyclesEnabled: true,
       };
 
-      const members = [
-        { id: '1', name: 'John Doe', email: 'john@example.com' },
-      ];
+      const members = [{ id: '1', name: 'John Doe', email: 'john@example.com' }];
 
-      const cycles = [
-        { id: 'c1', name: 'Sprint 1', startsAt: '2025-01-01', endsAt: '2025-01-14' },
-      ];
+      const cycles = [{ id: 'c1', name: 'Sprint 1', startsAt: '2025-01-01', endsAt: '2025-01-14' }];
 
       const states = [
         { id: 's1', name: 'Todo', type: 'unstarted' },
@@ -215,11 +211,15 @@ describe('Team CLI Commands', () => {
           completedIssues: 60,
           inProgressIssues: 10,
         },
-        memberStats: [
-          { userId: '1', name: 'John', assignedIssues: 20, completedIssues: 15 },
-        ],
-        labelDistribution: new Map([['bug', 10], ['feature', 20]]),
-        priorityDistribution: new Map([[1, 5], [2, 10]]),
+        memberStats: [{ userId: '1', name: 'John', assignedIssues: 20, completedIssues: 15 }],
+        labelDistribution: new Map([
+          ['bug', 10],
+          ['feature', 20],
+        ]),
+        priorityDistribution: new Map([
+          [1, 5],
+          [2, 10],
+        ]),
       };
 
       const team = { id: '123', key: 'ENG', name: 'Engineering', cyclesEnabled: true };

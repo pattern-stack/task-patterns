@@ -1,0 +1,40 @@
+# Source files
+src/
+bin/
+
+# Development files
+.env
+.env.*
+*.log
+*.tgz
+
+# Test files
+**/__tests__/
+**/*.test.ts
+**/*.spec.ts
+coverage/
+jest.config.js
+
+# Config files
+.eslintrc.json
+.prettierrc.json
+tsconfig.eslint.json
+tsconfig.json
+
+# Documentation
+docs/archive/
+.claude/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Local config (users create their own)
+.tp/
+
+# Build artifacts not needed
+*.tsbuildinfo

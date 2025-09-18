@@ -11,7 +11,7 @@ describe('CommonValidators', () => {
         'A987FBC9-4BED-4078-8F07-9141BA07C9F3', // uppercase
       ];
 
-      validUUIDs.forEach(uuid => {
+      validUUIDs.forEach((uuid) => {
         expect(CommonValidators.isValidUUID(uuid)).toBe(true);
       });
     });
@@ -26,7 +26,7 @@ describe('CommonValidators', () => {
         '550e8400-e29b-51d4-a716-446655440000', // wrong version (5 not 4)
       ];
 
-      invalidUUIDs.forEach(uuid => {
+      invalidUUIDs.forEach((uuid) => {
         expect(CommonValidators.isValidUUID(uuid)).toBe(false);
       });
     });
@@ -43,7 +43,7 @@ describe('CommonValidators', () => {
         'FirstName.LastName@company.com',
       ];
 
-      validEmails.forEach(email => {
+      validEmails.forEach((email) => {
         expect(CommonValidators.isValidEmail(email)).toBe(true);
       });
     });
@@ -62,7 +62,7 @@ describe('CommonValidators', () => {
         'user.@example.com',
       ];
 
-      invalidEmails.forEach(email => {
+      invalidEmails.forEach((email) => {
         expect(CommonValidators.isValidEmail(email)).toBe(false);
       });
     });
@@ -82,7 +82,7 @@ describe('CommonValidators', () => {
         'https://api.example.com/v1/users',
       ];
 
-      validUrls.forEach(url => {
+      validUrls.forEach((url) => {
         expect(CommonValidators.isValidUrl(url)).toBe(true);
       });
     });
@@ -107,7 +107,7 @@ describe('CommonValidators', () => {
         '',
       ];
 
-      invalidUrls.forEach(url => {
+      invalidUrls.forEach((url) => {
         expect(CommonValidators.isValidUrl(url)).toBe(false);
       });
     });
@@ -141,16 +141,9 @@ describe('CommonValidators', () => {
 
   describe('isValidLinearIdentifier', () => {
     it('should validate correct Linear identifier formats', () => {
-      const validIdentifiers = [
-        'ENG-123',
-        'PROJ-1',
-        'BUG-9999',
-        'FEAT-42',
-        'A-1',
-        'ZZZZZ-999999',
-      ];
+      const validIdentifiers = ['ENG-123', 'PROJ-1', 'BUG-9999', 'FEAT-42', 'A-1', 'ZZZZZ-999999'];
 
-      validIdentifiers.forEach(id => {
+      validIdentifiers.forEach((id) => {
         expect(CommonValidators.isValidLinearIdentifier(id)).toBe(true);
       });
     });
@@ -163,13 +156,12 @@ describe('CommonValidators', () => {
         '-123', // no prefix
         'ENG-ABC', // letters instead of numbers
         '123-ENG', // reversed
-        'ENG-0', // zero is technically valid
         '',
         'ENG--123',
         'E NG-123',
       ];
 
-      invalidIdentifiers.forEach(id => {
+      invalidIdentifiers.forEach((id) => {
         expect(CommonValidators.isValidLinearIdentifier(id)).toBe(false);
       });
     });
@@ -237,10 +229,10 @@ describe('CommonValidators', () => {
     it('should validate future dates', () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       const nextYear = new Date();
       nextYear.setFullYear(nextYear.getFullYear() + 1);
-      
+
       expect(CommonValidators.isFutureDate(tomorrow)).toBe(true);
       expect(CommonValidators.isFutureDate(nextYear)).toBe(true);
       expect(CommonValidators.isFutureDate('2099-01-01')).toBe(true);
@@ -249,7 +241,7 @@ describe('CommonValidators', () => {
     it('should reject past and current dates', () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      
+
       expect(CommonValidators.isFutureDate(yesterday)).toBe(false);
       expect(CommonValidators.isFutureDate(new Date())).toBe(false);
       expect(CommonValidators.isFutureDate('2020-01-01')).toBe(false);
@@ -264,10 +256,10 @@ describe('CommonValidators', () => {
     it('should validate past dates', () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      
+
       const lastYear = new Date();
       lastYear.setFullYear(lastYear.getFullYear() - 1);
-      
+
       expect(CommonValidators.isPastDate(yesterday)).toBe(true);
       expect(CommonValidators.isPastDate(lastYear)).toBe(true);
       expect(CommonValidators.isPastDate('2020-01-01')).toBe(true);
@@ -276,7 +268,7 @@ describe('CommonValidators', () => {
     it('should reject future and current dates', () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       expect(CommonValidators.isPastDate(tomorrow)).toBe(false);
       expect(CommonValidators.isPastDate(new Date())).toBe(false);
       expect(CommonValidators.isPastDate('2099-01-01')).toBe(false);
@@ -302,7 +294,7 @@ describe('CommonValidators', () => {
         '#F0F',
       ];
 
-      validColors.forEach(color => {
+      validColors.forEach((color) => {
         expect(CommonValidators.isValidHexColor(color)).toBe(true);
       });
     });
@@ -320,7 +312,7 @@ describe('CommonValidators', () => {
         '##000000',
       ];
 
-      invalidColors.forEach(color => {
+      invalidColors.forEach((color) => {
         expect(CommonValidators.isValidHexColor(color)).toBe(false);
       });
     });
@@ -338,7 +330,7 @@ describe('CommonValidators', () => {
         'multi-word-slug-example',
       ];
 
-      validSlugs.forEach(slug => {
+      validSlugs.forEach((slug) => {
         expect(CommonValidators.isValidSlug(slug)).toBe(true);
       });
     });
@@ -356,7 +348,7 @@ describe('CommonValidators', () => {
         'hello/world',
       ];
 
-      invalidSlugs.forEach(slug => {
+      invalidSlugs.forEach((slug) => {
         expect(CommonValidators.isValidSlug(slug)).toBe(false);
       });
     });
@@ -378,16 +370,9 @@ describe('CommonValidators', () => {
 
   describe('isValidTeamKey', () => {
     it('should validate correct team key formats', () => {
-      const validKeys = [
-        'EN',
-        'ENG',
-        'PROJ',
-        'INFRA',
-        'AB',
-        'ZZZZZ',
-      ];
+      const validKeys = ['EN', 'ENG', 'PROJ', 'INFRA', 'AB', 'ZZZZZ'];
 
-      validKeys.forEach(key => {
+      validKeys.forEach((key) => {
         expect(CommonValidators.isValidTeamKey(key)).toBe(true);
       });
     });
@@ -405,7 +390,7 @@ describe('CommonValidators', () => {
         'A1',
       ];
 
-      invalidKeys.forEach(key => {
+      invalidKeys.forEach((key) => {
         expect(CommonValidators.isValidTeamKey(key)).toBe(false);
       });
     });

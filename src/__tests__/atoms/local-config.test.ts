@@ -13,7 +13,7 @@ describe('LocalConfigManager', () => {
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tp-config-test-'));
     nestedDir = path.join(tempDir, 'nested');
     fs.mkdirSync(nestedDir, { recursive: true });
-    
+
     // Clear caches
     localConfigManager.clearCache();
     projectDiscovery.clearCache();
@@ -31,34 +31,34 @@ describe('LocalConfigManager', () => {
         tp: {
           defaultTeam: 'TEST',
           teamFilter: ['TEST', 'DEV'],
-          workspaceId: 'workspace-123'
-        }
+          workspaceId: 'workspace-123',
+        },
       };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       const config = localConfigManager.readLocalConfig(nestedDir);
-      
+
       expect(config).toEqual({
         defaultTeam: 'TEST',
         teamFilter: ['TEST', 'DEV'],
-        workspaceId: 'workspace-123'
+        workspaceId: 'workspace-123',
       });
     });
 
     it('should read config from .tp-config.json', () => {
       const tpConfig = {
         defaultTeam: 'MOBILE',
-        teamFilter: ['MOBILE', 'API']
+        teamFilter: ['MOBILE', 'API'],
       };
-      
+
       fs.writeFileSync(path.join(tempDir, '.tp-config.json'), JSON.stringify(tpConfig, null, 2));
 
       const config = localConfigManager.readLocalConfig(nestedDir);
-      
+
       expect(config).toEqual({
         defaultTeam: 'MOBILE',
-        teamFilter: ['MOBILE', 'API']
+        teamFilter: ['MOBILE', 'API'],
       });
     });
 
@@ -70,56 +70,62 @@ describe('LocalConfigManager', () => {
     it('should handle empty tp section in package.json', () => {
       const packageJson = {
         name: 'test-project',
-        tp: {}
+        tp: {},
       };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       const config = localConfigManager.readLocalConfig(nestedDir);
-      
+
       expect(config).toEqual({});
     });
 
     it('should validate config schema and warn on invalid config', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-      
+
       const invalidConfig = {
         defaultTeam: 123, // Should be string
         teamFilter: 'not-array', // Should be array
-        invalidKey: 'value' // Not allowed
+        invalidKey: 'value', // Not allowed
       };
-      
-      fs.writeFileSync(path.join(tempDir, '.tp-config.json'), JSON.stringify(invalidConfig, null, 2));
+
+      fs.writeFileSync(
+        path.join(tempDir, '.tp-config.json'),
+        JSON.stringify(invalidConfig, null, 2),
+      );
 
       const config = localConfigManager.readLocalConfig(nestedDir);
-      
+
       expect(config).toBeNull();
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('Warning: Invalid local config'),
-        expect.any(Object)
+        expect.any(Object),
       );
-      
+
       consoleSpy.mockRestore();
     });
 
     it('should cache config for repeated reads', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'TEST' }
+        tp: { defaultTeam: 'TEST' },
       };
-      
+
       const packagePath = path.join(tempDir, 'package.json');
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
 
       // First read
       const config1 = localConfigManager.readLocalConfig(nestedDir);
-      
+
       // Modify file to test cache
-      fs.writeFileSync(packagePath, JSON.stringify({ name: 'modified', tp: { defaultTeam: 'MODIFIED' } }, null, 2));
-      
+      fs.writeFileSync(
+        packagePath,
+        JSON.stringify({ name: 'modified', tp: { defaultTeam: 'MODIFIED' } }, null, 2),
+      );
+
       // Second read should return cached value
       const config2 = localConfigManager.readLocalConfig(nestedDir);
-      
+
       expect(config1).toEqual(config2);
       expect(config2?.defaultTeam).toBe('TEST'); // Not 'MODIFIED'
     });
@@ -129,15 +135,15 @@ describe('LocalConfigManager', () => {
     it('should write config to package.json when it exists', () => {
       const packageJson = {
         name: 'test-project',
-        version: '1.0.0'
+        version: '1.0.0',
       };
-      
+
       const packagePath = path.join(tempDir, 'package.json');
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
 
       const config = {
         defaultTeam: 'WRITE_TEST',
-        teamFilter: ['WRITE', 'TEST']
+        teamFilter: ['WRITE', 'TEST'],
       };
 
       localConfigManager.writeLocalConfig(config, tempDir);
@@ -150,35 +156,35 @@ describe('LocalConfigManager', () => {
     it('should create .tp-config.json when no package.json exists', () => {
       const config = {
         defaultTeam: 'STANDALONE',
-        workspaceId: 'workspace-456'
+        workspaceId: 'workspace-456',
       };
 
-      localConfigManager.writeLocalConfig(config, tempDir, '.tp-config.json');
+      localConfigManager.writeLocalConfig(config, tempDir);
 
       const configPath = path.join(tempDir, '.tp-config.json');
       expect(fs.existsSync(configPath)).toBe(true);
-      
+
       const writtenConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
       expect(writtenConfig).toEqual(config);
     });
 
     it('should create new package.json if none exists and type is package.json', () => {
       const config = {
-        defaultTeam: 'NEW_PROJECT'
+        defaultTeam: 'NEW_PROJECT',
       };
 
-      localConfigManager.writeLocalConfig(config, tempDir, 'package.json');
+      localConfigManager.writeLocalConfig(config, tempDir);
 
       const packagePath = path.join(tempDir, 'package.json');
       expect(fs.existsSync(packagePath)).toBe(true);
-      
+
       const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
       expect(packageJson.tp).toEqual(config);
     });
 
     it('should validate config before writing', () => {
       const invalidConfig = {
-        defaultTeam: 123 // Should be string
+        defaultTeam: 123, // Should be string
       } as any;
 
       expect(() => {
@@ -188,10 +194,10 @@ describe('LocalConfigManager', () => {
 
     it('should update cache after writing', () => {
       const config = {
-        defaultTeam: 'CACHE_TEST'
+        defaultTeam: 'CACHE_TEST',
       };
 
-      localConfigManager.writeLocalConfig(config, tempDir, '.tp-config.json');
+      localConfigManager.writeLocalConfig(config, tempDir);
 
       // Reading should return the written config from cache
       const readConfig = localConfigManager.readLocalConfig(tempDir);
@@ -203,7 +209,7 @@ describe('LocalConfigManager', () => {
     it('should initialize config in empty directory', () => {
       const config = {
         defaultTeam: 'INIT',
-        teamFilter: ['INIT']
+        teamFilter: ['INIT'],
       };
 
       // Change to temp directory for init
@@ -215,7 +221,7 @@ describe('LocalConfigManager', () => {
 
         const packagePath = path.join(tempDir, 'package.json');
         expect(fs.existsSync(packagePath)).toBe(true);
-        
+
         const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
         expect(packageJson.tp).toEqual(config);
       } finally {
@@ -226,9 +232,9 @@ describe('LocalConfigManager', () => {
     it('should throw error if config already exists', () => {
       const packageJson = {
         name: 'existing',
-        tp: { defaultTeam: 'EXISTING' }
+        tp: { defaultTeam: 'EXISTING' },
       };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       const originalCwd = process.cwd();
@@ -250,15 +256,17 @@ describe('LocalConfigManager', () => {
         name: 'test-project',
         tp: {
           defaultTeam: 'OLD',
-          teamFilter: ['OLD']
-        }
+          teamFilter: ['OLD'],
+        },
       };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       localConfigManager.updateLocalSetting('defaultTeam', 'NEW', nestedDir);
 
-      const updatedPackageJson = JSON.parse(fs.readFileSync(path.join(tempDir, 'package.json'), 'utf-8'));
+      const updatedPackageJson = JSON.parse(
+        fs.readFileSync(path.join(tempDir, 'package.json'), 'utf-8'),
+      );
       expect(updatedPackageJson.tp.defaultTeam).toBe('NEW');
       expect(updatedPackageJson.tp.teamFilter).toEqual(['OLD']); // Preserve other settings
     });
@@ -268,15 +276,17 @@ describe('LocalConfigManager', () => {
         name: 'test-project',
         tp: {
           defaultTeam: 'REMOVE_ME',
-          teamFilter: ['KEEP']
-        }
+          teamFilter: ['KEEP'],
+        },
       };
-      
+
       fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       localConfigManager.updateLocalSetting('defaultTeam', undefined, nestedDir);
 
-      const updatedPackageJson = JSON.parse(fs.readFileSync(path.join(tempDir, 'package.json'), 'utf-8'));
+      const updatedPackageJson = JSON.parse(
+        fs.readFileSync(path.join(tempDir, 'package.json'), 'utf-8'),
+      );
       expect(updatedPackageJson.tp.defaultTeam).toBeUndefined();
       expect(updatedPackageJson.tp.teamFilter).toEqual(['KEEP']);
     });
@@ -286,9 +296,9 @@ describe('LocalConfigManager', () => {
     it('should return config path when found', () => {
       const packageJson = {
         name: 'test-project',
-        tp: { defaultTeam: 'TEST' }
+        tp: { defaultTeam: 'TEST' },
       };
-      
+
       const packagePath = path.join(tempDir, 'package.json');
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
 

@@ -3,11 +3,7 @@
  * Includes helpers for discriminated unions, validators, and calculations
  */
 
-import type { 
-  OperationResult, 
-  ValidationResult,
-  BulkResult 
-} from '@atoms/types/results';
+import type { OperationResult, ValidationResult, BulkResult } from '@atoms/types/results';
 
 /**
  * Type guard testing utilities for discriminated unions
@@ -18,7 +14,7 @@ export class ResultTestUtils {
    */
   static assertSuccess<T>(result: OperationResult<T>): T {
     if (!result.success) {
-      throw new Error(`Expected success but got error: ${result.error}`);
+      throw new Error(`Expected success but got error: ${result.error.message}`);
     }
     return result.data;
   }
@@ -38,7 +34,9 @@ export class ResultTestUtils {
    */
   static assertValid(result: ValidationResult): void {
     if (!result.valid) {
-      throw new Error(`Expected valid but got errors: ${'errors' in result ? result.errors.join(', ') : 'unknown'}`);
+      throw new Error(
+        `Expected valid but got errors: ${'errors' in result ? result.errors.join(', ') : 'unknown'}`,
+      );
     }
   }
 
@@ -49,13 +47,15 @@ export class ResultTestUtils {
     if (result.valid) {
       throw new Error('Expected invalid but got valid result');
     }
-    
+
     if (expectedErrors && 'errors' in result) {
       const errors = result.errors || [];
-      expectedErrors.forEach(expectedError => {
-        const hasError = errors.some(error => error.includes(expectedError));
+      expectedErrors.forEach((expectedError) => {
+        const hasError = errors.some((error) => error.includes(expectedError));
         if (!hasError) {
-          throw new Error(`Expected error containing "${expectedError}" but got: ${errors.join(', ')}`);
+          throw new Error(
+            `Expected error containing "${expectedError}" but got: ${errors.join(', ')}`,
+          );
         }
       });
     }
@@ -70,16 +70,16 @@ export class ResultTestUtils {
       totalCount?: number;
       successCount?: number;
       failureCount?: number;
-    }
+    },
   ): void {
     if (expected.totalCount !== undefined) {
       expect(result.totalCount).toBe(expected.totalCount);
     }
-    
+
     if (expected.successCount !== undefined) {
       expect(result.successCount).toBe(expected.successCount);
     }
-    
+
     if (expected.failureCount !== undefined) {
       expect(result.failureCount).toBe(expected.failureCount);
     }
@@ -96,18 +96,21 @@ export class ValidatorTestUtils {
   static testValidInputs<T>(
     validator: (input: T) => boolean | ValidationResult,
     validInputs: T[],
-    description?: string
+    description?: string,
   ): void {
-    validInputs.forEach(input => {
+    validInputs.forEach((input) => {
       const result = validator(input);
       const isValid = typeof result === 'boolean' ? result : result.valid;
-      
+
       if (!isValid) {
-        const errorMsg = typeof result === 'boolean' 
-          ? 'Validation failed'
-          : ('errors' in result ? result.errors.join(', ') : 'Unknown error');
+        const errorMsg =
+          typeof result === 'boolean'
+            ? 'Validation failed'
+            : 'errors' in result
+              ? result.errors.join(', ')
+              : 'Unknown error';
         throw new Error(
-          `${description || 'Validator'} rejected valid input: ${JSON.stringify(input)}. Error: ${errorMsg}`
+          `${description || 'Validator'} rejected valid input: ${JSON.stringify(input)}. Error: ${errorMsg}`,
         );
       }
     });
@@ -119,15 +122,15 @@ export class ValidatorTestUtils {
   static testInvalidInputs<T>(
     validator: (input: T) => boolean | ValidationResult,
     invalidInputs: T[],
-    description?: string
+    description?: string,
   ): void {
-    invalidInputs.forEach(input => {
+    invalidInputs.forEach((input) => {
       const result = validator(input);
       const isValid = typeof result === 'boolean' ? result : result.valid;
-      
+
       if (isValid) {
         throw new Error(
-          `${description || 'Validator'} accepted invalid input: ${JSON.stringify(input)}`
+          `${description || 'Validator'} accepted invalid input: ${JSON.stringify(input)}`,
         );
       }
     });
@@ -138,15 +141,15 @@ export class ValidatorTestUtils {
    */
   static testEdgeCases<T>(
     validator: (input: T) => boolean | ValidationResult,
-    edgeCases: { input: T; expected: boolean; description: string }[]
+    edgeCases: { input: T; expected: boolean; description: string }[],
   ): void {
     edgeCases.forEach(({ input, expected, description }) => {
       const result = validator(input);
       const isValid = typeof result === 'boolean' ? result : result.valid;
-      
+
       if (isValid !== expected) {
         throw new Error(
-          `${description}: Expected ${expected} but got ${isValid} for input: ${JSON.stringify(input)}`
+          `${description}: Expected ${expected} but got ${isValid} for input: ${JSON.stringify(input)}`,
         );
       }
     });
@@ -162,7 +165,7 @@ export class ValidatorTestUtils {
       valid: any[];
       invalid: any[];
       edgeCases?: { input: any; expected: boolean; description: string }[];
-    }
+    },
   ): void {
     describe(validatorName, () => {
       it('should accept valid inputs', () => {
@@ -189,15 +192,11 @@ export class CalculationTestUtils {
   /**
    * Test calculation accuracy within a tolerance
    */
-  static assertWithinTolerance(
-    actual: number,
-    expected: number,
-    tolerance = 0.0001
-  ): void {
+  static assertWithinTolerance(actual: number, expected: number, tolerance = 0.0001): void {
     const diff = Math.abs(actual - expected);
     if (diff > tolerance) {
       throw new Error(
-        `Value ${actual} is not within tolerance ${tolerance} of expected ${expected} (diff: ${diff})`
+        `Value ${actual} is not within tolerance ${tolerance} of expected ${expected} (diff: ${diff})`,
       );
     }
   }
@@ -214,14 +213,10 @@ export class CalculationTestUtils {
   /**
    * Test date calculations
    */
-  static assertDateInRange(
-    date: Date,
-    minDate: Date,
-    maxDate: Date
-  ): void {
+  static assertDateInRange(date: Date, minDate: Date, maxDate: Date): void {
     if (date < minDate || date > maxDate) {
       throw new Error(
-        `Date ${date.toISOString()} is not within range ${minDate.toISOString()} - ${maxDate.toISOString()}`
+        `Date ${date.toISOString()} is not within range ${minDate.toISOString()} - ${maxDate.toISOString()}`,
       );
     }
   }
@@ -229,19 +224,14 @@ export class CalculationTestUtils {
   /**
    * Test duration calculations
    */
-  static assertDuration(
-    startDate: Date,
-    endDate: Date,
-    expectedDays: number,
-    tolerance = 1
-  ): void {
+  static assertDuration(startDate: Date, endDate: Date, expectedDays: number, tolerance = 1): void {
     const msPerDay = 24 * 60 * 60 * 1000;
     const actualDays = (endDate.getTime() - startDate.getTime()) / msPerDay;
     const diff = Math.abs(actualDays - expectedDays);
-    
+
     if (diff > tolerance) {
       throw new Error(
-        `Duration ${actualDays} days is not within tolerance ${tolerance} of expected ${expectedDays} days`
+        `Duration ${actualDays} days is not within tolerance ${tolerance} of expected ${expectedDays} days`,
       );
     }
   }
@@ -252,9 +242,9 @@ export class CalculationTestUtils {
   static assertMetrics(
     actual: Record<string, number>,
     expected: Record<string, number>,
-    tolerance = 0.0001
+    tolerance = 0.0001,
   ): void {
-    Object.keys(expected).forEach(key => {
+    Object.keys(expected).forEach((key) => {
       if (!(key in actual)) {
         throw new Error(`Missing metric: ${key}`);
       }
@@ -276,26 +266,9 @@ export class AtomTestDataGenerators {
     edgeCases: string[];
   } {
     return {
-      valid: [
-        'normal string',
-        'String with numbers 123',
-        'Special chars !@#$%',
-        'Unicode 你好 🎉',
-      ],
-      invalid: [
-        null,
-        undefined,
-        123,
-        {},
-        [],
-        true,
-      ],
-      edgeCases: [
-        '',
-        ' ',
-        '\\n\\t',
-        'a'.repeat(1000),
-      ],
+      valid: ['normal string', 'String with numbers 123', 'Special chars !@#$%', 'Unicode 你好 🎉'],
+      invalid: [null, undefined, 123, {}, [], true],
+      edgeCases: ['', ' ', '\\n\\t', 'a'.repeat(1000)],
     };
   }
 
@@ -390,7 +363,7 @@ export class AtomTestDataGenerators {
     const now = new Date();
     const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
     const twoWeeksFromNow = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
-    
+
     return {
       id: 'sprint-123',
       name: 'Sprint 1',
@@ -412,7 +385,7 @@ export class AtomTestDataGenerators {
     const now = new Date();
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
-    
+
     return {
       createdAt: twoDaysAgo,
       startedAt: yesterday,
@@ -438,17 +411,17 @@ export class TimeTestUtils {
   static mockTime(timestamp: number | Date): void {
     this.originalDate = Date;
     this.mockNow = typeof timestamp === 'number' ? timestamp : timestamp.getTime();
-    
+
     global.Date = class extends Date {
       constructor(...args: any[]) {
         if (args.length === 0) {
           super(TimeTestUtils.mockNow);
         } else {
-          // @ts-ignore - spreading args for Date constructor
+          // @ts-expect-error - spreading args for Date constructor
           super(...args);
         }
       }
-      
+
       static now() {
         return TimeTestUtils.mockNow;
       }
@@ -467,10 +440,7 @@ export class TimeTestUtils {
   /**
    * Run a function with mocked time
    */
-  static async withMockedTime<T>(
-    timestamp: number | Date,
-    fn: () => T | Promise<T>
-  ): Promise<T> {
+  static async withMockedTime<T>(timestamp: number | Date, fn: () => T | Promise<T>): Promise<T> {
     this.mockTime(timestamp);
     try {
       return await fn();
@@ -499,10 +469,10 @@ export class ContractTestUtils {
   static testInterfaceImplementation<T>(
     implementation: T,
     requiredMethods: string[],
-    requiredProperties?: string[]
+    requiredProperties?: string[],
   ): void {
     // Test required methods exist and are functions
-    requiredMethods.forEach(method => {
+    requiredMethods.forEach((method) => {
       if (!(method in (implementation as any))) {
         throw new Error(`Missing required method: ${method}`);
       }
@@ -513,7 +483,7 @@ export class ContractTestUtils {
 
     // Test required properties exist
     if (requiredProperties) {
-      requiredProperties.forEach(property => {
+      requiredProperties.forEach((property) => {
         if (!(property in (implementation as any))) {
           throw new Error(`Missing required property: ${property}`);
         }
@@ -525,14 +495,14 @@ export class ContractTestUtils {
    * Test that a function signature matches expected types
    */
   static testFunctionSignature(
-    fn: Function,
+    fn: (...args: any[]) => any,
     expectedArity: number,
-    expectedName?: string
+    expectedName?: string,
   ): void {
     if (fn.length !== expectedArity) {
       throw new Error(`Expected ${expectedArity} parameters but got ${fn.length}`);
     }
-    
+
     if (expectedName && fn.name !== expectedName) {
       throw new Error(`Expected function name ${expectedName} but got ${fn.name}`);
     }

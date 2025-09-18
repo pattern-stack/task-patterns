@@ -1,5 +1,8 @@
 import type { WorkflowState } from '@linear/sdk';
-import type { WorkflowStateCreateInput, WorkflowStateUpdateInput } from '@linear/sdk/dist/_generated_documents';
+import type {
+  WorkflowStateCreateInput,
+  WorkflowStateUpdateInput,
+} from '@linear/sdk/dist/_generated_documents';
 
 /**
  * WorkflowState transformer functions
@@ -10,10 +13,7 @@ export const WorkflowStateTransformers = {
    * Transform Linear SDK WorkflowState to API response
    */
   toResponse: async (state: WorkflowState) => {
-    const [team, issues] = await Promise.all([
-      state.team,
-      state.issues(),
-    ]);
+    const [team, issues] = await Promise.all([state.team, state.issues()]);
 
     return {
       id: state.id,
@@ -24,11 +24,13 @@ export const WorkflowStateTransformers = {
       position: state.position,
       createdAt: state.createdAt,
       updatedAt: state.updatedAt,
-      team: team ? {
-        id: team.id,
-        key: team.key,
-        name: team.name,
-      } : null,
+      team: team
+        ? {
+            id: team.id,
+            key: team.key,
+            name: team.name,
+          }
+        : null,
       issueCount: issues?.nodes?.length || 0,
     };
   },
@@ -129,7 +131,7 @@ export const WorkflowStateTransformers = {
       canceled: [],
     };
 
-    states.forEach(state => {
+    states.forEach((state) => {
       if (state.type in grouped) {
         grouped[state.type].push(state);
       }

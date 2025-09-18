@@ -6,19 +6,19 @@ import { enhancedConfig } from '@atoms/config';
 
 /**
  * Enhanced Settings Manager
- * 
+ *
  * Integrates with the hierarchical configuration system while maintaining
  * backward compatibility with the existing settings interface.
- * 
+ *
  * Handles both local (project-specific) and global (user-specific) settings.
  */
 
 interface GlobalSettings {
-  defaultTeam?: string;      // Can be overridden by local config
-  activeTeams?: string[];    // Can be overridden by local config (teamFilter)
-  hideTeams?: string[];      // Global only
-  backend?: 'linear' | 'github' | 'jira';  // Global user preference
-  linearApiKey?: string;     // Global security setting
+  defaultTeam?: string; // Can be overridden by local config
+  activeTeams?: string[]; // Can be overridden by local config (teamFilter)
+  hideTeams?: string[]; // Global only
+  backend?: 'linear' | 'github' | 'jira'; // Global user preference
+  linearApiKey?: string; // Global security setting
 }
 
 class EnhancedSettingsManager {
@@ -51,12 +51,8 @@ class EnhancedSettingsManager {
       if (!fs.existsSync(this.configDir)) {
         fs.mkdirSync(this.configDir, { recursive: true });
       }
-      
-      fs.writeFileSync(
-        this.configPath, 
-        JSON.stringify(this.globalSettings, null, 2),
-        'utf-8'
-      );
+
+      fs.writeFileSync(this.configPath, JSON.stringify(this.globalSettings, null, 2), 'utf-8');
     } catch (error) {
       console.log(chalk.yellow('Could not save settings:', error));
     }
@@ -68,7 +64,7 @@ class EnhancedSettingsManager {
    */
   get<K extends keyof GlobalSettings>(key: K): GlobalSettings[K] | undefined {
     const mergedConfig = enhancedConfig.getMergedConfig();
-    
+
     // Map between settings keys and merged config keys
     switch (key) {
       case 'defaultTeam':
@@ -92,7 +88,7 @@ class EnhancedSettingsManager {
   set<K extends keyof GlobalSettings>(key: K, value: GlobalSettings[K]): void {
     this.globalSettings[key] = value;
     this.save();
-    
+
     // Clear enhanced config cache to reflect changes
     enhancedConfig.clearCache();
   }
@@ -101,8 +97,8 @@ class EnhancedSettingsManager {
    * Set a local setting (project-specific)
    */
   setLocal<K extends 'defaultTeam' | 'teamFilter'>(
-    key: K, 
-    value: K extends 'defaultTeam' ? string : string[]
+    key: K,
+    value: K extends 'defaultTeam' ? string : string[],
   ): void {
     // Map settings keys to local config keys
     if (key === 'defaultTeam') {
@@ -118,7 +114,7 @@ class EnhancedSettingsManager {
 
   addActiveTeams(...teams: string[]): void {
     const isLocalProject = enhancedConfig.hasLocalConfig();
-    
+
     if (isLocalProject) {
       // Update local config
       const current = enhancedConfig.getMergedConfig().teamFilter || [];
@@ -130,19 +126,23 @@ class EnhancedSettingsManager {
       const current = this.globalSettings.activeTeams || [];
       this.globalSettings.activeTeams = [...new Set([...current, ...teams])];
       this.save();
-      console.log(chalk.green(`✓ Now showing issues from: ${this.globalSettings.activeTeams.join(', ')} (global config)`));
+      console.log(
+        chalk.green(
+          `✓ Now showing issues from: ${this.globalSettings.activeTeams.join(', ')} (global config)`,
+        ),
+      );
     }
   }
 
   removeActiveTeams(...teams: string[]): void {
     const isLocalProject = enhancedConfig.hasLocalConfig();
-    
+
     if (isLocalProject) {
       // Update local config
       const current = enhancedConfig.getMergedConfig().teamFilter || [];
-      const updated = current.filter(t => !teams.includes(t));
+      const updated = current.filter((t) => !teams.includes(t));
       this.setLocal('teamFilter', updated);
-      
+
       if (updated.length === 0) {
         console.log(chalk.yellow('No team filters - showing all teams (local config)'));
       } else {
@@ -150,24 +150,30 @@ class EnhancedSettingsManager {
       }
     } else {
       // Update global config (backward compatibility)
-      if (!this.globalSettings.activeTeams) return;
-      
+      if (!this.globalSettings.activeTeams) {
+        return;
+      }
+
       this.globalSettings.activeTeams = this.globalSettings.activeTeams.filter(
-        t => !teams.includes(t)
+        (t) => !teams.includes(t),
       );
       this.save();
-      
+
       if (this.globalSettings.activeTeams.length === 0) {
         console.log(chalk.yellow('No team filters - showing all teams (global config)'));
       } else {
-        console.log(chalk.green(`✓ Now showing issues from: ${this.globalSettings.activeTeams.join(', ')} (global config)`));
+        console.log(
+          chalk.green(
+            `✓ Now showing issues from: ${this.globalSettings.activeTeams.join(', ')} (global config)`,
+          ),
+        );
       }
     }
   }
 
   clearTeamFilters(): void {
     const isLocalProject = enhancedConfig.hasLocalConfig();
-    
+
     if (isLocalProject) {
       // Update local config
       this.setLocal('teamFilter', []);
@@ -190,11 +196,13 @@ class EnhancedSettingsManager {
   /**
    * Initialize local config for current project
    */
-  initLocal(config: {
-    defaultTeam?: string;
-    teamFilter?: string[];
-    workspaceId?: string;
-  } = {}): void {
+  initLocal(
+    config: {
+      defaultTeam?: string;
+      teamFilter?: string[];
+      workspaceId?: string;
+    } = {},
+  ): void {
     enhancedConfig.initLocalConfig(config);
     console.log(chalk.green('✓ Initialized local configuration'));
     console.log(chalk.dim('  Use --local flag with config commands to modify local settings'));
@@ -216,9 +224,9 @@ class EnhancedSettingsManager {
   } {
     return {
       global: this.configPath,
-      local: enhancedConfig.hasLocalConfig() 
+      local: enhancedConfig.hasLocalConfig()
         ? require('@atoms/config').projectDiscovery.findProjectRoot()?.configPath || null
-        : null
+        : null,
     };
   }
 }
