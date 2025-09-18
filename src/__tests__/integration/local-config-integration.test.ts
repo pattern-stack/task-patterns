@@ -136,22 +136,19 @@ describe('Local Configuration Integration', () => {
   });
 
   describe('Non-Node.js Project Workflow', () => {
-    it('should support .tp-config.json for non-Node.js projects', () => {
-      // 1. Initialize with .tp-config.json (non-Node.js project)
-      enhancedConfig.initLocalConfig(
-        {
-          defaultTeam: 'PYTHON',
-          teamFilter: ['PYTHON', 'DATA'],
-          workspaceId: 'python-workspace',
-        },
-        '.tp-config.json',
-      );
+    it('should support .tp/config.json for non-Node.js projects', () => {
+      // 1. Initialize with .tp/config.json (non-Node.js project)
+      enhancedConfig.initLocalConfig({
+        defaultTeam: 'PYTHON',
+        teamFilter: ['PYTHON', 'DATA'],
+        workspaceId: 'python-workspace',
+      });
 
-      expect(fs.existsSync('.tp-config.json')).toBe(true);
+      expect(fs.existsSync('.tp/config.json')).toBe(true);
       expect(fs.existsSync('package.json')).toBe(false);
 
       // 2. Verify standalone config file
-      const configContent = JSON.parse(fs.readFileSync('.tp-config.json', 'utf-8'));
+      const configContent = JSON.parse(fs.readFileSync('.tp/config.json', 'utf-8'));
       expect(configContent).toEqual({
         defaultTeam: 'PYTHON',
         teamFilter: ['PYTHON', 'DATA'],
@@ -168,7 +165,7 @@ describe('Local Configuration Integration', () => {
       // 4. Update settings
       enhancedConfig.updateLocalSetting('defaultTeam', 'ML');
 
-      const updatedConfigContent = JSON.parse(fs.readFileSync('.tp-config.json', 'utf-8'));
+      const updatedConfigContent = JSON.parse(fs.readFileSync('.tp/config.json', 'utf-8'));
       expect(updatedConfigContent.defaultTeam).toBe('ML');
     });
   });
@@ -308,7 +305,7 @@ describe('Local Configuration Integration', () => {
   describe('Error Handling and Edge Cases', () => {
     it('should handle corrupted local config gracefully', () => {
       // Create invalid JSON config
-      fs.writeFileSync('.tp-config.json', '{ invalid json }');
+      fs.writeFileSync('.tp/config.json', '{ invalid json }');
 
       expect(enhancedConfig.hasLocalConfig()).toBe(false);
       expect(enhancedConfig.getMergedConfig()).toBeDefined(); // Should not throw

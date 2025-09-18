@@ -389,16 +389,19 @@ describe('SprintCalculations', () => {
       const issues: IssueData[] = [
         {
           id: 'issue-1',
+          createdAt: '2024-01-05T00:00:00Z',
           startedAt: '2024-01-10T00:00:00Z',
           completedAt: '2024-01-15T00:00:00Z', // 5 days
         },
         {
           id: 'issue-2',
+          createdAt: '2024-01-05T00:00:00Z',
           startedAt: '2024-01-12T00:00:00Z',
           completedAt: '2024-01-15T00:00:00Z', // 3 days
         },
         {
           id: 'issue-3',
+          createdAt: '2024-01-05T00:00:00Z',
           startedAt: '2024-01-08T00:00:00Z',
           completedAt: '2024-01-15T00:00:00Z', // 7 days
         },
@@ -412,16 +415,19 @@ describe('SprintCalculations', () => {
       const issues: IssueData[] = [
         {
           id: 'issue-1',
+          createdAt: '2024-01-05T00:00:00Z',
           startedAt: '2024-01-10T00:00:00Z',
           completedAt: '2024-01-15T00:00:00Z', // 5 days
         },
         {
           id: 'issue-2',
+          createdAt: '2024-01-05T00:00:00Z',
           startedAt: undefined,
           completedAt: '2024-01-15T00:00:00Z',
         },
         {
           id: 'issue-3',
+          createdAt: '2024-01-05T00:00:00Z',
           startedAt: '2024-01-08T00:00:00Z',
           completedAt: undefined,
         },
@@ -437,9 +443,9 @@ describe('SprintCalculations', () => {
 
     it('should return 0 when no issues have both dates', () => {
       const issues: IssueData[] = [
-        { id: 'issue-1', startedAt: '2024-01-10T00:00:00Z' },
-        { id: 'issue-2', completedAt: '2024-01-15T00:00:00Z' },
-        { id: 'issue-3' },
+        { id: 'issue-1', createdAt: '2024-01-05T00:00:00Z', startedAt: '2024-01-10T00:00:00Z' },
+        { id: 'issue-2', createdAt: '2024-01-05T00:00:00Z', completedAt: '2024-01-15T00:00:00Z' },
+        { id: 'issue-3', createdAt: '2024-01-05T00:00:00Z' },
       ];
 
       expect(SprintCalculations.averageCycleTime(issues)).toBe(0);
@@ -449,11 +455,13 @@ describe('SprintCalculations', () => {
       const issues: IssueData[] = [
         {
           id: 'issue-1',
+          createdAt: '2024-01-05T00:00:00Z',
           startedAt: '2024-01-10T00:00:00Z',
           completedAt: '2024-01-10T12:00:00Z', // 0.5 days
         },
         {
           id: 'issue-2',
+          createdAt: '2024-01-05T00:00:00Z',
           startedAt: '2024-01-10T00:00:00Z',
           completedAt: '2024-01-11T06:00:00Z', // 1.25 days
         },
