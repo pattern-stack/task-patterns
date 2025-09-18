@@ -8,12 +8,17 @@ const binDir = __dirname;
 // Get the project root (parent of bin/)
 const projectRoot = path.dirname(binDir);
 
-// Change to project directory and run the CLI
-process.chdir(projectRoot);
+// Preserve the original working directory
+const originalCwd = process.cwd();
 
+// Run the CLI from the project root but preserve the original CWD in an env var
 const child = spawn('npx', ['tsx', 'src/organisms/cli/index.ts', ...process.argv.slice(2)], {
   stdio: 'inherit',
-  cwd: projectRoot
+  cwd: projectRoot,
+  env: {
+    ...process.env,
+    TP_ORIGINAL_CWD: originalCwd
+  }
 });
 
 child.on('exit', (code) => {
