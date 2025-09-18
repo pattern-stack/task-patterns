@@ -31,19 +31,12 @@ export function createEnhancedConfigCommand(): Command {
   config
     .command('init')
     .description('Initialize local configuration for current project')
-    .option('--type <type>', 'Config file type: package.json or .tp-config.json', 'package.json')
-    .action((options) => {
+    .action(() => {
       try {
         if (enhancedSettings.hasLocalConfig()) {
           formatters.warning('Project already has local configuration');
           const paths = enhancedSettings.getConfigPaths();
           console.log(chalk.dim(`  Local config: ${paths.local}`));
-          return;
-        }
-
-        const configType = options.type as 'package.json' | '.tp-config.json';
-        if (!['package.json', '.tp-config.json'].includes(configType)) {
-          formatters.error('Invalid config type. Use: package.json or .tp-config.json');
           return;
         }
 
@@ -62,10 +55,10 @@ export function createEnhancedConfigCommand(): Command {
           }
         });
 
-        enhancedConfig.initLocalConfig(initialConfig, configType);
-        
+        enhancedConfig.initLocalConfig(initialConfig);
+
         formatters.success(`Local configuration initialized`);
-        console.log(chalk.dim(`  Config file: ./${configType === 'package.json' ? 'package.json' : '.tp-config.json'}`));
+        console.log(chalk.dim(`  Config file: ./.tp/config.json`));
         console.log(chalk.dim('  Use --local flag with config commands to modify local settings'));
       } catch (error) {
         formatters.error('Failed to initialize local configuration', error);
@@ -75,17 +68,93 @@ export function createEnhancedConfigCommand(): Command {
   // Set a configuration value
   config
     .command('set <key> <value>')
-    .description('Set a configuration value')
-    .option('--local', 'Set in local project configuration')
-    .option('--global', 'Set in global user configuration (default)')
-    .action((key, value, options) => {
-      const isLocal = options.local;
-      const isGlobal = options.global || !options.local; // Default to global
+    .description('Set a configuration value (defaults to local if available)')
+    .option('--local', 'Force set in local project configuration')
+    .option('--global', 'Force set in global user configuration')
+    .action(async (key, value, options) => {
+      const hasLocal = enhancedSettings.hasLocalConfig();
+      let useLocal = false;
+
+      // Determine where to save based on options and context
+      if (options.local && options.global) {
+        formatters.error('Cannot use both --local and --global flags');
+        return;
+      } else if (options.local) {
+        if (!hasLocal) {
+          const readline = await import('readline');
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+          });
+
+          const shouldInit = await new Promise<boolean>((resolve) => {
+            rl.question(chalk.yellow('No local config found. Initialize one? (Y/n) '), (answer) => {
+              rl.close();
+              resolve(!answer || answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
+            });
+          });
+
+          if (shouldInit) {
+            enhancedConfig.initLocalConfig({});
+            formatters.success('Local configuration initialized');
+            useLocal = true;
+          } else {
+            return;
+          }
+        } else {
+          useLocal = true;
+        }
+      } else if (options.global) {
+        useLocal = false;
+      } else {
+        // No flags specified - if local exists, ask user preference
+        if (hasLocal) {
+          const readline = await import('readline');
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+          });
+
+          const choice = await new Promise<string>((resolve) => {
+            console.log(chalk.cyan('\nWhere would you like to save this setting?'));
+            console.log(chalk.gray('  1) Local project config (.tp/config.json)'));
+            console.log(chalk.gray('  2) Global user config'));
+            rl.question(chalk.yellow('Choose [1-2] (default: 1): '), (answer) => {
+              rl.close();
+              resolve(answer || '1');
+            });
+          });
+
+          useLocal = choice === '1';
+        } else {
+          // No local config, default to local and offer to create
+          const readline = await import('readline');
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+          });
+
+          const shouldInit = await new Promise<boolean>((resolve) => {
+            rl.question(chalk.yellow('Initialize local config for this project? (Y/n) '), (answer) => {
+              rl.close();
+              resolve(!answer || answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
+            });
+          });
+
+          if (shouldInit) {
+            enhancedConfig.initLocalConfig({});
+            formatters.success('Local configuration initialized');
+            useLocal = true;
+          } else {
+            useLocal = false;
+          }
+        }
+      }
 
       try {
         // Validate key and value
         if (key === 'team.default' || key === 'defaultTeam') {
-          if (isLocal) {
+          if (useLocal) {
             enhancedConfig.updateLocalSetting('defaultTeam', value);
             formatters.success(`Default team set to "${value}" (local config)`);
           } else {
@@ -93,7 +162,7 @@ export function createEnhancedConfigCommand(): Command {
             formatters.success(`Default team set to "${value}" (global config)`);
           }
         } else if (key === 'backend') {
-          if (isLocal) {
+          if (useLocal) {
             formatters.error('Backend setting is global only (user preference)');
             return;
           }
@@ -104,12 +173,13 @@ export function createEnhancedConfigCommand(): Command {
           enhancedSettings.set('backend', value as any);
           formatters.success(`Backend set to "${value}" (global config)`);
         } else if (key === 'workspaceId') {
-          if (isLocal) {
+          if (useLocal) {
             enhancedConfig.updateLocalSetting('workspaceId', value);
             formatters.success(`Workspace ID set to "${value}" (local config)`);
           } else {
-            formatters.warning('Workspace ID is typically set locally per project');
-            console.log(chalk.dim('  Use --local flag to set workspace ID for this project'));
+            formatters.error('Workspace ID can only be set in local project configuration');
+            console.log(chalk.dim('  Use --local flag or initialize local config first'));
+            return;
           }
         } else {
           formatters.warning(`Unknown configuration key: ${key}`);
@@ -117,12 +187,7 @@ export function createEnhancedConfigCommand(): Command {
           console.log(chalk.dim('  Use: tp config list for all options'));
         }
       } catch (error) {
-        if ((error as Error).message?.includes('Project already has a tp configuration')) {
-          formatters.error('Cannot modify local config: project not initialized');
-          console.log(chalk.dim('  Use: tp config init to initialize local configuration'));
-        } else {
-          formatters.error('Failed to set configuration', error);
-        }
+        formatters.error('Failed to set configuration', error);
       }
     });
 
@@ -204,24 +269,93 @@ export function createEnhancedConfigCommand(): Command {
   // Team filter management with local/global awareness
   config
     .command('teams [teams...]')
-    .description('Set active teams to filter (automatically chooses local or global)')
+    .description('Set active teams to filter (defaults to local if available)')
     .option('--local', 'Force update local configuration')
     .option('--global', 'Force update global configuration')
-    .action((teams, options) => {
-      try {
-        const isForceLocal = options.local;
-        const isForceGlobal = options.global;
-        const hasLocal = enhancedSettings.hasLocalConfig();
+    .action(async (teams, options) => {
+      const hasLocal = enhancedSettings.hasLocalConfig();
+      let useLocal = false;
 
-        if (isForceLocal && !hasLocal) {
-          formatters.error('No local configuration found');
-          console.log(chalk.dim('  Use: tp config init to create local configuration'));
-          return;
+      // Determine where to save based on options and context
+      if (options.local && options.global) {
+        formatters.error('Cannot use both --local and --global flags');
+        return;
+      } else if (options.local) {
+        if (!hasLocal) {
+          const readline = await import('readline');
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+          });
+
+          const shouldInit = await new Promise<boolean>((resolve) => {
+            rl.question(chalk.yellow('No local config found. Initialize one? (Y/n) '), (answer) => {
+              rl.close();
+              resolve(!answer || answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
+            });
+          });
+
+          if (shouldInit) {
+            enhancedConfig.initLocalConfig({});
+            formatters.success('Local configuration initialized');
+            useLocal = true;
+          } else {
+            return;
+          }
+        } else {
+          useLocal = true;
         }
+      } else if (options.global) {
+        useLocal = false;
+      } else {
+        // No flags specified - interactive selection
+        if (hasLocal) {
+          const readline = await import('readline');
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+          });
 
+          const choice = await new Promise<string>((resolve) => {
+            console.log(chalk.cyan('\nWhere would you like to save team filters?'));
+            console.log(chalk.gray('  1) Local project config (.tp/config.json)'));
+            console.log(chalk.gray('  2) Global user config'));
+            rl.question(chalk.yellow('Choose [1-2] (default: 1): '), (answer) => {
+              rl.close();
+              resolve(answer || '1');
+            });
+          });
+
+          useLocal = choice === '1';
+        } else {
+          // No local config, offer to create
+          const readline = await import('readline');
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+          });
+
+          const shouldInit = await new Promise<boolean>((resolve) => {
+            rl.question(chalk.yellow('Initialize local config for this project? (Y/n) '), (answer) => {
+              rl.close();
+              resolve(!answer || answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
+            });
+          });
+
+          if (shouldInit) {
+            enhancedConfig.initLocalConfig({});
+            formatters.success('Local configuration initialized');
+            useLocal = true;
+          } else {
+            useLocal = false;
+          }
+        }
+      }
+
+      try {
         if (teams && teams.length > 0) {
           // Setting specific teams
-          if (isForceLocal || (hasLocal && !isForceGlobal)) {
+          if (useLocal) {
             enhancedConfig.updateLocalSetting('teamFilter', teams);
             formatters.success(`Now showing issues from: ${teams.join(', ')} (local config)`);
           } else {
@@ -230,11 +364,12 @@ export function createEnhancedConfigCommand(): Command {
           }
         } else {
           // Clearing team filters
-          if (isForceLocal || (hasLocal && !isForceGlobal)) {
+          if (useLocal) {
             enhancedConfig.updateLocalSetting('teamFilter', undefined);
             console.log(chalk.green('✓ Cleared team filters - showing all teams (local config)'));
           } else {
             enhancedSettings.clearTeamFilters();
+            console.log(chalk.green('✓ Cleared team filters - showing all teams (global config)'));
           }
         }
         console.log(chalk.dim('  Run "tp context" to see filtered view'));
@@ -334,17 +469,16 @@ export function createEnhancedConfigCommand(): Command {
           const paths = enhancedSettings.getConfigPaths();
           if (paths.local) {
             const fs = await import('fs');
-            if (paths.local.endsWith('package.json')) {
-              // Remove "tp" section from package.json
-              const packageJson = JSON.parse(fs.readFileSync(paths.local, 'utf-8'));
-              delete packageJson.tp;
-              fs.writeFileSync(paths.local, JSON.stringify(packageJson, null, 2));
-              formatters.success('Local configuration removed from package.json');
-            } else {
-              // Remove .tp-config.json file
-              fs.unlinkSync(paths.local);
-              formatters.success('Local configuration file removed');
+            // Remove .tp/config.json file
+            fs.unlinkSync(paths.local);
+            // Try to remove .tp directory if empty
+            const tpDir = paths.local.replace('/config.json', '');
+            try {
+              fs.rmdirSync(tpDir);
+            } catch {
+              // Directory not empty or other error, ignore
             }
+            formatters.success('Local configuration removed');
           }
         }
 
