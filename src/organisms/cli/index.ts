@@ -5,10 +5,16 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { linearClient } from '@atoms/client/linear-client';
 import { IssueAPI } from '@molecules/issue.api';
+import { LabelAPI } from '@molecules/apis/label.api';
 import { enhancedConfig } from '@atoms/config';
 import { createTeamCommand } from './commands/team';
 import { createLabelCommand } from './commands/label';
 import { createEnhancedConfigCommand } from './commands/enhanced-config';
+import {
+  resolveLabelIds,
+  formatLabelList,
+  formatLabelErrors,
+} from './helpers/label-resolver';
 
 const program = new Command();
 
@@ -467,6 +473,10 @@ program
   )
   .option('-a, --assign <email>', 'Assign issue to user by email')
   .option('--add-comment <comment>', 'Add a comment to the issue')
+  .option('--add-labels <labels>', 'Add labels (comma-separated names or IDs, e.g., "type:bug,priority:high")')
+  .option('--remove-labels <labels>', 'Remove labels (comma-separated names or IDs)')
+  .option('--set-labels <labels>', 'Replace all labels (comma-separated names or IDs)')
+  .option('--list-labels', 'Show available labels for this issue\'s team')
   .action(async (identifier, options) => {
     const spinner = ora(`Updating ${identifier}...`).start();
 
@@ -537,6 +547,83 @@ program
       if (options.addComment) {
         await api.addComment(issue.id, options.addComment);
         updates.push('comment added');
+      }
+
+      // Handle --list-labels flag (show and exit early)
+      if (options.listLabels) {
+        spinner.stop();
+
+        const team = await issue.team;
+        if (!team) {
+          console.log(chalk.yellow('  ⚠ Issue has no team'));
+          return;
+        }
+
+        console.log(chalk.cyan(`\n==> Available Labels for ${team.name} (${team.key})\n`));
+
+        const labelAPI = new LabelAPI(client);
+        const labels = await labelAPI.listByTeam(team.key);
+
+        console.log(formatLabelList(labels));
+        return;
+      }
+
+      // Handle label operations
+      if (options.addLabels || options.removeLabels || options.setLabels) {
+        const team = await issue.team;
+        const teamId = team?.id;
+
+        const labelAPI = new LabelAPI(client);
+        const allLabels = teamId ? await labelAPI.listByTeam(team.key) : await labelAPI.list();
+
+        // Add labels
+        if (options.addLabels) {
+          const resolution = await resolveLabelIds(options.addLabels, teamId, client);
+
+          if (resolution.notFound.length > 0) {
+            spinner.stop();
+            console.log(formatLabelErrors(resolution.notFound, allLabels));
+            return;
+          }
+
+          if (resolution.resolved.length > 0) {
+            const labelIds = resolution.resolved.map((l) => l.id);
+            await api.addLabels(issue.id, labelIds);
+            updates.push(`added labels: ${resolution.resolved.map((l) => l.name).join(', ')}`);
+          }
+        }
+
+        // Remove labels
+        if (options.removeLabels) {
+          const resolution = await resolveLabelIds(options.removeLabels, teamId, client);
+
+          if (resolution.notFound.length > 0) {
+            spinner.stop();
+            console.log(formatLabelErrors(resolution.notFound, allLabels));
+            return;
+          }
+
+          if (resolution.resolved.length > 0) {
+            const labelIds = resolution.resolved.map((l) => l.id);
+            await api.removeLabels(issue.id, labelIds);
+            updates.push(`removed labels: ${resolution.resolved.map((l) => l.name).join(', ')}`);
+          }
+        }
+
+        // Set labels (replace all)
+        if (options.setLabels) {
+          const resolution = await resolveLabelIds(options.setLabels, teamId, client);
+
+          if (resolution.notFound.length > 0) {
+            spinner.stop();
+            console.log(formatLabelErrors(resolution.notFound, allLabels));
+            return;
+          }
+
+          const labelIds = resolution.resolved.map((l) => l.id);
+          await api.updateIssue(issue.id, { labelIds });
+          updates.push(`set labels: ${resolution.resolved.map((l) => l.name).join(', ')}`);
+        }
       }
 
       if (updates.length > 0) {
