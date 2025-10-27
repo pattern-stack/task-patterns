@@ -877,6 +877,10 @@ program
     console.log(chalk.white('  tp labels list'), chalk.dim('........'), 'List all labels');
     console.log(chalk.white('  tp labels create'), chalk.dim('......'), 'Create new label');
     console.log(chalk.white('  tp labels apply-template'), 'Apply label template');
+    console.log(chalk.white('  tp update ID --add-labels'), 'Add labels to issue');
+    console.log(chalk.white('  tp update ID --remove-labels'), 'Remove labels from issue');
+    console.log(chalk.white('  tp update ID --set-labels'), 'Replace all issue labels');
+    console.log(chalk.white('  tp update ID --list-labels'), 'Show available labels');
     console.log();
 
     console.log(chalk.yellow('⚙️  Configuration:'));
@@ -895,7 +899,8 @@ program
     console.log(chalk.yellow('🏷️  Label System:'));
     console.log(chalk.gray('  Format:    '), 'group:label (e.g., type:feature, area:tasks)');
     console.log(chalk.gray('  Groups:    '), 'type, area, stage, layer, backend');
-    console.log(chalk.gray('  Docs:      '), 'See LABEL_HIERARCHY.md');
+    console.log(chalk.gray('  Exclusive: '), 'Only one label per parent group on an issue');
+    console.log(chalk.gray('  Docs:      '), 'See docs/LINEAR_LABEL_GROUPS.md');
     console.log();
 
     console.log(chalk.yellow('🚀 Session Startup:'));

@@ -44,6 +44,10 @@ tp done TASK-19         # Complete with celebration! 🎉
 # Get details when needed
 tp show TASK-19         # Full issue details
 tp update TASK-19 --status "In Review"
+
+# Manage labels
+tp update TASK-19 --add-labels "Bug,Refactor"
+tp update TASK-19 --list-labels    # See available labels
 ```
 
 ## 🏗️ Configuration
@@ -100,6 +104,29 @@ cd ~/projects/frontend
 tp config init && tp config teams FE
 # This project only shows FE team tasks
 ```
+
+### Label Management
+Smart label assignment with fuzzy matching:
+```bash
+# See available labels
+tp update TASK-19 --list-labels
+
+# Add labels (by name or ID)
+tp update TASK-19 --add-labels "Bug,Refactor"
+
+# Remove labels
+tp update TASK-19 --remove-labels "Testing"
+
+# Replace all labels
+tp update TASK-19 --set-labels "Task,CLI,Features"
+
+# Typo? Get suggestions!
+tp update TASK-19 --add-labels "Bugg"
+# ✗ Label not found: Bugg
+#   Did you mean: Bug
+```
+
+**Label Groups**: Linear uses exclusive label groups - you can only have one label per group on an issue. See `docs/LINEAR_LABEL_GROUPS.md` for details.
 
 ## 📁 Architecture
 
