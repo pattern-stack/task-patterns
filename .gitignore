@@ -56,6 +56,10 @@ pids
 tmp/
 temp/
 
+# Exploration/scratch files
+explore-*.ts
+explore-*.js
+
 # Cache
 .npm
 .eslintcache
