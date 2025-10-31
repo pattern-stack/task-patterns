@@ -4,6 +4,8 @@ import ora from 'ora';
 import * as readline from 'readline';
 import { linearClient } from '@atoms/client/linear-client';
 import { LabelAPI } from '@molecules/apis/label.api';
+import { TeamService } from '@features/team/service';
+import { enhancedConfig } from '@atoms/config';
 import { formatters } from '../formatters';
 
 /**
@@ -284,6 +286,7 @@ export function createLabelCommand(): Command {
     .option('-n, --new-name <name>', 'New label name')
     .option('-c, --color <color>', 'New hex color')
     .option('-d, --description <desc>', 'New description')
+    .option('-t, --team <key>', 'Team key (search team-specific labels)')
     .action(async (name, options) => {
       if (!options.newName && !options.color && !options.description) {
         formatters.warning('No updates specified');
@@ -296,10 +299,30 @@ export function createLabelCommand(): Command {
       try {
         const client = linearClient.getClient();
         const api = new LabelAPI(client);
+        const teamService = new TeamService(client);
 
-        const label = await api.getByName(name);
+        // Get team ID from option or config
+        let teamId: string | undefined;
+        if (options.team) {
+          const resolvedTeamId = await teamService.resolveTeamId(options.team);
+          if (!resolvedTeamId) {
+            spinner.fail(`Team not found: ${options.team}`);
+            return;
+          }
+          teamId = resolvedTeamId;
+        } else {
+          // Try to get team from config
+          const config = enhancedConfig.getMergedConfig();
+          if (config.teamFilter && config.teamFilter.length > 0) {
+            // Use first team in filter
+            const resolvedTeamId = await teamService.resolveTeamId(config.teamFilter[0]);
+            teamId = resolvedTeamId ?? undefined;
+          }
+        }
+
+        const label = await api.getByName(name, teamId);
         if (!label) {
-          spinner.fail(`Label "${name}" not found`);
+          spinner.fail(`Label "${name}" not found${teamId ? ' in team' : ''}`);
           return;
         }
 
@@ -330,16 +353,37 @@ export function createLabelCommand(): Command {
     .alias('rm')
     .description('Delete a label')
     .option('--confirm', 'Skip confirmation prompt')
+    .option('-t, --team <key>', 'Team key (search team-specific labels)')
     .action(async (name, options) => {
       const spinner = ora(`Deleting label "${name}"...`).start();
 
       try {
         const client = linearClient.getClient();
         const api = new LabelAPI(client);
+        const teamService = new TeamService(client);
 
-        const label = await api.getByName(name);
+        // Get team ID from option or config
+        let teamId: string | undefined;
+        if (options.team) {
+          const resolvedTeamId = await teamService.resolveTeamId(options.team);
+          if (!resolvedTeamId) {
+            spinner.fail(`Team not found: ${options.team}`);
+            return;
+          }
+          teamId = resolvedTeamId;
+        } else {
+          // Try to get team from config
+          const config = enhancedConfig.getMergedConfig();
+          if (config.teamFilter && config.teamFilter.length > 0) {
+            // Use first team in filter
+            const resolvedTeamId = await teamService.resolveTeamId(config.teamFilter[0]);
+            teamId = resolvedTeamId ?? undefined;
+          }
+        }
+
+        const label = await api.getByName(name, teamId);
         if (!label) {
-          spinner.fail(`Label "${name}" not found`);
+          spinner.fail(`Label "${name}" not found${teamId ? ' in team' : ''}`);
           return;
         }
 
