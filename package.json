@@ -1,11 +1,11 @@
 {
   "name": "@pattern-stack/task-patterns",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Lightning-fast task management for AI-human collaborative development",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "tp": "./bin/tp.js"
+    "tp": "./dist/cli.js"
   },
   "files": [
     "dist/",
