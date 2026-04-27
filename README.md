@@ -16,10 +16,10 @@ Working with AI on code? You need a task system that:
 
 ```bash
 # Install globally
-npm install -g task-pattern
+npm install -g @pattern-stack/task-patterns
 
 # Or clone and link
-git clone https://github.com/DougsHub/task-patterns.git
+git clone https://github.com/pattern-stack/task-patterns.git
 cd task-patterns
 npm install && npm link
 

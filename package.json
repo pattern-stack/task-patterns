@@ -13,14 +13,14 @@
     "LICENSE"
   ],
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc",
     "prepublishOnly": "npm run verify && npm run build",
-    "postpublish": "echo 'Successfully published @dugsnodes/task-patterns'",
+    "postpublish": "echo 'Successfully published @pattern-stack/task-patterns'",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "cli": "tsx src/organisms/cli/index.ts",
@@ -39,12 +39,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DougsHub/task-patterns.git"
+    "url": "git+https://github.com/pattern-stack/task-patterns.git"
   },
   "bugs": {
-    "url": "https://github.com/DougsHub/task-patterns/issues"
+    "url": "https://github.com/pattern-stack/task-patterns/issues"
   },
-  "homepage": "https://github.com/DougsHub/task-patterns#readme",
+  "homepage": "https://github.com/pattern-stack/task-patterns#readme",
   "keywords": [
     "task-management",
     "linear",
